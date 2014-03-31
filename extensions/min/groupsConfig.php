@@ -69,6 +69,8 @@ return array(
 	'eiuj' => array('//extensions/wikihow/eiu/easyimageupload.js'),
 	'jcookj' => array('//extensions/wikihow/common/jquery.cookie.js'),
 	'pbj' => array('//extensions/wikihow/profilebox/profilebox.js'),
+	'airj' => array('//extensions/wikihow/adminimageremoval.js'),
+	'aej' => array('//extensions/wikihow/wikihowAds/adminadexclusions.js'),
 
 	// big web CSS
 	'whcss' => array(

@@ -3,33 +3,28 @@
 if (!defined('MEDIAWIKI')) die();
 
 class ImageUploadHandler extends UnlistedSpecialPage {
-	private $executeAsSpecialPage;
 	private $maxFilesize;
 
 	public function __construct() {
 		global $wgMaxUploadSize;
 
 		parent::__construct('ImageUploadHandler');
-		$this->executeAsSpecialPage = false;
 		$this->maxFilesize = $wgMaxUploadSize;	
 	}
 
 	public function execute() {
-		global $wgUser, $wgOut, $wgRequest;
 
-		if ($wgUser->isBlocked()) {
-			$wgOut->blockedPage();
-			return;
+		if ($this->getUser()->isBlocked()) {
+			throw new PermissionsError( 'imageuploadhandler' );
 		}
 
-		$wgOut->setArticleBodyOnly(true);
-
-		$this->executeAsSpecialPage = true;
+		$this->getOutput()->setArticleBodyOnly(true);
+		header('Content-type: application/json');
 
 		$result = array();
-		$delImage = $wgRequest->getVal('delete');
-		if ($delImage) {
-			$result = $this->deleteImage($delImage);
+		$toDelete = $this->getRequest()->getVal('delete');
+		if ($toDelete) {
+			$result = $this->deleteImage($toDelete);
 		} else {
 			$result = $this->uploadImage();
 		}
@@ -55,13 +50,13 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 	}
 
 	protected function addToDB($data) {
-		global $wgUser;
+		$user = $this->getUser();
 
 		$uci_row_data = array(
 			'uci_image_name' => $data['titleDBkey'],
 			'uci_image_url' => $data['fileURL'],
-			'uci_user_id' => intval($wgUser->getId()),
-			'uci_user_text' => $wgUser->getName(),
+			'uci_user_id' => intval($user->getId()),
+			'uci_user_text' => $user->getName(),
 			'uci_timestamp' => $data['timestamp'],
 			'uci_article_id' => intval($data['titleArtID']),
 			'uci_article_name' => $data['fromPage']);
@@ -76,17 +71,20 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 		$dbw->commit();
 	}
 
-	protected function insertImage($name, $mwname, $result) {
-		global $wgRequest, $wgImageMagickConvertCommand, $wgServer;
+	protected function insertImage($name, $mwname, &$result = array()) {
+		global $wgImageMagickConvertCommand, $wgServer;
 
-		if (!$result)
-			$result = array();
-		elseif ($result['error'])
+		$request = $this->getRequest();
+
+		if ($result['error']) {
 			return $result;
+		}
 
-		$fromPage = $wgRequest->getVal('viapage');
+		$fromPage = $request->getVal('viapage');
 
 		if (!empty($mwname) && !empty($name)) {
+			// TODO we might not even need to check the filename for extension
+			// it is very likely that the LocalFile class will handle this for us
 			$name = trim(urldecode($name));
 
 			$dateTime = new DateTime();
@@ -105,27 +103,22 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 				return $result;
 			}
 
-			$saveName = false;
+			// TODO refactor this section into it's own method for getting a unique file name
 			$titleExists = false;
-			$suffixNum = 1;
+			$saveName = 'User Completed Image ' . $fromPage . ' ' . $dateTime->format('Y.m.d H.i.s') . ' ' . $suffixNum . '.' . $ext;
+			$title = Title::makeTitleSafe(NS_IMAGE, $saveName);
+			$titleExists = $title->exists();
+			$result['debug'][] = "title exists $titleExists";
 
-			while (!$saveName || $titleExists) {
-				$saveName = 'User Completed Image ' . $fromPage . ' ' . $dateTime->format('Y.m.d H.i.s') . ' ' . $suffixNum . '.' . $ext;
-
-				$title = Title::makeTitleSafe(NS_IMAGE, $saveName);
-
-				$newFile = true;
-				$titleExists = $title->exists();
-
-				$suffixNum++;
-			}
-
-			$temp_file = new TempLocalImageFile(Title::newFromText($mwname, NS_IMAGE), RepoGroup::singleton()->getLocalRepo());
+			// todo no need to get this file again we just created it above
+			// or not even use a temp image at all...
+			$temp_file = new LocalFile(Title::newFromText($mwname, NS_IMAGE), RepoGroup::singleton()->getLocalRepo());
 			if (!$temp_file || !$temp_file->exists()) {
-				$result['error'] = 'Error: A server error has occurred. Please try again.';
+				$result['error'] = 'tmp file does not exist..';
 				return $result;
 			}
 
+			// todo - do this part after the single file upload
 			// Image orientation is a bit wonky on some mobile devices; use ImageMagick's auto-orient to try fixing it.
 			$tempFilePath = $temp_file->getPath();
 			$cmd = $wgImageMagickConvertCommand . ' ' . $tempFilePath . ' -auto-orient ' . $tempFilePath;
@@ -134,13 +127,20 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 			// Use a CC license
 			$comment = '{{Self}}';
 
+			// todo implement this
+			//$title = $this->getFileSaveName();
 			$file = new LocalFile($title, RepoGroup::singleton()->getLocalRepo());
+			// then get the file path from this file
+			// $filePath = $file->getPath();
+			// then use it in the uplaod
 
 			$file->upload($tempFilePath, $comment, $comment);
 			if (!$file || !$file->exists()) {
-				$result['error'] = 'Error: A server error has occurred. Please try again.';
+				$result['debug'][] = $file;
+				$result['error'] = 'uploaded file does not exist.';
 				return $result;
 			}
+			// todo no need to delete the temp file if we don'e have one
 			$temp_file->delete('');
 
 			$fileTitle = $file->getTitle();
@@ -149,18 +149,19 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 			$thumbURL = '';
 			$thumb = $file->getThumbnail(200, -1, true, true);
 			if (!$thumb) {
-				$result['error'] = 'Error: A server error has occurred. Please try again.';
+				$result['error'] = 'file thumbnail does not exist';
 				$file->delete('');
 				return $result;
 			}
 			$thumbURL = $thumb->getUrl();
 
+			// TODO what does this section do?
 			$result['titleText'] = $fileTitle->getText();
 			$result['titleDBkey'] = substr($fileTitle->getDBkey(), 21); // Only keep important info
 			$result['titlePreText'] = '/' . $fileTitle->getPrefixedText();
 			$result['titleArtID'] = $fileTitle->getArticleID();
 			$result['timestamp'] = $mwDate;
-			$result['fromPage'] = $wgRequest->getVal('viapage');
+			$result['fromPage'] = $request->getVal('viapage');
 			$result['thumbURL'] = $thumbURL;
 			$result['fileURL'] = $wgServer . $fileURL;
 		}
@@ -169,26 +170,28 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 	}
 
 	protected function uploadImage() {
-		global $wgRequest, $wgOut, $wgUser, $wgGroupPermissions;
+		global $wgGroupPermissions;
 
-		header('Content-type: application/json');
+		$request = $this->getRequest();
 
 		$result = array();
 
-		$fromPage = $wgRequest->getVal('viapage');
+		// sanity check on the page to link to
+		$fromPage = $request->getVal('viapage');
 		$title = Title::newFromText($fromPage, NS_MAIN);
-
 		if (!$title->exists()) {
 			$result['error'] = "Error: No article $fromPage found to link image.";
 			return $result;
 		}
 
-		$tempname = TempLocalImageFile::createTempFileName($fromPage);
-		$file = new TempLocalImageFile(Title::newFromText($tempname, NS_IMAGE), RepoGroup::singleton()->getLocalRepo());
+		// create the temporary image..not sure if this is needed though.
+		// todo probably don't need this temp file at all
+		$tempname = Easyimageupload::createTempFileName($fromPage);
+		$tempUser = Easyimageupload::getTempFileUser();
+		$file = new LocalFile(Title::newFromText($tempname, NS_IMAGE), RepoGroup::singleton()->getLocalRepo());
+		$name = $request->getFileName('wpUploadImage', '', '');
 
-		$name = $wgRequest->getFileName('wpUploadImage', '', '');
-
-		$file->upload($wgRequest->getFileTempName('wpUploadImage'), '', '');
+		$file->upload($request->getFileTempName('wpUploadImage'), '', '');
 		$filesize = $file->getSize();
 		if (!$filesize) {
 			$result['error'] = 'Error: We didn\'t get a file. Please try again.';
@@ -201,23 +204,24 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 			return $result;
 		}
 
+		$result['debug'][] = $file;
 		$prevPermissions = $wgGroupPermissions['*']['upload'];
 		$wgGroupPermissions['*']['upload'] = true;
 		
-		$result = $this->insertImage($name, $tempname, $result);
+		$this->insertImage($name, $tempname, &$result);
 
 		$wgGroupPermissions['*']['upload'] = $prevPermissions;
 
 		if (!$result['error']) {
 			// Successfully uploaded; add to DB
-			$this->addToDB($result);
+			$this->addToDB(&$result);
 		}
 
 		return $result;
 	}
 
 	protected function deleteImage($imgName) {
-		global $wgUser;
+		$user = $this->getUser();
 
 		$localRepo = RepoGroup::singleton()->getLocalRepo();
 		$file = $localRepo->findFile($imgName);
@@ -230,12 +234,12 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 		$comment = 'UCI undo';
 		$imgDBKey = substr($fileTitle->getDBkey(), 21);
 
-		$userGroups = $wgUser->getGroups();
-		if (!in_array('staff', $userGroups) && $wgUser->getName() != "G.bahij") {
+		$userGroups = $user->getGroups();
+		if (!in_array('staff', $userGroups) && $user->getName() != "G.bahij") {
 			// If not staff, make sure the user deleting their own image and not someone else's
-			$userID = $wgUser->getID();
+			$userID = $user->getID();
 			$userDBKey = $userID > 0 ? 'uci_user_id' : 'uci_user_text';
-			$userDBVal = $userID > 0 ? $userID : $wgUser->getName();
+			$userDBVal = $userID > 0 ? $userID : $user->getName();
 
 			$dbr = wfGetDB(DB_SLAVE);
 			$res = $dbr->select(
@@ -247,9 +251,9 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 				$result['error'] = 'Could not find image in database.';
 				return $result;
 			}
-			$user = $res->fetchRow();
+			$userCompletedImage = $res->fetchRow();
 
-			if ($user[$userDBKey] != $userDBVal) {
+			if ($userCompletedImage[$userDBKey] != $userDBVal) {
 				$result['error'] = 'You do not have permission to delete this image.';
 				return $result;
 			}
@@ -270,26 +274,4 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 
 		return $result;
 	}
-}
-
-class TempLocalImageFile extends LocalFile {
-	public static function createTempFileName($pageUrl) {
-		$date = new DateTime();
-		return 'TMP_FILE-User-completed-' . $pageUrl . '-' . $date->format('Y.m.d H.i.s') . '-' . rand(0,65535) . '-image.tmp';
-	}
-
-	public function recordUpload2($oldver, $comment, $pageText, $props = false, $timestamp = false) {
-		if (!$props) {
-			$virtURL = $this->getVirtualUrl();
-			$props = $this->repo->getFileProps($virtURL);
-		}
-		$this->setProps($props);
-		$this->purgeThumbnails();
-		$this->saveToCache();
-		return true;
-	}
-
-	public function upgradeRow() {}
-
-	public function doDBInserts() {}
 }

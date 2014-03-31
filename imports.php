@@ -42,11 +42,14 @@ if ($wgLanguageCode == 'en') {
 	require_once("$IP/extensions/EventLogging/EventLogging.php");
 	require_once("$IP/extensions/GuidedTour/GuidedTour.php");
 	require_once("$IP/extensions/wikihow/EditPageWrapper.php");
+	require_once("$IP/extensions/wikihow/AdminImageRemoval.php");
+	require_once("$IP/extensions/wikihow/wikihowAds/AdminAdExclusions.php");
 }
 if($wgLanguageCode == "zh") {
 	require_once("$IP/extensions/wikihow/chinesevariantselector/ChineseVariantSelector.php");
 }
 require_once("$IP/extensions/wikihow/WikihowPreferences/WikihowPreferences.php");
+require_once("$IP/extensions/UndeleteBatch/UndeleteBatch.php");
 require_once("$IP/extensions/wikihow/whvid/WHVid.php");
 require_once("$IP/extensions/wikihow/translateeditor/TranslateEditor.php");
 require_once("$IP/extensions/wikihow/QuickEdit.php");
@@ -269,3 +272,4 @@ require_once("$IP/extensions/wikihow/CategoryNames.php");
 
 #UPGRADE 1.23
 require_once("$IP/extensions/wikihow/WikihowLogin.php");
+require_once("$IP/extensions/wikihow/MassMessage/MassMessage.php");

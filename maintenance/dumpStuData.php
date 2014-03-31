@@ -1,5 +1,6 @@
 <?php
-# Dump all the STU data for all main namespace articels
+# Dump all the STU data for all main namespace articles
+exit;
 require_once('commandLine.inc');
 
 /**
@@ -166,7 +167,7 @@ class DumpStuData {
 	}
 	
 	function sendErrorEmail() {
-		if($this->errors || $this->warnings || $this->pagesProcessed == 2000) {
+		if($this->errors || $this->warnings || $this->pagesProcessed <= 2000) {
 			$to = new MailAddress("gershon@wikihow.com, reuben@wikihow.com, john@wikihow.com");
 			$from = new MailAddress("alerts@wikihow.com");
 			$subject = "Errors or warnings doing STU dump";
@@ -177,7 +178,7 @@ class DumpStuData {
 			if($this->errors) {
 				$msg .= " Failed to get STU data on " . $this->errors . " articles."; 
 			}	
-			if($this->pagesProcessed < 2000) { 
+			if($this->pagesProcessed <= 2000) { 
 				$msg .= " Less than 2000 pages processed";
 			}
 			UserMailer::send($to, $from, $subject, $msg); 

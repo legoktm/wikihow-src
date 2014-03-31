@@ -77,7 +77,8 @@
 		'suggested_edit_title_title' => 'Edit title',
 		'suggested_edit_title'	=> '<center>
 			<input type="text" id="newsuggestion" value="$1" class="input_med" /><br/><br/>
-			<input type="button" class="button primary" onclick="saveSuggestion();" value="Save"/></center>',
+			<input type="button" class="button primary" onclick="saveSuggestion();" value="Save"/></center>
+			<input type="hidden" id="title_id" value="$2" />',
 		'suggested_article_exists_title'	=> "<h2>Good news!</h2>",
 		'suggested_article_exists_info'	=> "An article with the title \"How to $1\" already exists. <br/><br/>Do you want to read the article?
 				<br/><br/><center>

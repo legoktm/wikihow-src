@@ -143,6 +143,41 @@ EOHTML;
 		}
 	}
 	
+	function resetAllAdExclusionCaches() {
+		global $wgActiveLanguages, $wgDBname;
+
+		$dbr = wfGetDB(DB_SLAVE);
+
+		//first do english
+		self::resetAdExclusionCache($dbr, "en");
+
+		foreach($wgActiveLanguages as $languageCode) {
+			self::resetAdExclusionCache($dbr, $languageCode);
+		}
+
+		$dbr->selectDB($wgDBname);
+	}
+
+	function resetAdExclusionCache(&$dbr, $languageCode) {
+		global $wgMemc, $wgDBname;
+
+		$key = wfMemcKey('adExclusions', $languageCode);
+		$excludeList = array();
+
+		if($languageCode == "en") {
+			$dbr->selectDB($wgDBname);
+		} else {
+			$dbr->selectDB('wikidb_'.$languageCode);
+		}
+
+		$res = $dbr->select(AdminAdExclusions::EXCLUSION_TABLE, "ae_page", array(), __METHOD__);	
+		foreach($res as $row) {
+			$excludeList[] = $row->ae_page;
+		}
+
+		$wgMemc->set($key, $excludeList);
+	}
+
 	function getLinkUnit($num) {
 		global $wgUser;
 		$channels = self::getCustomGoogleChannels('linkunit' . $num, false);

@@ -1,3 +1,5 @@
+<script type="text/javascript" src="/extensions/wikihow/common/download.jQuery.js"></script>
+<script type="text/javascript" src="/extensions/wikihow/titus/jquery.sqlbuilder-0.06.js"></script>
 <link rel="stylesheet" type="text/css" href="/extensions/wikihow/titus/jquery.sqlbuilder.css" />
 <style type="text/css">
 .urls {
@@ -67,7 +69,7 @@ $(document).ready(function() {
 
 
 </script>
-<?php if(!IS_CLOUD_SITE) { ?>
+<?php if(!IS_CLOUD_SITE && !IS_DEV_SITE) { ?>
 <span style="color:red;background-color:#222;font-size:30pt">titus.wikiknowhow.com is deprecated. Please switch to Cloud Titus at <a href="https://cloudtitus.wikiknowhow.com/">https://cloudtitus.wikiknowhow.com</a>.</span>
 <? } ?>
 <p>

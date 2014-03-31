@@ -259,6 +259,7 @@ class FlaviusController {
 		$intervalStats['FTalkPagesSent'] = 0;
 		$intervalStats['FTalkPagesReceived'] = 0;
 		$this->flavius->calcIntervalStats($ids, $intervalStats, $this->oldDay, $this->yesterdaysDate);
+		$this->flavius->calcTotalStats($ids, $intervalStats, $this->oldDay);
 	}
 }
 

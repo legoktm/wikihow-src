@@ -376,7 +376,9 @@ class ImagePage extends Article {
 						if ( !$this->displayImg->mustRender() ) {
 							// We can safely include a link to the "full-size" preview,
 							// without actually rendering.
-							$thumbSizes[] = array( $width_orig, $height_orig );
+							// WIKIHOW - ARG - we do not want to create this giant thumbnail for now
+							// since we watermark images it will acutally cause rendering!
+							//$thumbSizes[] = array( $width_orig, $height_orig );
 						}
 					}
 					# Generate thumbnails or thumbnail links as needed...

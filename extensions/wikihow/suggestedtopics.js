@@ -52,27 +52,26 @@ function changeCat() {
 	location.href='/Special:ListRequestedTopics?category=' + escape(document.getElementById('suggest_cat').value);
 }
 
-var gId = null;
-
 function saveSuggestion() {
 	var n = document.getElementById('newsuggestion').value;
-	document.suggested_topics_manage["st_newname_" + gId].value = n;
-	document.getElementById("st_display_id_" + gId).innerHTML= n;
+	var id = document.getElementById('title_id').value;
+	document.suggested_topics_manage["st_newname_" + id].value = n;
+	document.getElementById("st_display_id_" + id).innerHTML= n;
     for (i=0;i<document.suggested_topics_manage.elements.length;i++) {
         if (document.suggested_topics_manage.elements[i].type ==    'radio'
-            && document.suggested_topics_manage.elements[i].name == 'ar_' + gId
+            && document.suggested_topics_manage.elements[i].name == 'ar_' + id
             && document.suggested_topics_manage.elements[i].value == 'accept') {
             document.suggested_topics_manage.elements[i].checked = true;
         }
     }
-	//closeModal();
+	
 	$('#dialog-box').dialog('close');
 }
 
 var gName = null;
 function editSuggestion(id) {
 	gName = $('#st_display_id_' + id).html();
-	$('#dialog-box').load('/Special:RenameSuggestion?name='+escape(gName));
+	$('#dialog-box').load('/Special:RenameSuggestion?name='+escape(gName)+'&id='+id);
 	$('#dialog-box').dialog({
 		modal: true,
 		title: 'Edit title',

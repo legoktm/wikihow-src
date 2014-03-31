@@ -190,8 +190,9 @@ class ListRequestedTopics extends SpecialPage {
 		} else {
 			if ($st_search && $st_search != "all") {
 				$key = generateSearchKey($st_search);
+				$cat_snippet = ($category) ? "AND st_category = " . $dbr->addQuotes($category) . " " : "";
 				$sql = "SELECT st_title, st_user_text, st_user FROM suggested_titles WHERE st_used = 0 " .
-					"AND st_category = " . $dbr->addQuotes($category) . " " .
+					$cat_snippet .
 					"AND st_key like " . $dbr->addQuotes("%" . str_replace(" ", "%", $key) . "%") . " ".
 					"LIMIT $offset, $limit;";
 			} else {
@@ -497,20 +498,21 @@ class ManageSuggestedTopics extends SpecialPage {
 			$reject = array();
 			$updates = array();
 			$newnames = array();
-			$title_mst = Title::makeTitle(NS_SPECIAL, "ManageSuggstions");
 			foreach ($wgRequest->getValues() as $key=>$value) {
 				$id = str_replace("ar_", "", $key);
 				if ($value == 'accept') {
 					$accept[] = $id;
-					self::LogManageSuggestion('added', $title_mst, $id);
 				} elseif ($value == 'reject') {
 					$reject[] = $id;
-					self::LogManageSuggestion('removed', $title_mst, $id);
 				} elseif (strpos($key, 'st_newname_') !== false) {
 					$updates[str_replace('st_newname_', '', $key)] = $value;
 					$newnames[str_replace('st_newname_', '', $key)] = $value;
 				}
 			}
+			
+			//log all this stuff
+			self::LogManageSuggestions($accept, $reject, $newnames);
+			
 			$dbw = wfGetDB(DB_MASTER);
 			if (count($accept) > 0) {
 				$dbw->update('suggested_titles', array('st_patrolled' => 1), array('st_id' => $accept), __METHOD__);
@@ -551,6 +553,7 @@ class ManageSuggestedTopics extends SpecialPage {
 					array('st_id' => $u),
 					__METHOD__);
 			}
+			
 			$wgOut->addHTML(count($accept) . " suggestions accepted, " . count($reject) . " suggestions rejected.");
 		}
 		$sql = "SELECT st_title, st_user_text, st_category, st_id
@@ -596,14 +599,31 @@ class ManageSuggestedTopics extends SpecialPage {
 			");
 	}
 	
+	private function LogManageSuggestions($accept, $reject, $newnames) {
+		global $wgUser;
+		$title_mst = Title::makeTitle(NS_SPECIAL, "ManageSuggestedTopics");
+		
+		//accepted
+		foreach ($accept as $id) {
+			self::LogManageSuggestion('added',$title_mst,$newnames[$id],$id);
+		}
+		
+		//rejected
+		foreach ($reject as $id) {
+			self::LogManageSuggestion('removed',$title_mst,$newnames[$id],$id);
+		}
+	}
+	
 	//write a log message for the action just taken
-	private function LogManageSuggestion($name, $title_mst, $suggest_id) {
+	private function LogManageSuggestion($name, $title_mst, $suggestion, $suggest_id) {
 		global $wgUser;
 		
-		//first, get the title this is talking about
-		$dbr = wfGetDB(DB_SLAVE);
-		$the_title = $dbr->selectField('suggested_titles','st_title',array('st_id' => $suggest_id));
-		$page_title = Title::newFromText($the_title);
+		if (!$suggestion) {
+			//not new, let's dive for it
+			$dbr = wfGetDB(DB_SLAVE);
+			$suggestion = $dbr->selectField('suggested_titles','st_title',array('st_id' => $suggest_id));
+		}
+		$page_title = Title::newFromText($suggestion);
 		
 		if ($page_title) {
 			//then log that sucker
@@ -623,9 +643,10 @@ class RenameSuggestion extends UnlistedSpecialPage {
     function execute($par) {
 		global $wgOut, $wgRequest;
 		$name = $wgRequest->getVal( 'name' );
+		$id = $wgRequest->getVal( 'id' );
 		wfLoadExtensionMessages('RequestTopic');
 		$wgOut->setArticleBodyOnly(true);
-		$wgOut->addHTML(wfMsg('suggested_edit_title',$name));
+		$wgOut->addHTML(wfMsg('suggested_edit_title',$name,$id));
     }
 
 }

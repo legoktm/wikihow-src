@@ -1051,12 +1051,14 @@ class FContributionEditCount extends FSInterval {
 		$res = $dbr->query($sql,__METHOD__);
 		foreach($res as $row) {
 			$this->profileIn(__METHOD__ . "-interval-add");
-			
-			if(isset($userTotal[$row->fi_user])) {
-				$userTotal[$row->fi_user] += $row->s;
-			}
-			else {
-				$userTotal[$row->fi_user] = $row->s;
+		
+			if($row->s) {
+					if(isset($userTotal[$row->fi_user])) {
+					$userTotal[$row->fi_user] += $row->s;
+				}
+				else {
+					$userTotal[$row->fi_user] = $row->s;
+				}
 			}
 			$this->profileOut(__METHOD__ . "-interval-add");
 
@@ -1082,7 +1084,9 @@ class FContributionEditCount extends FSInterval {
 		$ret = array();
 		foreach($users as $user) {
 			$user->load();
-			$ret[$endDate][$user->getId()]['contribution_edit_count'] = $user->getEditCount();
+			if($user->getEditCount() != NULL) {
+				$ret[$endDate][$user->getId()]['contribution_edit_count'] = $user->getEditCount();
+			}
 		}
 		return($ret);
 	}
@@ -1527,11 +1531,11 @@ class FRequestsMade extends FSInterval {
 class FRequestsAnswered extends FSInterval {
     function batchCalcInterval(&$dbr, &$users, $startDate, $endDate) {
 		$ids = $this->getIds($users);
-		$sql = 'select st_user, ' . $this->getDayQuery('fe_timestamp') . ' , count(*) as ct from firstedit join page on page_id=fe_page AND page_namespace=0 join suggested_titles on st_title=page_title AND st_used=1 where fe_page in (' . implode(',',$ids) . ') AND st_suggested >' . $dbr->addQuotes($startDate) . ' AND st_suggested <=' . $dbr->addQuotes($endDate) . ' group by st_user,day';
+		$sql = 'select fe_user, ' . $this->getDayQuery('fe_timestamp') . ' , count(*) as ct from firstedit join page on page_id=fe_page AND page_namespace=0 join suggested_titles on st_title=page_title AND st_used=1 where fe_user in (' . implode(',',$ids) . ') AND st_suggested >' . $dbr->addQuotes($startDate) . ' AND st_suggested <=' . $dbr->addQuotes($endDate) . ' group by fe_user,day';
 		$res = $dbr->query($sql, __METHOD__);
 		$ret = array();
 		foreach($res as $row) {
-			$ret[$row->day][$row->st_user] = array('requests_answered' => $row->ct);
+			$ret[$row->day][$row->fe_user] = array('requests_answered' => $row->ct);
 		}
 		return($ret);
 		
@@ -1539,11 +1543,11 @@ class FRequestsAnswered extends FSInterval {
 
     function batchCalcTotals(&$dbr, &$users, $endDate) {
 		$ids = $this->getIds($users);
-		$sql = 'select st_user, ' . $this->getDayQuery('fe_timestamp') . ' , count(*) as ct from firstedit join page on page_id=fe_page AND page_namespace=0 join suggested_titles on st_title=page_title AND st_used=1 where fe_page in (' . implode(',',$ids) . ') AND st_suggested <=' . $dbr->addQuotes($endDate) . ' group by st_user';
+		$sql = 'select fe_user, ' . $this->getDayQuery('fe_timestamp') . ' , count(*) as ct from firstedit join page on page_id=fe_page AND page_namespace=0 join suggested_titles on st_title=page_title AND st_used=1 where fe_user in (' . implode(',',$ids) . ') AND st_suggested <=' . $dbr->addQuotes($endDate) . ' group by fe_user';
 		$res = $dbr->query($sql, __METHOD__);
 		$ret = array();
 		foreach($res as $row) {
-			$ret[$endDate][$row->st_user] = array('requests_answered' => $row->ct);
+			$ret[$endDate][$row->fe_user] = array('requests_answered' => $row->ct);
 		}
 		return($ret);
 

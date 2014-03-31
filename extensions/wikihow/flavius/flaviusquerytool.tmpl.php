@@ -1,4 +1,6 @@
-<link rel="stylesheet" type="text/css" href="/extensions/wikihow/titus/jquery.sqlbuilder.css" /
+<script type="text/javascript" src="/extensions/wikihow/common/download.jQuery.js"></script>                                                                    
+<script type="text/javascript" src="/extensions/wikihow/titus/jquery.sqlbuilder-0.06.js"></script>
+<link rel="stylesheet" type="text/css" href="/extensions/wikihow/titus/jquery.sqlbuilder.css" />
 <h1>Dear Flavius Anicius Petronius Maximus. I come seeking.....</h1><br/>
 <p><a href="https://docs.google.com/a/wikihow.com/document/d/1yiixeaX2dqsh8WuhdgjchBT7sL7-NJgM3YjVWLL9v2g/edit?usp=sharing">Flavius documenation</a></p>
 <div style="top:25px;left:480px;position:relative;margin-top:-10px;">

@@ -36,8 +36,6 @@ class FlaviusQueryTool extends UnlistedSpecialPage {
 			EasyTemplate::set_path(dirname(__FILE__).'/');
 				
 			$vars = array('fields'=>$this->getFields() );
-			$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('download.jQuery.js'), 'extensions/wikihow/common', false));
-			$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('jquery.sqlbuilder-0.06.js'), 'extensions/wikihow/titus', false));
 			
 			$html = EasyTemplate::html('flaviusquerytool.tmpl.php', $vars);
 			$wgOut->addHTML($html);
@@ -107,13 +105,12 @@ class FlaviusQueryTool extends UnlistedSpecialPage {
 	function getFields() {
 		$sql = "select * from flavius_summary limit 1";
 		$res = $this->flavius->performQuery($sql);
-		$n = mysql_num_fields($res->result);
+		$dbr = wfGetDB(DB_SLAVE);
+		$n = $dbr->numFields($res);
 		$fields = array();
 		$intervalFields = $this->flavius->getIntervalFields();
 		for($k = 0; $k < $n; $k++) {
-			$meta = mysql_fetch_field($res->result,$k);
-			$field = new MySQLField($meta);
-			$name = $field->name();
+			$name = $dbr->fieldName($res, $k);
 
 			//Exclude interval fields except _all, and for _all drop the _all.
 			$exclude = false;
@@ -129,7 +126,7 @@ class FlaviusQueryTool extends UnlistedSpecialPage {
 				$fields[] = array('field' => 'flavius_summary.' . $name,
 													'name'  => $name,
 													'id' => $i,
-													'ftype' => $field->type(),
+													'ftype' => "string",
 													'defaultval' => '[enter val]');
 				$i++;
 			}

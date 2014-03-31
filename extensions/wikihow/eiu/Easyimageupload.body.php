@@ -426,13 +426,13 @@ class Easyimageupload extends UnlistedSpecialPage {
 		return $pairs;
 	}
 
-	private static function createTempFilename() {
+	public static function createTempFilename() {
 		global $wgUser;
 		$tempname = 'Temp_file_'.$wgUser->getID().'_'.rand(0, 1000).'.jpg';
 		return $tempname;
 	}
 
-	private static function getTempFileUser() {
+	public static function getTempFileUser() {
 		$user = User::newFromName(self::PHOTO_UPLOAD_BOT);
 		if ( $user && !$user->isLoggedIn() ) {
 			$user->addToDatabase();

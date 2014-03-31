@@ -124,7 +124,7 @@ function wfImageConvertNoScale($image, $params) {
 
 	// return false here..we want to create the watermarked file!
 	// AG - TODO trying to figure out why we check if the file exists here..doesn't seem necessary or should be inverted
-	if ( $params[WatermarkSupport::ADD_WATERMARK] || $image->repo->fileExists($params['dstPath']) ) {
+	if ( $params[WatermarkSupport::ADD_WATERMARK] || $image->getRepo()->fileExists($params['dstPath']) ) {
 		return false;
 	}
 
@@ -133,6 +133,7 @@ function wfImageConvertNoScale($image, $params) {
 $wgHooks['ImageConvertNoScale'][] = array('wfImageConvertNoScale');
 
 function wfImageConvertComplete($params) {
+
 	if ($params[WatermarkSupport::ADD_WATERMARK]) {
 		WatermarkSupport::addWatermark($params['dstPath'], $params['dstPath'], $params['physicalWidth'], $params['physicalHeight']);
 	}
@@ -141,7 +142,10 @@ function wfImageConvertComplete($params) {
 $wgHooks['ImageConvertComplete'][] = array('wfImageConvertComplete');
 
 function wfFileTransform($image, &$params) {
-	if ( $image->user_text && $image->user_text == WatermarkSupport::WIKIPHOTO_CREATOR && $params[WatermarkSupport::NO_WATERMARK] != true) {
+	if ( $image->getUser('text') && $image->getUser('text') == WatermarkSupport::MAINTENANCE_CREATOR && $params[WatermarkSupport::NO_WATERMARK] != true) {
+		$params[WatermarkSupport::ADD_WATERMARK] = true;
+	}
+	if ( $image->getUser("text") && $image->getUser('text') == WatermarkSupport::WIKIPHOTO_CREATOR && $params[WatermarkSupport::NO_WATERMARK] != true) {
 		$params[WatermarkSupport::ADD_WATERMARK] = true;
 	}
 

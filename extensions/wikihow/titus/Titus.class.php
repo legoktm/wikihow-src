@@ -1406,13 +1406,9 @@ class TSTop10k extends TitusStat {
 				$this->reportError("Top10k problem fetching spreadsheet. Fewer than 1000 ids found ");
 				return;
 			}
-			$query = "select page_id,page_title  from " . Misc::getLangDB($wgLanguageCode) . ".page where page_is_redirect=1 AND page_id in (" . implode($ids,",") . ")";
-			$res = $dbr->query($query,__METHOD__);
-			$this->checkForRedirects($dbr, $ids);
-			$this->checkForMissing($dbr, $ids);
-
-			if($redirects != "") {
-				$this->reportError($redirects);	
+			if($ids) {
+				$this->checkForRedirects($dbr, $ids);
+				$this->checkForMissing($dbr, $ids);
 			}
 
 			$query = "select ti_page_id, ti_top10k FROM " . TitusDB::getDBName() . "." . TitusDB::TITUS_INTL_TABLE_NAME  . " WHERE ti_language_code=" . $dbr->addQuotes($wgLanguageCode) ;

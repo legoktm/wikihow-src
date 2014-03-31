@@ -7,6 +7,7 @@ class WatermarkSupport {
 	const ADD_WATERMARK = "addWatermark";
 	const WIKIPHOTO_CREATOR = "Wikiphoto";
 	const FORCE_TRANSFORM = "forcetransform";
+	const MAINTENANCE_CREATOR = "Maintenance script";
 
 	function getUnwatermarkedThumbnail( $image, $width, $height=-1, $render = true, $crop = false, $heightPreference = false ) {
 		$params = array( 'width' => $width );
@@ -38,7 +39,7 @@ class WatermarkSupport {
 	}
 
 	function addWatermark($srcPath, $dstPath, $width, $height) {
-		global $IP, $wgImageMagickConvertCommand;
+		global $IP, $wgImageMagickConvertCommand, $wgImageMagickCompositeCommand;
 
 		// do not add a watermark if the image is too small
 		if (WatermarkSupport::validImageSize($width, $height) == false) {
@@ -66,12 +67,11 @@ class WatermarkSupport {
 		}
 
 		$cmd = $cmd . wfEscapeShellArg($wgImageMagickConvertCommand) . " -density $density -background none ".wfEscapeShellArg($wm).
-				" miff:- | composite -gravity southeast -quality 100 -geometry +8+10 - ". wfEscapeShellArg($srcPath) ." ".
+				" miff:- | " . wfEscapeShellArg($wgImageMagickCompositeCommand) . " -gravity southeast -quality 100 -geometry +8+10 - ". wfEscapeShellArg($srcPath) ." ".
 				wfEscapeShellArg($dstPath)." 2>&1";
 
 		$beforeExists = file_exists($dstPath);
 		wfDebug( __METHOD__.": running ImageMagick: $cmd\n");
-		wfRunHooks("AddWatermark", $cmd);
 		$err = wfShellExec( $cmd, $retval );
 		$afterExists = file_exists($dstPath);
 		$currentDate = `date`;
@@ -79,4 +79,49 @@ class WatermarkSupport {
 		wfProfileOut( 'watermark' );
 	}
 
+	// given an image file (local file object) delete the thumbnails from s3
+	// functionality gotten from FileRepo.php quickpurgebatch and LocalFile.php purgethumblist
+	public static function recreateThumbnails($file) {
+
+		$thumbnails = $file->getThumbnails();
+
+		// take out the directory from the list of thumbnails
+		array_shift( $thumbnails );
+
+		foreach ( $thumbnails as $thumbnail ) {
+			// Check that the base file name is part of the thumb name
+			// This is a basic sanity check to avoid acting on unrelated directories
+			if ( strpos( $thumbnail, $file->getName() ) !== false ||
+					strpos( $thumbnail, "-thumbnail" ) !== false ) {
+
+				$vPath = $file->getThumbPath($thumbnail);
+				$thumbPath = $file->repo->getLocalReference($vPath)->getPath();
+				$thumbUrl = $file->getThumbUrl().'/'.$thumbnail;
+
+				// make sure the file is the right format
+				$imageSize = getimagesize($thumbPath);
+				if ($imageSize["mime"] != $file->getMimeType()) {
+					continue;
+				}
+
+				$params = array();
+				$params["width"] = $imageSize[0];
+				if (strpos($thumb, "crop") != false) {
+					$params['crop'] = 1;
+					if (strpos($thumb, "--") == false) {
+						$params["height"] = $imageSize[1];
+					}
+				}
+
+				$params[WatermarkSupport::FORCE_TRANSFORM] = true;
+				$params[WatermarkSupport::ADD_WATERMARK] = true;
+
+				$result = $file->getHandler()->doTransform($file, $thumbPath, $thumbUrl, $params);
+				if ( get_class($result) == 	MediaTransformError) {
+					echo "there was an error processing this file \n";
+					echo $result->toText();
+				}
+			}
+		}
+	}
 }

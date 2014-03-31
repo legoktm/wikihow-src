@@ -267,7 +267,12 @@ EditFinder.prototype.edit = function (id,title) {
 	
 			//pre-fill summary
 			jQuery('#wpSummary').val("Edit from "+WH.lang['app-name']+": " + editFinder.getEditType().toUpperCase());
-	
+
+			//cancel link update
+			var cancel_link = jQuery('#mw-editform-cancel').attr('href');
+			cancel_link += '/'+editFinder.getEditType();
+			jQuery('#mw-editform-cancel').attr('href',cancel_link);
+
 			//make Cancel do the right thing
 			jQuery('.editButtons #edit_cancel_btn').unbind('click');
 			jQuery('.editButtons #edit_cancel_btn').click(function(e) {

@@ -39,8 +39,8 @@
 					<option value="PD self" title="{{PD self}}" <?= $license=='PD self'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-made-myself-public') ?></option>
 					<option value="" disabled="disabled" style="color: GrayText"><?= wfMsg('eiu-not-self-made') ?></option>
 					<option value="GFDL" title="{{GFDL}}" <?= $license=='GFDL'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-public-gfdl') ?></option>
-					<option value="cc-by-2.5" title="{{cc-by-2.5}}" <?= $license=='cc-by-2.5'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-public-cc-by') ?></option>
-					<option value="cc-by-sa-2.5" title="{{cc-by-sa-2.5}}" <?= $license=='cc-by-sa-2.5'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-public-cc-sa') ?></option>
+					<option value="cc-by-3.0" title="{{cc-by-3.0}}" <?= $license=='cc-by-3.0'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-public-cc-by') ?></option>
+					<option value="cc-by-sa-3.0" title="{{cc-by-sa-3.0}}" <?= $license=='cc-by-sa-3.0'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-public-cc-sa') ?></option>
 					<option value="PD" title="{{PD}}" <?= $license=='PD'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-public-domain') ?></option>
 					<option value="" disabled="disabled" style="color: GrayText"><?= wfMsg('eiu-cr') ?></option>
 					<option value="copyrighted-rerelease" title="{{copyrighted-rerelease}}" <?= $license=='copyrighted-rerelease'?'selected="selected"':''?>><?= $indent . wfMsg('eiu-cr-cc') ?></option>

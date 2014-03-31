@@ -41,8 +41,6 @@ class TitusQueryTool extends UnlistedSpecialPage {
 			$this->loadExcluded();
 			$this->handleQuery();
 		} else {
-			$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('download.jQuery.js'), 'extensions/wikihow/common', false));
-			$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('jquery.sqlbuilder-0.06.js'), 'extensions/wikihow/titus', false));
 			$wgOut->setPageTitle('Dear Titus...');
 			$wgOut->addHtml($this->getToolHtml());
 		}
@@ -50,35 +48,34 @@ class TitusQueryTool extends UnlistedSpecialPage {
 
 
 	function getHeaderRow(&$res, $delimiter = "\t") {
-		$n = mysql_num_fields($res->result);
+		$dbr = wfGetDB(DB_SLAVE);
+		$n = $dbr->numFields($res);
 		$fields = array('titus_query_url', 'titus_status');
 		for( $i = 0; $i < $n; $i++ ) {
-			$meta = mysql_fetch_field( $res->result, $i );
-			$field =  new MySQLField($meta);
-			$fields[] = $field->name();
+			$fields[] = $dbr->fieldName($res,$i);
 		}
 		return implode($delimiter, $fields) . "\n";
 	}
 
 	function getTitusFields() {
 		$data = array();
+		$dbr = wfGetDB(DB_SLAVE);
 		$titus = $this->titus;
 		$res = $titus->performTitusQuery("SELECT * FROM " . TitusDB::TITUS_TABLE_NAME . " LIMIT 1");
-		$n = mysql_num_fields($res->result);
+		$n = $dbr->numFields($res);
 		for( $i = 0; $i < $n; $i++ ) {
-			$meta = mysql_fetch_field( $res->result, $i );
-			$field =  new MySQLField($meta);
-			if($field->name() != ti_language_code) {
+			$fName = $dbr->fieldName($res, $i);
+			if($fName != "ti_language_code") {
 				$data[] = array(
-				'field' => "titus" . '.' . $field->name(), 
-				'name' => $field->name(), 
+				'field' => "titus" . '.' . $fName, 
+				'name' => $fName, 
 				'id'  => $i, 
-				'ftype' => $field->type(),
+				'ftype' => 'string',
 				'defaultval' => '[enter val]');
-			}	
+			}
 		}
 		return json_encode($data);
-	}	
+	}
 
 	function handleQuery() {
 		global $wgRequest; 
