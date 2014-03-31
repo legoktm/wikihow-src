@@ -1,0 +1,54 @@
+/* 
+	Cusco Sky table styles
+	written by Braulio Soncco http://www.buayacorp.com
+*/
+
+#Patrolcount table,#Patrolcount  th,#Patrolcount  td {
+	border: 1px solid #D4E0EE;
+	border-collapse: collapse;
+	color: #555;
+}
+
+#Patrolcount caption {
+	font-size: 150%;
+	font-weight: bold;
+	margin: 5px;
+}
+
+#Patrolcount td,#Patrolcount  th {
+	padding: 4px;
+}
+
+#Patrolcount thead th {
+	text-align: center;
+	background: #E6EDF5;
+	color: #4F76A3;
+	font-size: 100% !important;
+}
+
+#Patrolcount tbody th {
+	font-weight: bold;
+}
+
+#Patrolcount tbody tr { background: #FCFDFE; }
+
+#Patrolcount tbody tr.odd { background: #F7F9FC; }
+
+#Patrolcount table a:link {
+	color: #718ABE;
+	text-decoration: none;
+}
+
+#Patrolcount table a:visited {
+	color: #718ABE;
+	text-decoration: none;
+}
+
+#Patrolcount table a:hover {
+	color: #718ABE;
+	text-decoration: underline !important;
+}
+
+#Patrolcount tfoot th,#Patrolcount  tfoot td {
+	font-size: 85%;
+}

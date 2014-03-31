@@ -1,0 +1,41 @@
+--- mediawiki-1.9.3/includes/OutputPage.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/OutputPage.php	2007-10-31 14:31:36.000000000 -0500
+@@ -475,6 +475,7 @@
+ 		# don't serve compressed data to clients who can't handle it
+ 		# maintain different caches for logged-in users and non-logged in ones
+ 		$wgRequest->response()->header( 'Vary: Accept-Encoding, Cookie' );
++		#$wgRequest->response()->header( 'Vary: Accept-Encoding' );
+ 		if( !$this->uncacheableBecauseRequestvars() && $this->mEnableClientCache ) {
+ 			if( $wgUseSquid && ! isset( $_COOKIE[ini_get( 'session.name') ] ) &&
+ 			  ! $this->isPrintable() && $this->mSquidMaxage != 0 )
+@@ -501,9 +502,16 @@
+ 			} else {
+ 				# We do want clients to cache if they can, but they *must* check for updates
+ 				# on revisiting the page.
+-				wfDebug( "$fname: private caching; {$this->mLastModified} **\n", false );
+-				$wgRequest->response()->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
+-				$wgRequest->response()->header( "Cache-Control: private, must-revalidate, max-age=0" );
++				//XXCHANGED - cache the RSS feed
++				global $wgTitle;
++				if ($wgTitle->getFullText() != "Special:Generatefeed"
++				//	&& $wgTitle->getFullText() != "Special:Recentchanges"
++					&& false
++					) {
++					wfDebug( "$fname: private caching; {$this->mLastModified} **\n", false );
++					$wgRequest->response()->header( 'Expires1: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
++					$wgRequest->response()->header( "Cache-Control: private, must-revalidate, max-age=0" );
++				}
+ 			}
+ 			if($this->mLastModified) $wgRequest->response()->header( "Last-modified: {$this->mLastModified}" );
+ 		} else {
+@@ -1107,7 +1115,9 @@
+ 		}
+ 
+ 		$p = $this->mRobotpolicy;
+-		if( $p !== '' && $p != 'index,follow' ) {
++		//XXCHANGED - explicity set robots policy
++		//if( $p !== '' && $p != 'index,follow' ) {
++		if( $p !== '' ) {
+ 			// http://www.robotstxt.org/wc/meta-user.html
+ 			// Only show if it's different from the default robots policy
+ 			$ret .= "<meta name=\"robots\" content=\"$p\" />\n";

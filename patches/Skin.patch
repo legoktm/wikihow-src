@@ -1,0 +1,18 @@
+--- mediawiki-1.9.3/includes/Skin.php	2007-02-20 20:20:32.000000000 -0600
++++ wiki19/includes/Skin.php	2007-06-14 10:15:28.000000000 -0500
+@@ -122,7 +122,6 @@
+ 		$deps = "{$wgStyleDirectory}/{$skinName}.deps.php";
+ 		if( file_exists( $deps ) ) include_once( $deps );
+ 		require_once( "{$wgStyleDirectory}/{$skinName}.php" );
+-
+ 		# Check if we got if not failback to default skin
+ 		$className = 'Skin'.$skinName;
+ 		if( !class_exists( $className ) ) {
+@@ -318,6 +317,7 @@
+ 			'wgCurRevisionId' => isset( $wgArticle ) ? $wgArticle->getLatest() : 0,
+ 		);
+ 
++
+ 		return self::makeVariablesScript( $vars );
+ 	}
+ 

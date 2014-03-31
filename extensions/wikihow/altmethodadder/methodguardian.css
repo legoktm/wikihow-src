@@ -1,0 +1,94 @@
+#method_header{
+
+}
+
+#method_method{
+	
+}
+
+#method_steps h3{
+	margin-top:0px;
+	background-color: #ffffff;
+	width: auto;
+	margin-bottom: 15px;
+}
+
+#method_steps{
+	clear:both;
+    background-color: #ffffff;
+	padding:20px;
+    margin-top:10px;
+}
+
+#method_steps .editsection {
+	display: none;
+}
+
+#article #method_steps OL.steps_list_2 LI{
+	margin-bottom: 0px;
+	font-size: 15px;
+	line-height: 25px;
+	color: #545454;
+	list-style: none;
+	background-color: #fff;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 10px 0px;
+	border: none;
+	clear: both;
+}
+
+#method_steps .step_num {
+	font-size: 23px;
+	color: #545454;
+	padding: 3px 15px 0 0;
+	float: left;
+	font-weight: normal;
+}
+
+#method_header h1{
+	margin-bottom:20px;
+}
+
+#method_keep {
+	margin-right: 0;
+}
+
+#method_keep, #method_delete{
+	float:right;
+}
+
+#method_article {
+	margin:15px 0;
+}
+
+#method_article #featurestar{
+	display: none;
+}
+
+#method_skip{
+	float:left;
+	margin-left:0px;
+    margin-bottom: 10px;
+}
+
+
+
+#method_count span{
+	font-size:12px;
+}
+
+#method_waiting{
+	text-align:center;
+}
+
+#method_header a.clickfail {
+	color: #888;
+	cursor: default;
+	background-position: 0 -78px;
+}
+#method_header a.clickfail:hover { 
+	text-decoration: none;
+	background-position: 0 -78px; 
+}

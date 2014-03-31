@@ -1,0 +1,207 @@
+.mqg_heading {
+	font-size: 18px;
+	/*color: #038AAF;*/
+	margin: 0px auto 0px auto;
+	width: 215px;
+	font-weight: bold;
+}
+
+.mqg_subheading {
+	font-size: 14px;
+	/*color: #038AAF;*/
+	margin: 0px auto 5px auto;
+}
+
+#mqg_prompt {
+	background:#FFFFCC;
+	padding: 10px 5px 5px 5px;
+	border-bottom: 1px solid #C7BFB0;
+}
+
+#mqg_finished {
+	border-top: 1px solid #C7BFB0;
+}
+
+.mqg_finish {
+	padding: 5px;
+	/*color: #038AAF;*/
+}
+
+.mqg_space {
+	padding-top: 15px;
+}
+
+#mqg_complete, #intro_img {
+	display: none;
+}
+
+#mqg_display {
+	overflow: hidden;
+}
+
+.mqg_clickfail {
+	color: #888;
+	cursor: default;
+	background-position: -140px -78px;
+}
+.mqg_clickfail_2 {
+	color: #888;
+	cursor: default;
+	background-position: 0 -78px;
+}
+.clickfail:hover { 
+	text-decoration: none;
+}
+
+#mqg_data {
+	display: none;
+}
+
+#mqg_skip_div {
+	float:right; 
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 26px;
+	white-space: nowrap;
+}
+
+#mqg_skip_arrow {
+	background: url(/extensions/wikihow/editfinder/editfinder_yes.png) no-repeat scroll -165px 0 transparent;
+	width: 9px;
+	height: 10px;
+	float: right;
+	margin: 8px 0 0 4px;
+}
+
+#mqg_buttons {
+	margin-top: 5px;
+	margin-right: auto;
+	margin-left: auto;
+	width: 160px;
+}
+
+#mqg_spinner {
+	display: none;
+	width: 32px;
+	height: 32px;
+}
+
+body {
+	margin: 0px;
+	background-color: white;
+}
+
+#mqg_article {
+	z-index: 1;
+}
+
+#mqg_eml_box {
+	display: none;
+	font-size: 12px;
+	position: absolute;
+	z-index: 3;
+	border: 1px solid #C7BFB0;
+	width: 250px;
+	padding: 5px;
+	background-color: #F7F5F2;
+}
+
+.mqg_rounded {
+	-moz-border-radius-topright: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+#mqg_eml {
+	margin-top: 3px;
+	width: 140px;
+}
+
+.mqg_eml_input {
+	margin-top: 10px;
+	margin-left: auto;
+	width: 230px;
+}
+
+.mqg_eml_buttons {
+	margin-top: 10px;
+	margin-left: auto;
+	width: 117px;
+}
+
+
+
+#mqg_eml_box {
+	padding: 10px 10px 10px 5px;
+}
+
+#mqg_eml_box img {
+	float: left;	
+	margin-right: 7px;
+	width: 40px;
+	height: 40px;
+}
+
+#mqg_ok {
+	margin-left: 3px;
+}
+
+#header {
+	border-bottom: 1px solid #C7BFB0;
+}
+
+#mqg_pic{
+	margin-left: auto;
+	margin-right: auto;
+	min-height: 120px;
+}
+
+h1 {
+	margin: 0px !important;
+}
+
+
+
+.mqg_yes {
+	background: url('/skins/WikiHow/images/mqg_yes.png') center no-repeat;
+}
+
+.mqg_no {
+	background: url('/skins/WikiHow/images/mqg_no.png') center no-repeat;
+}
+
+.mqg_skip {
+	background: url('/skins/WikiHow/images/mqg_skip.png') center no-repeat;
+}
+
+#mqg_preload {
+	width: 0px;
+	height: 0px;
+}
+
+.mqg_outerwrap {
+	position: relative;
+	overflow: hidden;
+}
+
+.mqg_container {
+	float: left;
+	position: relative;
+	left: 50%;
+}
+
+.mqg_center {
+	float: left;
+	position: relative;
+	left: -50%;
+}
+
+#mqg_finish_img {
+	float: left;
+	padding-right: 5px;
+}

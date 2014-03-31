@@ -1,0 +1,11 @@
+--- mediawiki-1.9.3/includes/SpecialDoubleRedirects.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialDoubleRedirects.php	2008-03-10 08:54:50.000000000 -0500
+@@ -84,7 +84,7 @@
+ 		$titleC = Title::makeTitle( $result->nsc, $result->tc );
+ 
+ 		$linkA = $skin->makeKnownLinkObj( $titleA,'', 'redirect=no' );
+-		$edit = $skin->makeBrokenLinkObj( $titleA, "(".wfMsg("qbedit").")" , 'redirect=no');
++		$edit = "(<a href='{$titleA->getEditURL()}'>" .wfMsg("qbedit") . "</a>)" ;
+ 		$linkB = $skin->makeKnownLinkObj( $titleB, '', 'redirect=no' );
+ 		$linkC = $skin->makeKnownLinkObj( $titleC );
+ 		$arr = $wgContLang->getArrow() . $wgContLang->getDirMark();

@@ -1,0 +1,84 @@
+table.managersstable {
+    font-size: 130%;
+}   
+table.managersstable td {
+    border-bottom: 1px solid #ccc;
+}
+td.managersstableheader {
+    text-align: center;
+    font-size: 120%;
+    font-weight: bold;
+}
+td.mrss_td {
+    background-color: #eee;
+}
+td.remove_btn {
+    text-align:center;
+}
+
+div.month {
+	float: left;
+	border: 1px solid #ccc;
+	margin-left: 15px;
+	padding: 5px;	
+}
+div.selected{
+	background-color: #45D7DD;
+}
+
+td.date {
+	font-size: 1.8em;
+	width: 100px;
+	border: 1px solid #ccc;
+	text-align: center;
+}
+td.feeditem {
+	width: 500px;
+	border: 1px solid #ccc;
+	vertical-align: top;
+	font-size: 1.1em;
+	padding-left: 10px;
+}
+ 
+tr.day{
+	border: 1px solid #eee;
+}
+
+span.dow {
+	font-size: 0.7em;
+	color: #CCC;
+}
+
+table.days {
+	margin-top: 20px;
+	font-family: Arial Black;
+}
+
+td.options {
+	text-align: right;
+	vertical-align: top;
+	width: 120px;
+}
+
+table.feeditem td {
+	border-bottom: 1px solid #eee;
+}
+
+table.addicon  {
+	width: 100%;
+}
+
+table.addicon td {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+span.renamed {
+	font-size: 0.8em;
+	color: #BBB;
+}
+
+div.approved {
+	display:none;
+}
+

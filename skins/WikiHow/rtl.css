@@ -1,0 +1,236 @@
+/*************************** GLOBAL SETTINGS ***/
+BODY {
+    min-width: 44em;
+    max-width: 69em;
+    margin: 25px auto;
+direction: rtl;
+font-family: Tahoma, Arial, Helvetica, sans-serif;
+}
+
+UL, OL { margin: 0 20px 20px 0; }
+
+
+/*************************** HEADER ***/ 
+DIV#header { text-align: left; }
+
+    #header P#logo { 
+        float: right; 
+        text-align: right;
+    }
+    
+    #header P#logo SPAN { margin-right: 2px; }    
+
+    UL#user_action LI {
+            display: block;
+            float: left;
+            background-position: 100% 50%;
+            margin: 0 1em 0 0;
+            padding: 0 1.5em 0 0;
+        }
+        
+        #user_action LI#nav_ehow { padding-right: 0; }
+        
+        
+    #header FORM { margin-top: 20px; }
+    
+/*************************** BREAD CRUMBS ***/
+DIV#location UL#breadcrumb { margin: auto 0 0 225px; }
+    
+    UL#breadcrumb LI {
+        display: block; 
+        float: right;
+        padding-right: 3px;
+    }
+    
+    UL#breadcrumb LI.home {
+        background-position: 100% 0;
+        padding: 0 1.5em 0 0;
+    }
+    
+    
+/*************************** SEARCH BOX ***/
+    #search_site INPUT#keywords {
+        padding: 0 3px 2px 0;
+        background-position: 0 50%; 
+    }    
+  
+	DIV#location P#ImportantLinks { float: left; }
+	
+	
+/*************************** MAIN ARTICLE AREA ***/
+DIV#main { float: left; }	
+
+    /*links (external and otherwise)*/
+    #main A.external {
+        background: none;
+        padding: 0px;
+    }
+       
+    /*article images*/
+    DIV#main P.L, DIV#main .floatleft { float: right; margin: 0 0 1em 1.5em; }
+    DIV#main P.R, DIV#main .floatright { float: left; margin: 0 1.5em 1em 0; }
+        
+        
+/************************ HOME PAGE ***/
+DIV#main DIV#multilanguages {
+    background-position: top right;
+    background-repeat: no-repeat;
+    padding-right: 110px;
+}
+
+#featured_article DIV#SpotlightHead { padding-right: 16px; } 
+
+DIV#main DIV#article DIV#Categories_list UL LI { float: right; }
+
+
+/*************************** ARTICLE TABS ***/
+    #article_tabs P {
+        float: right;
+        padding-left: 1px;
+    } 
+    
+    #article_tabs DIV#tabs_admin { float: left; }
+    #article_tabs DIV#tabs_admin P { float: left; }
+    
+        #ShareOptions LI IMG { padding-left: 5px; } 
+        
+        
+/*************************** ARTICLE ***/
+    /*lists in the article*/
+    DIV#article DIV#steps OL, DIV#article DIV#tips UL, DIV#article DIV#warnings UL { margin-right: 20px; }
+    
+    DIV#article UL UL { margin-right: 20px; }
+    
+    /*category list*/
+    DIV#article UL.cat_list { float: right; }
+    
+    DIV#article UL UL { margin-right: 20px; }
+    
+    /*accurate?*/
+        
+    
+        #accurate INPUT { margin-right: 5px; }
+    
+        #accurate A { margin-right: 5px; }
+        
+        
+/*************************** SECTION HEADERS ***/
+H2 {
+    padding-right: 35px; 
+    background-position: 99% 5px;
+    }
+
+DIV#main DIV#article SPAN.subheader { margin-right: 5px; }
+DIV#main DIV#article SPAN.mw-headline { float: right; }
+
+
+/*************************** LOWER ADS ***/
+    DIV#lower_ads DIV { float: right; }
+    
+    DIV#lower_ads DIV P { margin: 0 0 15px 10px; }
+    
+    
+/*************************** ACTIONS ***/            
+    TABLE#Actions_table TD { padding-right: 3%; }
+    
+    TABLE#Actions_table TD IMG { margin: 0 0 -1px 5px; }
+    
+
+/*************************** CATEGORIES ***/
+/*Home page only */
+DIV#main DIV#article DIV#Categories_list UL LI { float: right; }
+
+
+/************************ EDIT PAGE ***/
+    #relatedwikihows DIV#related_buttons { float: left; }
+
+    .editpage_buttons INPUT { margin-left: 10px; }
+
+DIV#main DIV#editpage DIV#optional_sections LI { margin-left: 5px; }
+
+    DIV#editpage H2 { padding-right: 23px; }
+
+
+/*************************** AUTHORS ***/    
+    #Authors A { margin-right: 4px; }
+    
+    #Authors A.AlphaAuthor { margin-right: 0; }
+    
+
+/*************************** FOOTER ***/        
+    #footer UL { direction: ltr; }
+    
+
+/*************************** SUB-FOOTER ***/    
+    #sub_footer P#creative_commons { float: right; }
+     
+    #sub_footer P#carbon_neutral {
+        float: left;
+        text-align: left;
+    }
+    
+/*************************** SIDE COLUMN ***/
+DIV#aside { float: right; }
+    
+    #aside UL { margin-right: 16px; }
+        
+    #aside UL#languages { margin-right: 0; }
+    #aside UL#languages LI { margin-left: 10px; }
+            
+blockquote { padding-right: 40px; } 
+
+DIV#header EM.msgs { float: left; }
+    
+	
+	
+
+/******** LEGACY AND MEDIAWIKI *****/
+
+.requests_categories td {
+    background: url('http://www.wikihow.com/images/c/c3/Request-category-arrow.gif') center right no-repeat;
+    padding-right: 20px;
+}
+
+/* Page history styling */
+/* the auto-generated edit comments */
+#pagehistory span.user {
+	margin-right: 1.4em;
+	margin-left: .4em;
+}
+
+div.patrollink { text-align: left; }
+div.gallerybox { margin-left: 10px; }
+
+html .thumbcaption { text-align: right; }
+div.magnify { float: left; }
+
+div.tright {
+	clear: left;
+	float: left;
+	border-width: .5em 1.4em .8em 0;
+}
+div.tleft {
+	float: right;
+	clear: right;
+	margin-right: .5em;
+	border-width: .5em 0 .8em 1.4em;
+}
+
+/* @media screen, projection { */
+	#preftoc li {
+		margin: 1px 2px 1px -2px;
+		float: right;
+	}
+/* } */
+#preftoc li.selected { margin-left: -3px; }
+.prefsection fieldset {
+	float: right;
+	margin-left: 2em;
+}
+
+TABLE#allmessagestable { margin-top: 630px; }
+
+DIV#main DIV#article SPAN.editsection1 {
+   float: left;
+}
+

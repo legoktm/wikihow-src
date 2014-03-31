@@ -1,0 +1,84 @@
+.textscroller_outer {
+	width: 500px;
+	padding: 0 20px 0 20px;
+	background: #D3D3D3;
+	border: 1px solid gray;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.textscroller_inner {
+	background: white;
+	padding: 40px 20px 30px 20px !important;
+	overflow: hidden;
+
+}
+
+.textscroller_inner_ff {
+	padding-bottom: 40px !important;
+}
+
+.scrolltext {
+	display: none;
+	font-size: 16px;
+	font-weight: normal;
+	min-height: 40px;
+	overflow: hidden;
+}
+
+.greytext {
+	color: gray;
+	font-weight: bold;
+	font-size: 12px;
+	margin: 0 0 10px 0;
+}
+
+.arrow_outer {
+	margin: -12px 0 10px -20px;
+	width: 75%;
+	height: 24px;
+
+}
+
+.arrow_text {
+	font-weight: bold;
+	padding-left: 5px;
+	background: #336633;
+	color: white;
+	overflow: hidden;
+	white-space: nowrap;
+	line-height: 24px;
+	font-size: 0.8em;
+}
+
+
+.arrow_right {
+	float: right;
+	width: 0; 
+	height: 0; 
+	border-top: 12px solid transparent;
+	border-bottom: 12px solid transparent;
+	border-left: 24px solid #336633;
+}
+
+.scroller_none {
+	display: none;
+}
+
+.scroller_padding {
+	padding-bottom: 35px;
+}
+
+.scroller_iewidth {
+	width: 480px;
+}
+
+.scroller_mobile {
+       width: 211px;
+       padding: 0 10px 0 10px;
+}
+.scroller_inner_mobile {
+	height: 70px;
+}

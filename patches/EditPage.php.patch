@@ -1,0 +1,220 @@
+--- mediawiki-1.9.3/includes/EditPage.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/EditPage.php	2008-03-10 10:30:48.000000000 -0500
+@@ -353,6 +353,7 @@
+ 				return;
+ 			}
+ 		} else {
++
+ 			if ( $this->save ) {
+ 				$this->formtype = 'save';
+ 			} else if ( $this->preview ) {
+@@ -391,7 +392,9 @@
+ 				$this->lastDelete = $this->getLastDelete();
+ 				if ( !is_null($this->lastDelete) ) {
+ 					$deletetime = $this->lastDelete->log_timestamp;
++					
+ 					if ( ($deletetime - $this->starttime) > 0 ) {
++					
+ 						$this->deletedSinceEdit = true;
+ 					}
+ 				}
+@@ -681,6 +684,8 @@
+ 			return false;
+ 		}
+ 
++
++
+ 		# If the article has been deleted while editing, don't save it without
+ 		# confirmation
+ 		if ( $this->deletedSinceEdit && !$this->recreate ) {
+@@ -842,7 +847,7 @@
+ 		}
+ 
+ 		# update the article here
+-		if( $this->mArticle->updateArticle( $text, $this->summary, $this->minoredit,
++				if( $this->mArticle->updateArticle( $text, $this->summary, $this->minoredit,
+ 			$this->watchthis, '', $sectionanchor ) ) {
+ 			wfProfileOut( $fname );
+ 			return false;
+@@ -858,7 +863,7 @@
+ 	 * Called on the first invocation, e.g. when a user clicks an edit link
+ 	 */
+ 	function initialiseForm() {
+-		$this->edittime = $this->mArticle->getTimestamp();
++		$this->edittime = $this->mArticle->getTimestamp(true);
+ 		$this->summary = '';
+ 		$this->textbox1 = $this->getContent();
+ 		if ( !$this->mArticle->exists() && $this->mArticle->mTitle->getNamespace() == NS_MEDIAWIKI )
+@@ -1021,6 +1026,19 @@
+ 				'[[' . wfMsgForContent( 'copyrightpage' ) . ']]',
+ 				$wgRightsText ) . "\n</div>";
+ 
++		// XXCHANGED
++        if (!$wgUser->getOption('disablewarning') ) {
++			$wgOut->addHTML("<script language=\"JavaScript\">
++		  		var needToConfirm = true;
++				window.onbeforeunload = confirmExit;
++		 		 function confirmExit()
++		  		{
++				if (needToConfirm) 
++						return \"All changes will be lost.\";
++		  		}
++				</script>");
++		}
++
+ 		if( $wgUser->getOption('showtoolbar') and !$this->isCssJsSubpage ) {
+ 			# prepare toolbar for edit buttons
+ 			$toolbar = $this->getEditToolbar();
+@@ -1140,6 +1158,9 @@
+ 			'value'     => wfMsg('savearticle'),
+ 			'accesskey' => wfMsg('accesskey-save'),
+ 			'title'     => wfMsg('tooltip-save'),
++			//XXCHANGED
++			'onclick'   => 'needToConfirm = false'
++
+ 		);
+ 		$buttons['save'] = wfElement('input', $temp, '');
+ 		$temp = array(
+@@ -1150,6 +1171,8 @@
+ 			'value'     => wfMsg('showdiff'),
+ 			'accesskey' => wfMsg('accesskey-diff'),
+ 			'title'     => wfMsg('tooltip-diff'),
++			//XXCHANGED
++			'onclick'   => 'needToConfirm = false'
+ 		);
+ 		$buttons['diff'] = wfElement('input', $temp, '');
+ 
+@@ -1164,6 +1187,8 @@
+ 				'accesskey' => '',
+ 				'title'     => wfMsg('tooltip-preview'),
+ 				'style'     => 'display: none;',
++				//XXCHANGED
++				'onclick'   => 'needToConfirm = false'
+ 			);
+ 			$buttons['preview'] = wfElement('input', $temp, '');
+ 			$temp = array(
+@@ -1186,6 +1211,8 @@
+ 				'value'     => wfMsg('showpreview'),
+ 				'accesskey' => wfMsg('accesskey-preview'),
+ 				'title'     => wfMsg('tooltip-preview'),
++				//XXADDED
++				'onclick'   => 'needToConfirm = false;'
+ 			);
+ 			$buttons['preview'] = wfElement('input', $temp, '');
+ 			$buttons['live'] = '';
+@@ -1194,8 +1221,15 @@
+ 		$safemodehtml = $this->checkUnicodeCompliantBrowser()
+ 			? ""
+ 			: "<input type='hidden' name=\"safemode\" value='1' />\n";
++		$guidedHTML = "";
++		if (WikiHow::articleIsWikiHow($this->mArticle) || ($this->mTitle->getArticleID() == 0 && $this->mTitle->getNamespace() == NS_MAIN) ) {
++				$guidedHTML = $sk->makeKnownLinkObj($this->mTitle, wfMsg('guided_editing'), "action=edit&override=yes");
++		} else {
++		}
++
+ 
+ 		$wgOut->addHTML( <<<END
++{$guidedHTML}
+ {$toolbar}
+ <form id="editform" name="editform" method="post" action="$action" enctype="multipart/form-data">
+ END
+@@ -1205,23 +1239,35 @@
+ 			call_user_func_array( $formCallback, array( &$wgOut ) );
+ 		}
+ 
++
+ 		// Put these up at the top to ensure they aren't lost on early form submission
++		$popbox = '';
++		$popbox_div = '';
++		global $wgLanguageCode;
++		if ($wgLanguageCode == 'en'){
++			$popbox =  wfGetPopBoxJSAdvanced() . wfGetPopBoxCSS();
++			$popbox_div = wfGetPopBoxDiv();
++		}
++		
+ 		$wgOut->addHTML( "
+ <input type='hidden' value=\"" . htmlspecialchars( $this->section ) . "\" name=\"wpSection\" />
+ <input type='hidden' value=\"{$this->starttime}\" name=\"wpStarttime\" />\n
+ <input type='hidden' value=\"{$this->edittime}\" name=\"wpEdittime\" />\n
+-<input type='hidden' value=\"{$this->scrolltop}\" name=\"wpScrolltop\" id=\"wpScrolltop\" />\n" );
+-
++<input type='hidden' value=\"{$this->scrolltop}\" name=\"wpScrolltop\" id=\"wpScrolltop\" />\n
++$popbox\n
++" );
+ 		$wgOut->addHTML( <<<END
+ $recreate
+ {$commentsubject}
+ {$subjectpreview}
+-<textarea tabindex='1' accesskey="," name="wpTextbox1" id="wpTextbox1" rows='{$rows}'
++<textarea tabindex='1' accesskey="," name="wpTextbox1" id="wpTextbox1" rows='{$rows}' 
+ cols='{$cols}'{$ew} $hidden>
+ END
+ . htmlspecialchars( $this->safeUnicodeOutput( $this->textbox1 ) ) .
+ "
+ </textarea>
++$popbox_div
++<script type=\"text/javascript\" src=\"{$wgScriptPath}/skins/common/clientscript.js\"></script>
+ 		" );
+ 
+ 		$wgOut->addWikiText( $copywarn );
+@@ -1242,7 +1288,7 @@
+ 	{$buttons['diff']}
+ 	<span class='editHelp'>{$cancel} | {$edithelp}</span>
+ </div><!-- editButtons -->
+-</div><!-- editOptions -->");
++</div><!-- editOptions --><br/><br/>");
+ 
+ 		$wgOut->addHtml( '<div class="mw-editTools">' );
+ 		$wgOut->addWikiText( wfMsgForContent( 'edittools' ) );
+@@ -1274,6 +1320,13 @@
+ 			$token = EDIT_TOKEN_SUFFIX;
+ 		$wgOut->addHTML( "\n<input type='hidden' value=\"$token\" name=\"wpEditToken\" />\n" );
+ 
++		//XXADDED patrol undone edits automatically
++		global $wgRequest;
++		if ($wgRequest->getVal('undo', null) != null) {
++			$undo_id = $wgRequest->getVal('undo', null);
++			$wgOut->addHTML( "\n<input type='hidden' value=\"$undo_id\" name=\"wpUndoEdit\" />\n" );
++		}
++
+ 
+ 		# If a blank edit summary was previously provided, and the appropriate
+ 		# user preference is active, pass a hidden tag here. This will stop the
+@@ -1293,10 +1346,11 @@
+ 
+ 			$de = new DifferenceEngine( $this->mTitle );
+ 			$de->setText( $this->textbox2, $this->textbox1 );
++
+ 			$de->showDiff( wfMsg( "yourtext" ), wfMsg( "storedversion" ) );
+ 
+ 			$wgOut->addWikiText( '==' . wfMsg( "yourtext" ) . '==' );
+-			$wgOut->addHTML( "<textarea tabindex=6 id='wpTextbox2' name=\"wpTextbox2\" rows='{$rows}' cols='{$cols}' wrap='virtual'>"
++			$wgOut->addHTML( "<textarea tabindex=6 id='wpTextbox' name=\"wpTextbox2\" rows='{$rows}' cols='{$cols}' wrap='virtual'>"
+ 				. htmlspecialchars( $this->safeUnicodeOutput( $this->textbox2 ) ) . "\n</textarea>" );
+ 		}
+ 		$wgOut->addHTML( $this->editFormTextBottom );
+@@ -1324,9 +1378,8 @@
+ 	 *
+ 	 * @param string $text The HTML to be output for the preview.
+ 	 */
+-	private function showPreview( $text ) {
++	 function showPreview( $text ) {
+ 		global $wgOut;
+-
+ 		$wgOut->addHTML( '<div id="wikiPreview">' );
+ 		if($this->mTitle->getNamespace() == NS_CATEGORY) {
+ 			$this->mArticle->openShowCategory();
+@@ -1745,8 +1798,13 @@
+ 			$toolbar.="addButton('$image','$tip','$open','$close','$sample');\n";
+ 		}
+ 
++		//XXADDED
++		wfRunHooks( 'EditPageToolbar', array( &$toolbar, NULL ) );
++
+ 		$toolbar.="/*]]>*/\n</script>";
+ 		$toolbar.="\n</div>";
++		
++		
+ 		return $toolbar;
+ 	}
+ 

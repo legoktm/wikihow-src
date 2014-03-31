@@ -1,0 +1,59 @@
+.tr_box {
+	display: inline-block;
+	width: 55px;
+	height: 20px;
+	line-height: 20px;
+	color: white;
+	background: #aaaaaa;
+	border: 2px #aaaaaa solid;
+	margin: 5px 2px 5px 2px;
+	padding: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	text-align: center;
+	vertical-align: top;
+}
+
+.tr_prompt {
+	color: #aaaaaa;
+	background: white;
+	width: 80px;
+}
+
+/*
+.tr_box img {
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+}
+*/
+.thumb {
+	/*background-image: url(/skins/WikiHow/images/thumb_sprite.png);*/
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAUCAYAAAGFXz9qAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAqRJREFUeNpi+P//PwMaXgiiYRwQaEFigxm/oWx5KP8piAYIIJiOFUhGHUOW+AWlS2FGMYLNgwBGKM0KxL8BAogRIQ4G/5EUIIvBARMQf4AKwiS+oWlgRKIZAQKIAYu/0fF7IA4CsZGdg80pf4CYGdkpIKAHpevQFDOj+gIToDsDBExgzviPw1Mw8BsahAwAAYTPYyBgT8DzGf+xg/VAvAqbhnyogjUEDA7+TwCAvPkD6AN2BvxAHYhvoYn9RYoAZBAITR+MIBd8IOCAiwR8oAVVdx9dDpmjCsR30QwuJyLRfYTqxZADCCBcGkDBFUuEweLQfPociCcCMT+yPCNmygKDfiDOxxGmyAn+NhAroYm/BuK9QPwDm2tgZUAfAVebEIirD9hc/h9H5mDAV4RgAR9Z0ATuI7FnAPErIL4GxCuwaAYVCix4DGfElp3RwT+MAoOBQQUa3gxYHJcEt/w/YaBOIOxXQNW9QZcjxuUyQPwUj/wnIOaF4i/oyYkQwGewINTQPHSD0UvFViLKXnSsBK38sMoDBBgxdQp6EfEbmuWVSNSLDZcTiO+7UE+rkutwViDORar+QcWJIAUOlv9PGfjNQkRa4QHiy0CsAOV/BmJXIH7PQB6QBuJNDJSBr4QSuQkQP0ByNAhsgxY25AJQQKhS6HBw1reBtjGQiwABIO4DYkUizfkHrcDvEFCnBsTXiSwV8IGfIId/BDL4KDAEVKRXAXE3keojgFgH6lmQXiloCc2Kpg4U0/5AfAl7LUW4xUIMCKawdFmDZl4+IT2UOvwPrN1LAe5DM7OUGH2gUmU9EHNDG5QcQGwNxKJERPk9aPI4R0EyswfiAih7AhAXkpI5ccnxA7Ez1HBTaEblgPaS9gBxGRC/ZKAcxAKxNxBHEtG+ggMAJMnwZMCVGDIAAAAASUVORK5CYII=');
+	background-repeat: no-repeat;
+	display: block;
+	height: 20px;
+	width: 20px;
+}
+.vote_down .thumb {
+	float: right;
+	background-position: -26px;
+}
+.vote_up .thumb {
+	float: left;
+}
+
+.vote_down span.tr_vote {
+	margin-right: 5px;
+}
+
+.vote_up span.tr_vote {
+	margin-left: 5px;
+}
+
+.up_nodisplay { margin-left: 18px; }
+.down_nodisplay { margin-right: 18px; }
+.nodisplay { visibility: hidden; }
+

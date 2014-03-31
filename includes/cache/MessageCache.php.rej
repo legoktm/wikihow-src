@@ -1,0 +1,36 @@
+***************
+*** 648,653 ****
+  				$title .= '/' . $langcode;
+  			}
+  			$message = $this->getMsgFromNamespace( $title, $langcode );
+  		}
+  
+  		# Try the array in the language object
+--- 648,656 ----
+  				$title .= '/' . $langcode;
+  			}
+  			$message = $this->getMsgFromNamespace( $title, $langcode );
++ 			// XXX
++ 			// Hook added by Gershon Bialer for post-processing of messages for converting variants in Chinese
++ 			wfRunHooks('MessageCachePostProcess', array(&$message));
+  		}
+  
+  		# Try the array in the language object
+***************
+*** 677,682 ****
+  			!$this->mDisable && $useDB &&
+  			!$isFullKey && ( $langcode != $wgLanguageCode ) ) {
+  			$message = $this->getMsgFromNamespace( $uckey, $wgLanguageCode );
+  		}
+  
+  		# Final fallback
+--- 680,688 ----
+  			!$this->mDisable && $useDB &&
+  			!$isFullKey && ( $langcode != $wgLanguageCode ) ) {
+  			$message = $this->getMsgFromNamespace( $uckey, $wgLanguageCode );
++ 			// XXX
++ 			// Hook added by Gershon Bialer for post-processing of messages for converting variants in Chinese
++ 			wfRunHooks('MessageCachePostProcess', array(&$message));
+  		}
+  
+  		# Final fallback

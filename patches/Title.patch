@@ -1,0 +1,118 @@
+--- wiki19/includes/Title.php	2007-06-01 08:38:50.000000000 -0500
++++ mediawiki-1.9.3/includes/Title.php	2007-02-20 20:20:31.000000000 -0600
+@@ -131,7 +131,7 @@
+ 		$filteredText = Sanitizer::decodeCharReferences( $text );
+ 
+ 		$t = new Title();
+-		$t->mDbkeyform = str_replace( ' ', '-', $filteredText );
++		$t->mDbkeyform = str_replace( ' ', '_', $filteredText );
+ 		$t->mDefaultNamespace = $defaultNamespace;
+ 
+ 		static $cachedcount = 0 ;
+@@ -171,7 +171,7 @@
+ 			$url = str_replace( '+', ' ', $url );
+ 		}
+ 
+-		$t->mDbkeyform = str_replace( ' ', '-', $url );
++		$t->mDbkeyform = str_replace( ' ', '_', $url );
+ 		if( $t->secureAndSplit() ) {
+ 			return $t;
+ 		} else {
+@@ -236,10 +236,10 @@
+ 		$t->mInterwiki = '';
+ 		$t->mFragment = '';
+ 		$t->mNamespace = intval( $ns );
+-		$t->mDbkeyform = str_replace( ' ', '-', $title );
++		$t->mDbkeyform = str_replace( ' ', '_', $title );
+ 		$t->mArticleID = ( $ns >= 0 ) ? -1 : 0;
+ 		$t->mUrlform = wfUrlencode( $t->mDbkeyform );
+-		$t->mTextform = str_replace( '-', ' ', $title );
++		$t->mTextform = str_replace( '_', ' ', $title );
+ 		return $t;
+ 	}
+ 
+@@ -571,7 +571,7 @@
+ 	 * Escape a text fragment, say from a link, for a URL
+ 	 */
+ 	static function escapeFragmentForURL( $fragment ) {
+-		$fragment = str_replace( ' ', '-', $fragment );
++		$fragment = str_replace( ' ', '_', $fragment );
+ 		$fragment = urlencode( Sanitizer::decodeCharReferences( $fragment ) );
+ 		$replaceArray = array(
+ 			'%3A' => ':',
+@@ -706,7 +706,7 @@
+ 	 */
+ 	function getPrefixedDBkey() {
+ 		$s = $this->prefix( $this->mDbkeyform );
+-		$s = str_replace( ' ', '-', $s );
++		$s = str_replace( ' ', '_', $s );
+ 		return $s;
+ 	}
+ 
+@@ -719,7 +719,7 @@
+ 	function getPrefixedText() {
+ 		if ( empty( $this->mPrefixedText ) ) { // FIXME: bad usage of empty() ?
+ 			$s = $this->prefix( $this->mTextform );
+-			$s = str_replace( '-', ' ', $s );
++			$s = str_replace( '_', ' ', $s );
+ 			$this->mPrefixedText = $s;
+ 		}
+ 		return $this->mPrefixedText;
+@@ -777,7 +777,7 @@
+ 	 */
+ 	function getSubpageUrlForm() {
+ 		$text = $this->getSubpageText();
+-		$text = wfUrlencode( str_replace( ' ', '-', $text ) );
++		$text = wfUrlencode( str_replace( ' ', '_', $text ) );
+ 		$text = str_replace( '%28', '(', str_replace( '%29', ')', $text ) ); # Clean up the URL; per below, this might not be safe
+ 		return( $text );
+ 	}
+@@ -789,7 +789,7 @@
+ 	 */
+ 	function getPrefixedURL() {
+ 		$s = $this->prefix( $this->mDbkeyform );
+-		$s = str_replace( ' ', '-', $s );
++		$s = str_replace( ' ', '_', $s );
+ 
+ 		$s = wfUrlencode ( $s ) ;
+ 
+@@ -1517,9 +1517,8 @@
+ 		
+ 		# Clean up whitespace
+ 		#
+-		// XXCHANGED don't replace _ with - screws up namespaces
+-		$dbkey = preg_replace( '/[ ]+/', '-', $this->mDbkeyform );
+-		$dbkey = trim( $dbkey, '-' );
++		$dbkey = preg_replace( '/[ _]+/', '_', $dbkey );
++		$dbkey = trim( $dbkey, '_' );
+ 
+ 		if ( '' == $dbkey ) {
+ 			return false;
+@@ -1529,6 +1528,7 @@
+ 			# Contained illegal UTF-8 sequences or forbidden Unicode chars.
+ 			return false;
+ 		}
++
+ 		$this->mDbkeyform = $dbkey;
+ 
+ 		# Initial colon indicates main namespace rather than specified default
+@@ -1669,8 +1669,7 @@
+ 		$this->mDbkeyform = $dbkey;
+ 		$this->mUrlform = wfUrlencode( $dbkey );
+ 
+-		//XXCHANGED
+-		$this->mTextform = str_replace( '-', ' ', $dbkey );
++		$this->mTextform = str_replace( '_', ' ', $dbkey );
+ 
+ 		return true;
+ 	}
+@@ -1685,8 +1684,7 @@
+ 	 * @access kind of public
+ 	 */
+ 	function setFragment( $fragment ) {
+-		//XXCHANGED
+-		$this->mFragment = str_replace( '-', ' ', substr( $fragment, 1 ) );
++		$this->mFragment = str_replace( '_', ' ', substr( $fragment, 1 ) );
+ 	}
+ 
+ 	/**

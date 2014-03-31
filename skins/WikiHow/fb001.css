@@ -1,0 +1,39 @@
+DIV#Wall {
+	height: 700px;
+	width: 523px;
+	background-color: #f9f7f1;
+	font-family: Arial;
+	color: #008cab;
+	text-decoration: none;
+	padding-right: 0px;
+	font-size:24px;
+}
+#Wall a {
+	color: #008cab;
+	text-decoration: none;
+}
+
+.small a {
+	color: #008cab;
+	text-decoration: none;
+	font-size:18px;
+	font-weight:lighter;
+	margin-left: 40px;
+}
+#Wall li {
+	list-style: none;
+	background-repeat: no-repeat;
+	padding-left: 70px;
+	padding-right:35px;
+	margin-left: 20;
+	padding-bottom: 10px;
+}
+#Wall #one {
+	background-image: url(http://i933.photobucket.com/albums/ad179/wikiHow1/Bullet1Final.png);
+}
+#Wall #two {
+	background-image: url(http://i933.photobucket.com/albums/ad179/wikiHow1/Bullet2Final.png);
+}
+#horizontalList {
+	margin-left: 20px;
+}

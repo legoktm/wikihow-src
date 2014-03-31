@@ -1,0 +1,76 @@
+/***NEW - add before DIV#last_question ***/
+/*** HISTORY ***/
+#pagehistory LI {
+    padding-bottom: .5em;
+    clear: both;
+}
+
+#pagehistory P { float: left; }
+
+TABLE.history_table TD.history_curlast {
+    white-space: nowrap;
+    padding-right: 2px;
+}
+
+TABLE.history_table TD.diffbtn {
+    padding-top: 6px;
+    padding-right: 2px;
+}
+
+TABLE.history_table TD.history_second_line {
+    padding: 2px 0 8px 0;
+    font-size: .9em; 
+}
+
+TABLE.history_table TR.odd_line {
+    background-color: #F9F7F1;
+    padding: 3px;
+}
+
+
+/***NEW - add after button52 ***/
+.button100 {
+    width: 100px;
+    height: 26px;
+    background: url(/skins/WikiHow/images/button_100.png) top left no-repeat;
+    line-height: 25px;  
+}
+
+/*** MODIFIED ***/
+DIV#main P.L, DIV#main .floatleft { float: left; margin: 0 .5em 1em 0; }
+DIV#main P.R, DIV#main .floatright { float: right; margin: 0 0 1em .5em; }
+
+
+
+/** MODIFIED 10/28/2009 **/
+#article LI { 
+    padding: 4px 0 0 0;
+    line-height: 1.2em; 
+    clear: both;
+}
+
+/** MODIFIED 11/3/2009 **/
+#article OL.steps_list_2 LI UL LI { 
+    border: none; 
+    padding: 6px;
+    clear: none;
+}
+
+/** MODIFIED 11/10/2009 **/
+#article #discuss_icons {
+    margin:3px 0 10px 115px;
+}
+        
+#discuss_icons A {
+    background: url(/skins/WikiHow/images/discuss_icons.gif) no-repeat left 1px;
+    margin-left: 15px;
+    padding-left: 16px;
+    display: block;
+    height: 13px;
+    font-size: .85em;
+    color: #7A6F68;
+    font-weight: bold;
+}
+#discuss_icons A:hover { color: #514239; }
+#discuss_icons #discuss_edit { background-position: 0 -12px; }
+#discuss_icons #discuss_history { background-position: 0 -26px; }

@@ -1,0 +1,357 @@
+#h5e-editing-toolbar { position: fixed; top:0; width:100%; display: none; z-index: 5000000; }
+.h5e-tb-function-wrapper, .h5e-tb-save-wrapper { position: relative; width:975px; height:51px; background:url("/skins/WikiHow/images/editbar_bg.png") repeat top left transparent; padding-top: 16px; margin: 0 auto; }
+.h5e-tb-left-wrapper { float: left; white-space:nowrap; }
+.h5e-tb-right-wrapper { height: 20px; line-height: 20px; color: #0e88ab; padding-top: 5px; }
+.h5e-tb-left-edge { background:url("/skins/WikiHow/images/editbar_bg_left.png") no-repeat top left transparent; width: 13px; height: 67px; float:left; margin:-16px 0 0 -13px;}
+.h5e-tb-right-edge { background:url("/skins/WikiHow/images/editbar_bg_right.png") no-repeat top right transparent; width: 13px; height: 67px; float: right; margin:-16px -13px 0 0; }
+.h5e-saving-notice { position: fixed; top: 100px; left: 100px; width: 170px; height: 70px; padding:30px 0; background-color: #4d545a; color: #FFF; font-size: 1.3em; font-weight: bold; z-index: 5000; display: none; text-align: center; -moz-border-radius: 10px; -khtml-border-radius: 10px; -webkit-border-radius: 10px; }
+.h5e-dialog { display: none; } 
+#h5e-toolbar-publish, #h5e-edit-summary-save { font-weight: bold; } 
+.h5e-toolbar-cancel { float: right; }
+#h5e-edit-summary-save { float: left; } 
+.h5e-alternate-methods { padding-left: 30px; } 
+.sources-removed { font-size: 18px; color: #aaaaaa; padding-bottom: 10px; margin-right: 50px; }
+.h5e-related-list { width: 470px; padding: 15px 0 20px 0; margin: 0 auto; }
+.h5e-related-sortable { list-style-type: none; margin: 0; padding: 0; width: 450px; }
+.h5e-related-sortable li { margin: 0 3px 3px 0; padding: 0.4em 0.4em 0.4em 2em; font-size: 1.4em; height: 18px; cursor:pointer; line-height: 17px; color:#01769F; } 
+.h5e-related-sortable li div.trash-icon { display: inline; float: right; padding:2px 8px 0 0; }
+.related-wh-overlay { display: none; position: absolute; background-color: white; opacity: 0.6; }
+.related-wh-overlay-edit { display: none; position: absolute; width: 150px; }
+.h5e-hidden-template { display: none; }
+.h5e-hidden-video { text-align: center; position: absolute; z-index:2; border: none; }
+.h5e-hidden-video p { color: #FFF; font-weight: bold; font-size: 1.7em; padding:100px 50px; text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -2px 2px 2px #333, 2px 2px 2px #333; }
+.h5e-rel-wh-edit { float: right; margin-bottom:-1.5em; font-size: 1.2em; }
+.h5e-rel-wh-add { float: none; padding-bottom: 2em; }
+.h5e-rel-wh-disabled { font-style: italic; }
+.h5e-example-text { color: #919191 !important; }
+.h5e-url-warning { border: 2px solid #aa0000; }
+.h5e-img-mouseover { background-color: white; opacity: 0.6; }
+.h5e-auto-complete { z-index: 1000010 !important; border: 1px solid #aaaaaa !important; }
+.h5e-external-link-editing-disabled { color: #a1a1a1; font-weight: normal; font-size: 11px; margin-bottom: 12px; height: 13px; }
+.h5e-external-link-editing-disabled span { display: none; }
+.h5e-link-external-help { float: left; display: inline; }
+.h5e-link-external-help a { float: left; }
+.h5e-link-external-help a.h5e-external-link-why { font-size: 11px; }
+.h5e-link-external-help a img { margin-top: 6px; padding-right: 6px; }
+#h5e-external-url-msg-dialog { display: none; }
+#h5e-external-url-msg-dialog div input { text-align: center; margin: 15px 0 10px 0; }
+#h5e-external-url-msg-dialog div p { margin: 0 0 10px 0; }
+.h5e-std-editing-outline:focus { outline: #414141 dotted 1px; }
+.h5e-describe-edits { font-size: 14px; margin-left: 5px; margin-bottom: 3px; }
+.h5e-first-remove-section { float: right; margin-right: 18px; font-size: 12px; font-weight: normal; background: url(/extensions/wikihow/h5e/i/rm_section_trash.png) no-repeat left center; padding-left: 16px; padding-top: 1px; }
+.h5e-adv-link { float: right; text-align: right; margin-right: -5px; }
+.h5e-remove-confirm-help { font-size: 11px; color: #a1a1a1; font-style: italic; }
+#h5e-edit-summary-pre { width: 165px; }
+
+#h5e-message-console { position: fixed; top:65px; padding: 10px; left: 155px; width:980px; padding-top: 15px; text-align: center; height: 30px; background-color: #C7D9E0; display: none; z-index: 5000000; font-weight: bold; }
+
+.h5e-edit-link-options-over { 
+display: none; 
+border: 1px solid #BDB7A7; 
+background-color: #FCFBF4;
+font-size: .9em; 
+width: 400px; 
+height: auto; 
+position: absolute; 
+top: 0; left: 0; 
+white-space: nowrap; 
+padding: 10px;
+z-index: 10; 
+}
+
+
+#h5e-link-dialog { 
+width: 500px; 
+} 
+
+#h5e-link-text {
+width: 100%;
+margin: 2px 0 15px 0;
+}
+#h5e-link-article {
+width: 85%;
+margin: 2px 0 5px 0;
+}
+.h5e-howto-input {
+text-align: right;
+margin-top: 5px;
+}
+.h5e-link-how-to-link { 
+margin: 4px 2px 0 0; 
+font-weight: normal; 
+}
+.h5e-link-how-to-related {
+line-height: 32px;
+margin-right: .5em;
+float: left;
+}
+
+
+/*NEW*/
+.h5e-x { 
+background:url("/skins/WikiHow/images/buttons_editbar.png") no-repeat scroll -656px 0 transparent;
+width:19px; 
+height:20px; 
+display:block;
+margin-left: 5px;
+float:right;
+}
+
+#h5e-editlink-cancel {
+float: right;
+}
+
+.h5e-separator {
+margin: 0 8px;
+float: left;
+}
+
+.h5e-button {
+color:#514239;
+display:block;
+font-weight:bold;
+font-size: .9em;
+overflow:hidden;
+text-align:center;
+background:url("/skins/WikiHow/images/buttons_editbar.png") no-repeat scroll -0 0 transparent;
+height: 30px;
+line-height: 30px;
+width: 30px;
+float: left;
+margin: 0 3px;
+}
+.h5e-button:hover { text-decoration: none; color:#01769F; }
+
+.h5e-input-button {
+border: none;
+font-size: .8em;
+cursor: pointer;
+letter-spacing: .01em;
+line-height: normal;
+}
+
+
+.h5e-button-img { background-position: 0 0; width:52px; padding-left:18px; }
+.h5e-button-a { background-position: -72px 0; width:45px; padding-left:16px; }
+.h5e-button-italics { background-position: -135px 0; }
+.h5e-button-indent { background-position: -167px 0; }
+.h5e-button-outdent { background-position: -199px 0; }
+.h5e-button-ref { background-position: -231px 0; }
+.h5e-button-section { background-position: -263px 0; }
+.h5e-button-related { background-position: -295px 0; }
+.h5e-discard-changes {background-position: -327px 0; }
+.button106  { background-position: -359px 0; float:left; }
+.button64  { background-position: -467px 0; float:left; }
+
+.h5e-button-section-icon-only {
+	background:url("/skins/WikiHow/images/buttons_editbar.png") no-repeat scroll -263px 0 transparent;
+	height: 30px;
+	width: 30px;
+	clear:both;
+	display:inline-block;
+}
+
+/*hover button states*/
+.h5e-button-img:hover { background-position: 0 -40px; }
+.h5e-button-a:hover { background-position: -72px -40px; }
+.h5e-button-italics:hover { background-position: -135px -40px; }
+.h5e-button-indent:hover { background-position: -167px -40px; }
+.h5e-button-outdent:hover { background-position: -199px -40px; }
+.h5e-button-ref:hover { background-position: -231px -40px; }
+.h5e-button-section:hover { background-position: -263px -40px; }
+.h5e-button-related:hover { background-position: -295px -40px; }
+.h5e-discard-changes:hover {background-position: -327px -40px; }
+.button106:hover { background-position: -359px -40px; color:#FFF; }
+.button64:hover { background-position: -467px -40px; color:#FFF; }
+
+/*active button states*/
+.h5e-button-img:active { background-position: 0 -80px; }
+.h5e-button-a:active { background-position: -72px -80px; }
+.h5e-button-italics:active { background-position: -135px -80px; }
+.h5e-button-italics-enabled { background-position: -135px -80px; }
+.h5e-button-indent:active { background-position: -167px -80px; }
+.h5e-button-outdent:active { background-position: -199px -80px; }
+.h5e-button-ref:active { background-position: -231px -80px; }
+.h5e-button-section:active { background-position: -263px -80px; }
+.h5e-button-related:active { background-position: -295px -80px; }
+.h5e-discard-changes:active {background-position: -327px -80px; }
+.button106:active  { background-position: -359px -80px; }
+.button64:active  { background-position: -467px -80px; }
+
+/*disabled button states*/
+.button106.h5e-disabled { background-position: -359px -120px; }
+.button64.h5e-disabled { background-position: -467px -120px; }
+.h5e-discard-changes.h5e-disabled { background-position: -327px -120px; }
+#h5e-toolbar-outdent.h5e-disabled { background-position: -199px -120px; }
+
+.button106 {
+height:38px;
+line-height:38px;
+width:106px;
+color: #FFF;
+font-size: 1em;
+letter-spacing: .01em;
+margin-top: -4px;
+}
+
+.button64 {
+height:26px;
+line-height:26px;
+width:64px;
+color: #FFF;
+}
+
+.button-gray-73 {
+background-position: -533px 0;
+height:26px;
+width:72px;
+color: #414141;
+float: none;
+}
+#h5e-toolbar-savedraft { float:left; padding-top:9px; font-size: 11px; }
+.h5e-nonlink { text-decoration: none; color: #888888; }
+
+.h5e-input {
+float: left;
+font-size: 1.2em;
+border: 1px solid #999;
+border-top-width: 2px;
+padding: 5px;
+margin: 0 5px;
+width: 300px;
+color: #414141;
+}
+
+#h5e-related-new, #h5e-link-query, #ref-edit {
+width: 300px;
+padding: 2px;
+margin-left:0;
+}
+
+.edit-remove-image {
+color:#01769F;
+display:block;
+font-weight:bold;
+font-size: 12px;
+overflow:hidden;
+background:url("/skins/WikiHow/images/edit_remove_img.png") no-repeat scroll 0 0 transparent;
+height: 34px;
+line-height: 34px;
+width: 54px;
+float: left;
+padding-left:33px;
+position: absolute;
+}
+.edit-remove-image:hover { text-decoration: none; }
+
+#h5e-edit-summary-post {
+width: 60%;
+}
+
+.h5e-tb-save-wrapper .h5e-tb-left-wrapper {
+margin: -13px 0 0 100px;
+}
+
+
+#h5e-mwimg-mouseover { display: none; position: absolute; z-index: 2000000; } 
+#h5e-mwimg-mouseover-confirm {
+display:block;
+font-weight:bold;
+width: 178px;
+text-align: center;
+position:absolute;
+float: left;
+overflow: hidden;
+}
+#h5e-mwimg-mouseover-confirm li {
+list-style: none;
+}
+#h5e-mwimg-mouseover-confirm span {
+color:#01769F;
+cursor: pointer;
+}
+
+
+.h5e-mwimg-mouseover-confirm_top {
+background:url("/skins/WikiHow/images/rm_img_conf.png") no-repeat 0 0 transparent;
+height: 9px;
+width: 178px;
+}
+.h5e-mwimg-mouseover-confirm-main {
+background:url("/skins/WikiHow/images/rm_img_conf_bg.png") repeat 0 0 transparent;
+width: 148px;
+padding: 4px 15px;
+}
+.h5e-mwimg-mouseover-confirm_bottom {
+background:url("/skins/WikiHow/images/rm_img_conf.png") no-repeat 0 -9px transparent;
+height: 9px;
+width: 178px;
+}
+
+
+.h5e-bottom-buttons {
+text-align: right;
+line-height: 26px;
+font-size: 1.1em;
+font-weight: bold;
+}
+.h5e-bottom-buttons input {
+float: right;
+margin-left: 10px;
+}
+
+#h5e-ac, .h5e-related-p, .h5e-ref-p {
+margin-left: 20px;
+}
+
+.h5e-related-li {
+background: url(/skins/WikiHow/images/h5e-related-bar.png) no-repeat 0 0;
+}
+
+#h5e-sections {
+padding: 0 1em;
+}
+
+#h5e-am-name { 
+width: 350px; 
+margin-bottom: 20px;
+}
+
+#ref-edit {
+width: 97%;
+margin-bottom: 1em;
+}
+
+.edit-reference {
+background-position: -607px 0;
+height: 16px;
+line-height: 16px;
+width: 47px;
+color: #FFF;
+font-size: .8em;
+float: none;
+display: inline-block;
+}
+.edit-reference:hover { text-decoration:none; color:#FFF; }
+
+.opaque {
+opacity: 0.35;
+-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
+filter: alpha(opacity=35);
+}
+.opaque a { color: #000; }
+#article ul#breadcrumb li.opaque a { color: #000; }
+#top_links a#gatWriteAnArticle { color: #FFF; }
+#h5e-sections-confirm { display: none; }
+
+.h5e-inline-publish-template { display: none; width: 550px; height: 150px; }
+.h5e-inline-publish { margin: 15px 0 25px 90px; padding-left: 80px; display: inline-block; width: 450px; height: 125px; border-top: thin solid #aaaaaa; }
+.h5e-publish-finished-editing { padding: 20px 0 15px 2px; font-size: 21px; }
+.h5e-publish-publish { height: 38px; line-height: 38px; width: 106px; background: url(/extensions/wikihow/h5e/i/publish-sprite.png) no-repeat 0 0; display: inline-block; margin-right: 10px; }
+.h5e-publish-save-draft { height: 38px; line-height: 38px; width: 121px; background: url(/extensions/wikihow/h5e/i/publish-sprite.png) no-repeat 0 -48px; display: inline-block; margin-right: 10px; }
+.h5e-publish-cancel { display: inline-block; position: relative; top: -13px; font-size: 15px; }
+.h5e-error-dialog { display: none; }
+.h5e-error-dialog .error-msg { margin-bottom: 15px; }
+.h5e-rs-console { display:none; position:absolute; top:600px; right:0; width:200px; background-color:#003366; z-index:10; }
+.h5e-first-remove-onclick { color:#666666; }
+

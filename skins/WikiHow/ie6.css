@@ -1,0 +1,122 @@
+#actions a{
+	position:relative;
+	z-index:1;
+}
+
+#featuredNav img{
+	width:8px;
+	height:12px;
+}
+
+#featuredNav img#moreorless{
+	width:12px;
+	height:12px;
+}
+
+.rounders2_sprite{
+	display:none;
+}
+
+.corner{
+	background-image:none;
+}
+
+#article ol.steps_list_2 li{
+	padding-left:50px;
+}
+
+#article OL.steps_list_2 LI DIV.step_num {
+	margin: 0 20px 0 0px;
+}
+
+#bubbles #head_bubble{
+	clear:both;
+	margin-top:0px;
+}
+
+#editform{
+	position:relative;
+}
+
+#article_tabs ul#AdminOptions{
+	margin-top:-90px;
+}
+
+#editform #edit_page_footer{
+	position:absolute;
+}
+
+.article_top, .article_bottom_white, .article_bottom, .sidebar_top, .sidebar_bottom_fold{
+	font-size:0px;
+	line-height:0px;
+}
+
+#bonus_bubble p a{
+	background-position:0 -207px;
+}
+
+#article A.edit_article_button {
+	margin-right: -10px;
+}
+
+#st_wrap{
+	margin-left:-23px;
+}
+
+#article #st_wrap div.article_inner{
+	padding:0;
+}
+
+#suggested_titles{
+	margin-left:46px;
+}
+
+DIV#main {
+	width:1010px;
+}
+
+DIV#article_shell{
+	margin: 0 10px 0 0;
+}
+
+#article .article_inner h2{
+	margin-left:0px;
+}
+
+DIV#sidebar {
+	margin-left:0px;
+}
+
+.sidebox_shell{ position: relative; }
+
+#side_rc_widget{display:none;}
+
+
+#more_newarticles{
+	float:left;
+}
+
+#head_bubble #cse-search-box {
+    position:relative;
+}
+
+.horiztonalAdContainer{
+	margin-right: -47px;
+	margin-top: 20px;
+}
+
+.article_widget { display: none; }
+
+.wikihow_watermark { display: none; }
+
+#logo img { display: none; }
+
+#logo a { 
+	background: url(/skins/WikiHow/images/wikihow_with_tag_ie6.jpg) no-repeat left top; 
+	width: 216px; 
+	height: 56px; 
+	display: block;
+}
+
+.sample_ribbon {	display: none; }
+#bodycontents { background-color: #FFF !important; }

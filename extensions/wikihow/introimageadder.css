@@ -1,0 +1,122 @@
+#IntroImageAdder {
+	margin-left:-28px; 
+	margin-right:-22px;
+}
+
+#IntroImageAdder #iia_msg {
+	padding:3px;
+	margin-left:8px;
+}
+
+.iia_msg_icon {
+	float:left;
+	padding-right: 5px;
+}
+
+.iia_msg_text {
+	padding-top: 20px;
+}
+
+
+#iia_main {
+	padding: 5px;
+	min-height:400px;
+	width:100%;
+}
+
+#introimageheader{
+	margin-left:27px;
+	margin-right:23px;
+}
+
+#introimagenav{
+	background-color:#f5f5f5;
+	padding:25px 20px 20px 26px;
+}
+
+#introimageupload h4{
+	margin-bottom:5px;
+}
+
+#introimageupload h4 a{
+	font-size:24px;
+}
+
+#introimageupload h4 a.button{
+	font-size:inherit;
+}
+
+.iia_results {
+	font-size:0.9em;
+}
+
+.introimagearticle {
+	font-size:24px;
+}
+
+#article #introimageupload #article_tabs{
+	margin-top:-31px;
+	margin-right:14px;
+}
+
+#article_tabs a{
+	float:right;
+}
+
+#eiu-image-search{
+	margin-top:10px;
+}
+
+#eiu-image-search .search_box{
+	width:300px;
+	margin-left:0px;
+}
+
+#introimageupload .recently_uploaded_title{
+	font-size:1.1em;
+	color:#47351d;
+}
+
+#introimageupload .recently_uploaded_next{
+	font-size:1.1em;
+}
+
+div#eiu_recently_uploaded{
+	padding:0 23px 0 27px;
+}
+
+#eiu-preview{
+	z-index:2;
+}
+
+.iia_modal {
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.search_button.iia_search_button {
+	width: 105px;
+	background: url(/skins/WikiHow/images/button_blue.png?1) -440px 0 no-repeat;
+}
+
+#iia_articleintro{
+	padding:15px 0;
+	display:none;
+}
+
+#iia_more{
+	width:11px;
+	height:11px;
+	background: url(/skins/WikiHow/images/arrow_blue.png) 0 -11px no-repeat;
+	float:left;
+	margin-right:3px;
+}
+
+#iia_more.off{
+	background-position:0 -11px;
+}
+
+#iia_more.on{
+	background-position:0 0;
+}

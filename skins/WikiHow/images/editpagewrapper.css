@@ -1,0 +1,122 @@
+ TEXTAREA {
+        width: 100%;
+        margin-bottom: 1em;
+        border: 1px solid #A59983;
+    }
+    #fixcaps_button {
+        padding-right: 8px;
+    }
+    .editOptions {
+        margin-top: 4px;
+    }
+    .editButtons {
+        padding: 10px 0;
+    }
+    .editButtons A {
+        margin-left:0;
+    }
+	
+	.editpage_buttons #weave_button{
+		margin-top:0;
+	}
+
+    .subheader {
+        margin: -10px 0 20px 0;
+    }
+    
+A.expand_button {
+    background: url(/skins/WikiHow/images/button_downup_sprite.gif) left top no-repeat;
+    width: 20px;
+    height: 21px;
+}
+
+A.contract_button {
+    background: url(/skins/WikiHow/images/button_downup_sprite.gif) left -21px no-repeat;
+    width: 20px;
+    height: 21px;
+}
+
+.taButtons {
+    width: 25px;
+    
+}
+#video_text{
+	margin:3px 10px 15px 0;
+	width:280px;
+}
+#show_preview_button{
+	float:left;
+	margin:0;
+}
+#gatVideoImportEdit{
+	float:left;
+}
+
+#wpPreview, #wpSave, #wpDiff, #wpDraftSave{
+margin-right:10px;
+}
+
+#wpSave{
+	margin-left:23px;
+}
+
+
+
+#related_buttons {
+    margin-top: -10px;
+}
+#related_buttons A {
+    margin-bottom: 4px;
+}
+
+#add_button {
+    float: left;
+    margin-top: -4px;
+}
+
+#optional_sections UL {
+    margin: 8px 0 15px 10px;
+}
+
+#edit_page_footer {
+   position:fixed;
+   bottom:0;
+   width:697px;
+   height:40px;   /* Height of the footer */
+   background:#64C486;
+    border: 2px solid #bbb;
+    margin-left: -26px;
+}
+#wpSummary1 {
+    width:280px;
+    font-size: 1.1em;
+}
+
+table.edit_footer {
+    width: 100%;
+}
+
+td.summary {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1.2em;
+    padding-bottom: 12px;
+}
+
+td.buttons{
+    text-align: right;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    /*border: 1px solid #000;*/
+}
+td.buttons input {
+    float: left !important;
+    vertical-align: middle;
+    font-size: 1.0em !important;
+    font-weight: normal !important;
+    margin-left: 10px;
+}
+
+#sub_footer {
+    margin-bottom: 45px !important;
+}

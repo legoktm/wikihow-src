@@ -1,0 +1,133 @@
+--- mediawiki-1.9.3/includes/Wiki.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/Wiki.php	2008-04-08 15:10:58.000000000 -0500
+@@ -118,15 +118,21 @@
+ 	 * Initialize the object to be known as $wgArticle for special cases
+ 	 */
+ 	function initializeSpecialCases ( &$title, &$output, $request ) {
+-		global $wgRequest;
++		global $wgRequest, $wgUseGoogleMini;
+ 		wfProfileIn( 'MediaWiki::initializeSpecialCases' );
+ 		
+ 		$search = $this->getVal('Search');
+ 		$action = $this->getVal('Action');
+ 		if( !$this->getVal('DisableInternalSearch') && !is_null( $search ) && $search !== '' ) {
+-			require_once( 'includes/SpecialSearch.php' );
+-			$title = SpecialPage::getTitleFor( 'Search' );
+-			wfSpecialSearch();
++			//XXCHANGED
++		   if ($wgRequest->getVal('advanced', null) == null && $wgUseGoogleMini) {
++				   $title = Title::makeTitle( NS_SPECIAL, 'Search' );
++				   wfSpecialLSearch();
++		   } else {
++				   require_once( 'includes/SpecialSearch.php' );
++				   $title = Title::makeTitle( NS_SPECIAL, 'Search' );
++				   wfSpecialSearch();
++		   }
+ 		} else if( !$title or $title->getDBkey() == '' ) {
+ 			$title = SpecialPage::getTitleFor( 'Badtitle' );
+ 			# Die now before we mess up $wgArticle and the skin stops working
+@@ -251,6 +257,11 @@
+ 				}
+ 				if( is_object( $target ) ) {
+ 					/* Rewrite environment to redirected article */
++										
++					//XXCHANGED USE 301 redirects for redirected articles
++					global $wgOut;
++					$wgOut->redirect($target->getFullURL(), 301);
++
+ 					$rarticle = $this->articleFromTitle($target);
+ 					$rarticle->loadPageData($rarticle->pageDataFromTitle($dbr,$target));
+ 					if ($rarticle->mTitle->mArticleID) {
+@@ -400,19 +411,84 @@
+ 				require_once( 'includes/Credits.php' );
+ 				showCreditsPage( $article );
+ 				break;
++				// XXADDED
++				// LEGACY
++			case 'easy':
++				global $wgServer;
++				$t = ereg_replace("http:\/\/.*\/", "$wgServer/", $_SERVER['REQUEST_URI']); 
++				$output->redirect(str_replace("action=easy", "action=edit", $t), 301);
++				break;
+ 			case 'submit':
+ 				if( !$this->getVal( 'CommandLineMode' ) && !$request->checkSessionCookie() ) {
+ 					/* Send a cookie so anons get talk message notifications */
+ 					User::SetupSession();
+ 				}
+ 				/* Continue... */
++	
++	///-------------------------------------------
++				// XXADDED
++							
++			case 'submit2':
++					if( !$this->getVal( 'CommandLineMode' ) && !$request->checkSessionCookie() ) {
++							/* Send a cookie so anons get talk message notifications */
++							User::SetupSession();
++					}
++					/* Continue... */
++///-------------------------------------------
++
+ 			case 'edit':
++			if( wfRunHooks( 'KalturaCustomEditor', array( $article, $user ) ) ) {
+ 				$internal = $request->getVal( 'internaledit' );
+ 				$external = $request->getVal( 'externaledit' );
+ 				$section = $request->getVal( 'section' );
+ 				$oldid = $request->getVal( 'oldid' );
+ 				if( !$this->getVal( 'UseExternalEditor' ) || $action=='submit' || $internal ||
+ 				   $section || $oldid || ( !$user->getOption( 'externaleditor' ) && !$external ) ) {
++
++		///-------------------------------------------
++				// XXADDED
++					// do we have a title? if not, it's a new article, use the wrapper.
++					if ($request->getVal('advanced') != 'true') {
++						$newArticle = false;
++						// if it's not new, is it already a wikiHow?
++						$validWikiHow = false;
++						if ($title->getNamespace() == NS_MAIN && $request->getVal('section', null) == null) {
++
++								if ( $request->getVal( "title" ) == "") {
++										$newArticle = true;
++								} else if ($title->getArticleID() == 0) {
++										$newArticle = true;
++								}
++
++								if (!$newArticle) {
++										$wHow = new WikiHow();
++										$wHow->loadFromArticle($article);
++										$validWikiHow = $wHow->useWrapperForEdit($article);
++
++										//echo "valid $validWikiHow";
++										//return;
++								}
++						}
++
++						// use the wrapper if it's a new article or
++						// if it's an existing wikiHow article          
++						$t = $request->getVal('title', null);
++						if ($t != null && $t != wfMsg('mainpage') && ($user->getOption('useadvanced', false) && !$request->getVal('override', null)) ) {
++							//use advanced if they have already set a title and have the default preference setting
++						} else if ($action != "submit") {
++							if ($newArticle || $action == 'submit2' ||
++							($validWikiHow &&
++							(!$user->getOption('useadvanced', false) || $request->getVal("override", "") == "yes" )))
++							{
++								$editor = new EditPageWrapper( $article );
++								$editor->edit();
++								break;
++							}
++						}
++		///-------------------------------------------
++
++				}
++						
+ 					$editor = new EditPage( $article );
+ 					$editor->submit();
+ 				} elseif( $this->getVal( 'UseExternalEditor' ) && ( $external || $user->getOption( 'externaleditor' ) ) ) {
+@@ -420,6 +496,7 @@
+ 					$extedit = new ExternalEdit( $article, $mode );
+ 					$extedit->edit();
+ 				}
++			 } //wfRunHooks( 'CustomEditor
+ 				break;
+ 			case 'history':
+ 				global $wgRequest;

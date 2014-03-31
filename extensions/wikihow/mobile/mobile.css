@@ -1,0 +1,481 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{
+	margin:0; padding:0; 
+	font-family:Helvetica, Arial, Sans Serif;
+}
+
+a{text-decoration:none; color:#038aaf;}
+a img{border:none;}
+.floatright{float:right; margin:0 0 11px 11px;}
+.floatleft{float:left; margin:0 11px 11px 0;}
+.clear{clear:both;}
+.clearall{clear:both;}
+
+#header { 
+	display: table;
+	background-color: #93B874;
+	height: 30px;
+	width: 100%;
+	position: fixed;
+	z-index: 50;
+	top: 0;
+	margin-top: 0;
+	border-bottom: 4px solid #FFF;
+}
+#header.typing{ position: absolute; }
+
+#header_logo { 
+	display: table-cell;
+	vertical-align: middle;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(/extensions/wikihow/mobile/images/wikihow_logo_230.png);
+	background-size: 115px;
+	width: 115px;
+	height: 38px;
+	padding: 0 14px;
+}	
+#header_logo a {
+	width: 100%;
+	height: 38px;
+	display: block;
+}
+
+#header_tag {
+	display: none;
+	font-weight: bold;
+	font-size: .9em;
+	color: #FFF;
+	text-align: center;
+	margin-bottom: 45px;
+	width: 100%;
+}
+
+#header_login {
+	width: 50px;
+	height: 16px;
+	display: table-cell;
+	/*background-image: url(/extensions/wikihow/mobile/images/login.svg), url(/extensions/wikihow/mobile/images/login.png);*/
+	background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB3aWR0aD0iMTAwLjE4N3B4IiBoZWlnaHQ9IjkwLjM5M3B4IiB2aWV3Qm94PSIwIDAgMTAwLjE4NyA5MC4zOTMiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEwMC4xODcgOTAuMzkzIgoJIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBmaWxsPSIjM0U2MzJGIiBkPSJNOC4zLDc1LjI3MmM0LjU3My0yLjY5OSwxOS43NzItOS4zMDUsMTkuNzcyLTkuMzA1bDAuMjkxLTQuOTQzYzAsMC0zLjg2Ny03LjEyMy00LjM2MS04LjE0MgoJcy0wLjU4Mi00LjA3MS0wLjU4Mi00LjA3MXMtNi4xMDUtMS4xNjMtMy43NzktMS40NTNjMi4zMjYtMC4yOTEsNC4wNy0wLjAwMSwzLjc3OS0xLjE2NGMtMC4yOTEtMS4xNjItMS43NDQtMi4wMzUtMi4zMjYtMi45MDcKCXMwLTQuMzYyLDAtNS41MjVzLTEuMTYzLTQuOTQzLTEuNzQ0LTcuODUxYy0wLjU4Mi0yLjkwOCwyLjYxNy0xNC41NCwyLjYxNy0xNC41NHM2LjEwNS05LjU5NSwxMC4xNzgtMTAuMTc3CgljNC4wNy0wLjU4Miw0LjM2MS0yLjkwOCw0LjM2MS0yLjkwOHM4LjcyMy00Ljk0MywxNi4yODMtMC4yOWM3LjU2MSw0LjY1Miw3LjU2MSw0LjA3LDkuODg3LDUuODE1CgljMy40ODksMi45MDcsNS44MTYsMTcuNzM3LDUuODE2LDE3LjczN3MxLjQ1Myw5Ljg4NywwLjI5LDEyLjIxM2MtMS4xNjMsMi4zMjctMy40ODksMy43OC00LjM2Miw1LjIzNAoJYy0wLjg3MiwxLjQ1NC0yLjMyNiwyLjYxNy0yLjYxNyw2LjM5N2MwLjI5MSwyLjMyNiwzLjE5OSwxLjc0NCwzLjE5OSwxLjc0NHMtMS4xNjMsMi4wMzYtMy43NzksMi4wMzYKCWMtNC4wNzItMC44NzItMi4wMzYsMC4yOTEtMS43NDYsMS4xNjNjMC4yOTEsMC44NzItMS43NDQsNC4zNjEtMS43NDQsNC4zNjFsMi4zMjYsMi45MDhjMCwwLDE4LjIxNyw1Ljk2NCwyNC4xMzUsOS4zMDUKCXMxNS45OTMsMTkuNDgyLDE1Ljk5MywxOS40ODJIMEMwLDkwLjM5MywzLjcyNyw3Ny45NzMsOC4zLDc1LjI3MnoiLz4KPHJlY3QgeT0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI5MC4zOTMiLz4KPC9zdmc+Cg==');
+	background-position: center 7px;
+	background-repeat: no-repeat;
+	background-size: 28px;
+	border-left: 4px solid #FFF;
+	padding-top: 34px;
+	font-size: 9px;
+	font-weight: bold;
+	color: #3E632F;
+	text-align: center;
+}
+
+#header_search {
+	display: table-cell;
+	vertical-align: middle;
+	padding-right: 5px;
+}
+
+.search { 
+	overflow: hidden;
+	background-color: #b3cd9e;
+	padding: 6px 8px 6px 6px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	margin: 0 5px;
+}
+
+.search .cse_q {
+	border: none;
+	background-color: #b3cd9e;
+	color: #FFF;
+	font-size: 1em;
+	width: 87%;
+}
+
+.search .cse_sa { 
+	width: 13px; 
+	height: 16px;
+	margin-top: 2px;
+	float: right;
+/*	background-image: url(/extensions/wikihow/mobile/images/search.svg), url(/extensions/wikihow/mobile/images/mag_glass.png);*/
+/*	background-image: url(/extensions/wikihow/mobile/images/search.svg);*/
+	background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iODEuMjE0cHgiIGhlaWdodD0iMTAwcHgiIHZpZXdCb3g9IjAgMCA4MS4yMTQgMTAwIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4MS4yMTQgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik04MS4yMTQsOTAuMDk1TDYzLjAxNSw2MS42MDFjNi4yMDEtNi41NTMsMTAuMDM5LTE1LjM2NSwxMC4wMzktMjUuMDc2QzczLjA1NCwxNi4zODQsNTYuNjY0LDAsMzYuNTIzLDANCglDMTYuMzg1LDAsMCwxNi4zODQsMCwzNi41MjVzMTYuMzg1LDM2LjUzLDM2LjUyMywzNi41M2MzLjc5NywwLDcuNDY0LTAuNTg0LDEwLjkwNi0xLjY2N0w2NS43MDEsMTAwTDgxLjIxNCw5MC4wOTV6IE0xMy44MDUsMzYuNTI1DQoJYzAtMTIuNTUxLDEwLjE3NC0yMi43MjEsMjIuNzE4LTIyLjcyMWMxMi41NTEsMCwyMi43MjUsMTAuMTY5LDIyLjcyNSwyMi43MjFjMCwxMi41NTYtMTAuMTc0LDIyLjcyNS0yMi43MjUsMjIuNzI1DQoJQzIzLjk3OSw1OS4yNSwxMy44MDUsNDkuMDgxLDEzLjgwNSwzNi41MjV6Ii8+DQo8L3N2Zz4NCg==');
+	background-color: #b3cd9e;
+	background-size: 13px;
+	border: none;
+	cursor: pointer;
+}
+
+.home_label {
+	background-image: url(/extensions/wikihow/mobile/images/HowTo_Label.svg), url(/extensions/wikihow/mobile/images/label_howto_en.png);
+	width: 88px;
+	height: 51px;
+	position:absolute;
+	margin: -50px 0 0 3px;
+	z-index:1;
+}
+
+.fa_head {    
+	background-color: #435F2C;
+    color: #FFFFFF;
+    padding: 7px;
+    text-align: center;
+	margin: 18px 0 5px 0;
+ }
+
+#featured_articles {
+	max-width: 730px;
+	height: 340px;
+	margin: 0 auto;
+	border: 5px solid #FFF;
+}
+
+#featured_articles .related_box {
+	height: 156px;
+	float: left;
+	position: relative;
+}
+
+#featured_articles .related_box p {
+	position: absolute;
+	width: 206px;
+}
+
+#spotlight_article {
+	margin: 0 auto 15px auto;
+	min-width: 290px;
+	font-size: 1.6em;
+}
+#spotlight_article h1 { 
+	font-size: 1.3em; 
+	padding: 3px 8px 0 8px; 
+}
+#spotlight_image {
+	margin: 0 auto;
+	max-width: 600px;
+}
+#spotlight_article #intro_img { 
+	width: 100%;
+	max-width: 600px;
+}
+#spotlight_article p { 
+	font-size: .85em; 
+	padding: 0 8px;
+}
+
+#main_page { padding: 65px 0 20px 0; }
+
+#main_tag {
+    background-color: #E9E9E9;
+    border-bottom: 2px solid #93B874;
+    color: #435F2C;
+    font-size: 1.1em;
+	margin-top: -14px;
+    padding: 10px;
+    text-align: center;
+}
+
+.button {
+	background-color: #b3cd9e;
+	color: #FFF;
+	border-radius: 5px;
+	padding: 8px;
+	margin: 5px;
+	text-align: center;
+	font-weight: bold;
+}
+
+#surprise_p {
+	margin: 0 0 75px 0;
+	text-align: center;
+	font-size: 1.6em;
+	font-weight: bold;
+	clear: both;
+}
+
+/************FOOTER*****/
+
+#footbar ul {
+	display: table;
+	width: 100%;
+	margin-top: 1em;
+	position: fixed;
+	bottom: -2px;
+	z-index: 50;
+	border-top: 4px solid #FFF;
+	font-size: .95em;
+	background-color: #93B874;
+}
+
+#footbar li {
+	display: table-cell;
+	text-align: center;
+	background-image: none;
+	border-left: 4px solid #FFF;
+	padding: 0 0 2px 0;
+}
+
+#footbar li  a {
+	color: #FFF;
+	font-weight: bold;
+	display: block;
+	width: 100%;
+	height: 100%;
+	padding: 13px 0 15px 0;
+}
+
+#footbar li.foot_edit {
+	background-color: #01769f;
+	background-size: 20px;
+}
+#footbar li.foot_edit img { margin: 0 0 -3px 5px; }
+
+#footbar li#footbar_logo { 
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(/extensions/wikihow/mobile/images/logo_230_with_tag.png);
+	background-size: 115px;
+	width: 115px;
+	padding: 0 14px;
+	border-left: none;
+}
+#footbar li#footbar_logo_intl { 
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(/extensions/wikihow/mobile/images/wikihow_logo_230.png);
+
+	background-size: 115px;
+	width: 115px;
+	padding: 0 14px;
+	border-left: none;
+}
+
+#footbar li#footbar_logo a { 
+	margin-bottom: -19px;
+	height: 19px;
+	padding: 13px 2px 15px 2px;
+}
+
+#footbar li#footbar_random { 
+	/*background-image: url(/extensions/wikihow/mobile/images/random.svg);*/
+/*	background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iMTI4cHgiIGhlaWdodD0iOTguNDI5cHgiIHZpZXdCb3g9IjAgMCAxMjggOTguNDI5IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMjggOTguNDI5IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjNTc3MTQyIiBkPSJNMCw2Ni4wNjljMTEuNjE4LDAuMDAzLDIzLjI0MS0wLjE3OSwzNC44NTMsMC4xDQoJCWM0Ljc3OCwwLjExNCw4LjIxNS0xLjcxNCwxMS4yMDUtNS4wNzJjNS4yMjctNS44NzIsOS4wMTctMTIuNzA4LDEzLjA0OC0xOS4zODFjMy42ODktNi4xMSw3LjM4NS0xMi4yMDgsMTIuMDQtMTcuNjYzDQoJCWM1Ljg3OC02Ljg4NywxMi45NzYtMTAuNDIsMjIuMzY2LTEwLjQyYzkuNzIyLDAtMC4wODcsMC4wNTQsOS43MTEsMC4wNTRjMS40ODUsMCwxLjk1My0wLjQ2MSwxLjk1My0xLjk1OQ0KCQljMC0xMS41Ni0wLjAyOCwwLjE1NC0wLjAyOC0xMS43MjdjMy4yMDUsMi45MTksNS45MTcsNS4zNzQsOC42MTEsNy44NDhjNC4xMzYsMy43OTcsOC4yNTQsNy42MTQsMTIuMzk3LDExLjQwNA0KCQljMC41MjYsMC40ODItMC4wMTktMC4wMDIsMS44MzgsMS42NzZjMCwwLDAsMCwwLTAuMDAxYy03LjQ0MSw2Ljc2NS0xNC44ODQsMTQuMTAxLTIyLjg0NiwyMS4zMzkNCgkJYzAtMTEuMDUzLDAuMDUyLTAuMzg3LDAuMDUyLTExLjEzNWMwLTIuMjE1LTAuNjU0LTIuNjY5LTIuNzM5LTIuNjY5Yy05Ljc5OCwwLTAuMDg0LDAuMDA3LTkuOTgxLDAuMDA3DQoJCWMtMy40MTEsMC02LjA1NywxLjE0OS04LjM4NiwzLjQ3N2MtNC4yMSw0LjIwOC03LjI3NCw5LjI0NC0xMC4zNTgsMTQuMjYxYy00LjYyMiw3LjUyNC04LjgyLDE1LjMyOS0xNC40MTEsMjIuMjE2DQoJCWMtNC43NTIsNS44NTQtMTAuMTY3LDEwLjgxOS0xNy45ODcsMTIuMTUzYy0xLjIwOCwwLjIwNy0yLjQ1MywwLjI3Ny0zLjY4MSwwLjI4MUMyNS4xMDQsODAuODk2LDEyLjU1Miw4MC45MDcsMCw4MC45MjUNCgkJQzAsNzUuOTczLDAsNzEuMDIxLDAsNjYuMDY5eiIvPg0KCTxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjNTc3MTQyIiBkPSJNMTA1LjIwMyw5OC40MjljMC0zLjIwNSwwLTYuNzE5LDAtMTAuNTMxDQoJCWMwLTIuODgzLTAuNTM1LTMuOTA2LTMuNjM1LTMuNzk5Yy00LjkyMiwwLjE3LTkuODkzLDAuNTMzLTE0Ljc5OC0wLjM0NWMtNy4zMzEtMS4zMTMtMTIuNzQ2LTUuNTY0LTE3LjE3Ni0xMS4zMTYNCgkJYy0wLjY1Ni0wLjg1My0wLjQ2NC0xLjUzMiwwLjA1My0yLjMxNWMyLjYwNi0zLjk1MSw1LjE5My03LjkxNSw3Ljk5My0xMi4xODhjMS43NTUsMi41NTgsMy4xOSw0Ljk4Myw1LjA3Niw3LjA3Mw0KCQljMi42MjIsMi45MDUsNS42ODcsNC4zNzcsOS43NTcsNC4zNzdjMTAuMzMyLDAsMC4wOTQsMCwxMC4yNjksMGMxLjc5NiwwLDIuNDA2LTAuNDA4LDIuNDA2LTIuMzcxYzAtNy43MjksMC03LjE3OSwwLTExLjQxNQ0KCQljNy45MDUsNy4xODMsMTUuMzc2LDEzLjM5NywyMi44NDYsMjAuMTg0YzAuMDEzLDAsMC0wLjAxMiwwLTAuMDAxTDEwNS4yMDMsOTguNDI5eiIvPg0KCTxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjNTc3MTQyIiBkPSJNMCwxNi45MjhjMTIuNTY2LDAuMDE4LDI1LjEzMiwwLjAzOCwzNy42OTksMC4wNTUNCgkJYzYuODE1LDAuMDEsMTIuNTM5LDIuNjk1LDE3LjQ5NSw3LjE5NmMwLjc4NywwLjcxNSwxLjc5MiwxLjQwNiwwLjg2OCwyLjg1OWMtMi41OSw0LjA3Ni01LjA1NCw4LjIzMS03LjU4MywxMi4zODINCgkJYy0xLjM2LTEuNTMtMi40NzMtMi45NjMtMy43NzEtNC4yMDRjLTIuNDE4LTIuMzExLTUuMjExLTMuNTM1LTguNzIyLTMuNDk0QzIzLjk5MiwzMS44NiwxMS45OTYsMzEuNzgxLDAsMzEuNzg1DQoJCUMwLDI2LjgzMywwLDIxLjg4LDAsMTYuOTI4eiIvPg0KPC9nPg0KPC9zdmc+DQo=');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 26px;*/
+}
+#footbar li#footbar_random a { 
+/*	padding: 13px 10px 15px 10px; 
+	margin-bottom: -19px;
+	height: 19px;*/
+}
+#footbar li#footbar_random img { 
+	margin: 0 7px -5px 0;
+}
+
+
+#footer { display: none; }
+
+
+/********************RESPONSIVE PART*/
+@media only screen and (max-width: 730px) {
+	#featured_articles { max-width: 484px; }
+}
+
+/* SCREEN < 599 PIXELS (PORTRAIT WIDTH OR LANDSCAPE HEIGHT) */
+@media only screen and (max-width: 599px), 
+	only screen and (max-height: 420px) and (orientation:landscape) {
+	#header {
+		padding: 6px 0 5px 0;
+	}
+	#header_logo { 
+		height: 19px;
+	}	
+	#header_logo a { height: 19px; }
+	#header_login { display: none; }
+		
+	#main_page { padding-top: 56px; }
+	
+	#spotlight_article {
+		font-size: 1.2em;
+	}
+
+	#featured_articles {
+		display: table;
+		max-width: 630px;
+	}
+
+	#featured_articles .related_box {
+		height: auto;
+		float: none;
+	}
+	
+	#featured_articles .related_box p {
+		position: relative;
+		width: auto;
+	}
+
+	.fa_row { 
+		display: table-row;
+		height: 156px;
+	}
+
+	#surprise_p { margin: 15px 0 0 0; }
+
+	#footbar { display: none; }
+	
+	#footer {
+		display: block;
+		background-color: #93B874;
+		width: 100%;
+		padding-top: 8px;
+	}
+
+	#footer .search { 
+		width: 90%;
+		float: none;
+		background-color: #b3cd9e;
+		padding: 6px 8px 6px 6px;
+		border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		margin: 0 auto 8px auto;
+	}
+	
+	#footer_links {
+		background-color: #ECF1E2;
+		padding: 10px;
+		text-align: center;
+		font-size: .9em;
+		font-weight: bold;
+	}
+	
+	#footer_links li {
+		display: inline;
+		/*background-image: url(/extensions/wikihow/mobile/images/bullet.svg), url(/extensions/wikihow/mobile/images/bullet.png);*/
+		background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB3aWR0aD0iNTBweCIgaGVpZ2h0PSI1MHB4IiB2aWV3Qm94PSIwIDAgNTAgNTAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGNpcmNsZSBmaWxsPSIjQkJCQkJCIiBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiLz4KPC9zdmc+Cg==');
+		background-repeat: no-repeat;
+		background-position: 0 center;
+		background-size: 6px;
+		padding: 0 6px 0 15px;
+		margin-left: 1px;
+	}
+	#footer_links li.nodot{
+		background: none;
+		padding-left: 0;
+	}
+}
+
+/*
+ * special landscape instructions
+ */
+@media only screen and (max-width: 420px) and (orientation:landscape)  {
+	#header { position: absolute; }
+}
+
+/*
+ * User completed images file uploader
+ */
+
+#image-upload-input {
+	position: relative;
+	width: 235px;
+	height: 50px;
+	overflow: hidden;
+	border: 1px solid #93b874;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	background-color: #e3f8d4;
+	padding: 0px;
+	vertical-align: middle;
+}
+
+#image-upload-button {
+	position: absolute;
+	width: 53px;
+	height: 50px;
+	border: 1px solid #93b874;
+	left: -3px;
+	padding: 0;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#image-upload-file {
+	font: 68px monospace;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
+}
+
+#image-upload-button-div {
+	height: 50px;
+	width: 180px;
+	position: absolute;
+	padding: 0;
+	vertical-align: middle;
+	text-align: center;
+	left: 55px;
+}
+
+#image-upload-button-p {
+	display: table-cell;
+	height: 50px;
+	padding: 0;
+	vertical-align: middle;
+	text-align: center;
+	color: #234804;
+}
+
+#image-upload-delete {
+	font-size: .75em;
+}
+
+#image-upload-delete-confirm {
+	font-size: .75em;
+}
+
+.rpt_img {
+	/* set to not display  for logged out, cookied users, since parser cache won't be cleared*/
+	display: none; 
+}
+
+.ad_label_mobile{
+	background-color: #363;
+	width: 18px;
+	padding: 2px;
+	line-height: normal;
+	color: #ffffff;
+	font-size: 13px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	float:left;
+	clear:left;
+	margin-right:5px;
+}
+
+.ad_label_long_mobile{
+	background-color: #363;
+	padding: 2px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	font-size: 13px;
+	color:#fff;
+	clear:left;
+	display: inline-block;
+	line-height: normal;
+}
+
+.wh_ad_inner {
+	float:left;
+}
+

@@ -1,0 +1,224 @@
+/*HEAD*/
+#search_head {
+	background-color: #F5F5F5;
+	padding: 20px;
+	border-top: 1px solid #d7d1c4;
+	border-bottom: 1px solid #d7d1c4;
+	margin: 10px 0 20px 0;
+}
+
+.lo_search_head {
+	padding: 13px !important;
+}
+
+#search_head INPUT {
+    font-size: 1.3em;
+}
+
+.lo_search_button {
+	padding-left: 5px;
+	font-size: 1.1em !important;
+}
+
+#search_head #keywords {
+	font-size: 1.6em;
+    color: #333333;
+    height: 30px;
+    padding: 5px 0 3px 10px;
+    width: 270px;
+	float: left;
+	margin-right: 10px;
+}
+
+.lo_q {
+	font-size: 1em !important;
+	height: 15px !important;
+}
+
+#search_head .result_count {
+	float: right;
+	line-height: 38px;
+}
+
+.lo_count {
+	line-height: 25px !important;
+}
+
+
+div.sr_for {
+	font-size: 1.6em;
+	padding: 0 27px 10px 23px;
+}
+
+.lo_for {
+	font-size: 1.3em !important;
+}
+
+h4 {
+	font-weight: normal;
+}
+
+
+/*THE RESULT LIST*/
+#searchresults_list{
+	font-size: .9em;
+}
+
+#searchresults_list a.result_link {
+	font-size: 1.6em; 
+}
+
+/*result node*/
+#searchresults_list .result {
+	border-bottom: 1px solid #d7d1c4;
+	padding: 10px 27px 10px 23px;
+	min-height: 75px;
+}
+
+/* icon section */
+#searchresults_list ul.search_results_stats {
+	/*margin-top: 10px; */
+	padding: 0;
+}
+
+#searchresults_list ul.search_results_stats li {
+	display: inline;
+	background: url(/skins/WikiHow/images/search_icons.png) no-repeat left 5px;
+	padding-left: 16px;
+	margin-right: 15px;
+	line-height: 15px;
+}
+#searchresults_list ul.search_results_stats li.sr_video { background-position: 0 -13px; }
+#searchresults_list ul.search_results_stats li.sr_steps { background-position: 0 -33px; }
+#searchresults_list ul.search_results_stats li.sr_view { 
+	background-position: 0 -50px;
+	padding-left: 22px;
+}
+
+
+#searchresults_list div.result_thumb {
+	float: right;
+	width: 75px;
+	height: 75px;
+	overflow: hidden;
+}
+#searchresults_list div.cat_thumb {
+	width: 75px;
+	height: 50px;
+}
+/*
+div.searchresult_0 {
+	width: 600px;	
+	margin-bottom: 5px;
+	padding: 3px;
+	padding-left: 10px;
+}
+div.searchresult_1 {
+	width: 600px;	
+	background: #eee;
+	margin-bottom: 5px;
+	padding: 3px;
+	padding-left: 10px;
+}*/
+
+.sr_suggest {
+	font-size: 1.2em;
+	padding: 0 27px 10px 23px;
+}
+
+.sr_noresults {
+	text-align: center;
+	font-size: 1.3em;
+	padding: 30px 27px 150px 23px;
+	border-bottom: 1px solid #d7d1c4;
+}
+
+#searchresults_footer {
+	padding: 10px; 
+	margin: 0; 
+	font-size: 1.1em; 
+	font-weight: bold; 
+	background-color: #F5F5F5;
+	text-align: center;	
+}
+
+#searchresults_footer div.sr_prev {
+	float: left; 
+}
+
+#searchresults_footer div.sr_next {
+	float: right; 
+	text-align: right;
+}
+
+#searchresults_footer div.sr_text {
+	text-align: center;
+	font-weight: normal;
+	font-size: .85em;
+	margin: 15px;
+}
+
+#article_tabs_line { display: none; }
+
+#article {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+#article div.article_inner {
+	padding-bottom: 0;
+}
+
+.lo_list {
+	float: left;
+	width: 512px;
+	margin-bottom: 20px;
+}
+
+.lo_result {
+	border-bottom: 0px !important;
+	padding: 20px 27px 0px 23px !important;
+	min-height: 0px !important;
+}
+
+#lo_search {
+	margin-left: -2px;
+	margin-right: 1px;
+}
+
+.lo_footer {
+	clear: both;
+	border-top: 1px solid #D7D1C4;
+	border-bottom: 1px solid #D7D1C4;
+}
+
+.lo_url {
+	color: #363;
+	color: #01769F;
+	font-size: 14px;
+}
+
+.lo_result_link {
+	font-size: 16px !important;
+	color: #01769F;
+	clear: both;
+}
+
+#lo_searchresults_list {
+	margin-left: 20px;
+}
+
+.lo_abstract {
+	font-size: 13px;
+}
+
+#adcontainer2{
+	width: 480px; 
+	margin-left: 20px;
+}
+
+#adcontainer1{
+	float: right; 
+	width: 300px;
+	margin-right:150px;
+}

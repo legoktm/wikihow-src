@@ -1,0 +1,11 @@
+/*en-biggen the text input boxes for easier tapping*/
+INPUT { font-size: 1.8em; }
+
+/*make the search button proportional to the text inputs*/
+INPUT.SearchMe { font-size: 1.3em; }
+
+/*fix some overlapping on the home page*/
+DIV#multilanguages { padding-bottom: 70px; }
+
+/*slider peaking out from the side for iPhone iOS4*/
+#sliderbox { display: none; }

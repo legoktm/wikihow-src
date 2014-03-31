@@ -1,0 +1,69 @@
+--- mediawiki-1.9.3/includes/SpecialUpload.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialUpload.php	2007-11-14 08:31:36.000000000 -0600
+@@ -670,7 +670,18 @@
+ 		}
+ 
+ 		$wgOut->addHTML( "
+-	<form id='uploadwarning' method='post' enctype='multipart/form-data' action='$action'>
++				<script type='text/javascript'>
++				function checkFFBug() {
++					var license = document.getElementById('wpLicense');
++					if (license && (license.value == 'nolicense' || license.value == 'No License' ) 
++						&& navigator.userAgent.toLowerCase().indexOf('firefox') >= 0) {
++						return confirm('" . wfMsg('no_license_selected') . "');	
++					}
++					return true;
++			}
++			</script>
++
++	<form id='uploadwarning' method='post' enctype='multipart/form-data' action='$action' onsubmit=\"return checkFFBug();\">
+ 		<input type='hidden' name='wpIgnoreWarning' value='1' />
+ 		<input type='hidden' name='wpSessionKey' value=\"" . htmlspecialchars( $this->mSessionKey ) . "\" />
+ 		<input type='hidden' name='wpUploadDescription' value=\"" . htmlspecialchars( $this->mUploadDescription ) . "\" />
+@@ -771,7 +782,17 @@
+ 		}
+ 
+ 		$wgOut->addHTML( "
+-	<form id='upload' method='post' enctype='multipart/form-data' action=\"$action\">
++				<script type='text/javascript'>
++				function checkFFBug() {
++					var license = document.getElementById('wpLicense');
++					if (license && (license.value == 'nolicense' || license.value == 'No License' ) 
++						&& navigator.userAgent.toLowerCase().indexOf('firefox') >= 0) {
++						return confirm('" . wfMsg('no_license_selected') . "');	
++					}
++					return true;
++			}
++			</script>
++	<form id='upload' method='post' enctype='multipart/form-data' action=\"$action\" onsubmit=\"return checkFFBug();\">
+ 		<table border='0'>
+ 		<tr>
+ 	  {$this->uploadFormTextTop}
+@@ -789,7 +810,7 @@
+ 		<tr>
+ 			<td align='right'><label for='wpUploadDescription'>{$summary}</label></td>
+ 			<td align='left'>
+-				<textarea tabindex='3' name='wpUploadDescription' id='wpUploadDescription' rows='6' cols='{$cols}'{$ew}>" . htmlspecialchars( $this->mUploadDescription ) . "</textarea>
++				<textarea tabindex='3' name='wpUploadDescription' id='wpUploadDescription' rows='6' cols='50'{$ew}>" . htmlspecialchars( $this->mUploadDescription ) . "</textarea>
+ 	   {$this->uploadFormTextAfterSummary}
+ 			</td>
+ 		</tr>
+@@ -802,8 +823,8 @@
+ 			<td align='left'>
+ 				<script type='text/javascript' src=\"$wgStylePath/common/upload.js\"></script>
+ 				<select name='wpLicense' id='wpLicense' tabindex='4'
+-					onchange='licenseSelectorCheck()'>
+-					<option value=''>$nolicense</option>
++					onchange='licenseSelectorCheck()' style='width: 600px'>
++					<option value='nolicense'>$nolicense</option>
+ 					$licenseshtml
+ 				</select>
+ 			</td>
+@@ -856,6 +877,7 @@
+ 
+ 	</table>
+ 	</form>" );
++	$wgOut->addWikiText(wfMsg('usemultiupload'));
+ 	}
+ 
+ 	/* -------------------------------------------------------------- */

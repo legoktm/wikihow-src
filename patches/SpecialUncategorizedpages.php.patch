@@ -1,0 +1,40 @@
+--- mediawiki-1.9.3/includes/SpecialUncategorizedpages.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialUncategorizedpages.php	2008-04-01 09:59:21.000000000 -0500
+@@ -31,6 +31,18 @@
+ 		list( $page, $categorylinks ) = $dbr->tableNamesN( 'page', 'categorylinks' );
+ 		$name = $dbr->addQuotes( $this->getName() );
+ 
++		//XXADDED
++		$not_in  = "";
++		global $wgLanguageCode;
++		if ($wgLanguageCode == 'en') {
++        	$templates = wfMsgForContent('templates_further_editing');
++        	$t_arr = split("\n", $templates);
++        	$not_in  = " AND cl_to NOT IN ('" . implode("','", $t_arr) . "')";
++		}
++			
++      $templates = wfMsgForContent('templates_further_editing');
++        $t_arr = split("\n", $templates);
++        $templates = "'" . implode("','", $t_arr) . "'";
+ 		return
+ 			"
+ 			SELECT
+@@ -39,7 +51,7 @@
+ 				page_title AS title,
+ 				page_title AS value
+ 			FROM $page
+-			LEFT JOIN $categorylinks ON page_id=cl_from
++			LEFT JOIN $categorylinks ON page_id=cl_from $not_in
+ 			WHERE cl_from IS NULL AND page_namespace={$this->requestedNamespace} AND page_is_redirect=0
+ 			";
+ 	}
+@@ -53,6 +65,9 @@
+ 
+ 	$lpp = new UncategorizedPagesPage();
+ 
++	//XXADDED
++	global $wgOut;
++	$wgOut->addWikiText(wfMsg("Uncategorizedpages_info", wfMsg('templates_further_editing')));
+ 	return $lpp->doQuery( $offset, $limit );
+ }
+ 

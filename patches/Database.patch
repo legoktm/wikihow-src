@@ -1,0 +1,36 @@
+--- mediawiki-1.9.3/includes/Database.php	2007-02-20 20:20:32.000000000 -0600
++++ wiki19/includes/Database.php	2007-06-11 10:38:16.000000000 -0500
+@@ -86,7 +86,7 @@
+ 
+ 	function getPageTitle() {
+ 		global $wgSitename;
+-		return "$wgSitename has a problem";
++		return "$wgSitename is temporarily unavailable";
+ 	}
+ 
+ 	function getHTML() {
+@@ -96,7 +96,14 @@
+ 		# I give up, Brion is right. Getting the message cache to work when there is no DB is tricky.
+ 		# Hard coding strings instead.
+ 
+-		$noconnect = "<p><strong>Sorry! This site is experiencing technical difficulties.</strong></p><p>Try waiting a few minutes and reloading.</p><p><small>(Can't contact the database server: $1)</small></p>";
++		$noconnect = '<style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "/skins/WikiHow/main.css"; /*]]>*/</style>' . 
++			"<p style='padding-left:80px;'><strong>Sorry! This site is under going routine maintenance. </strong><br/>
++				<br/><br/>
++			The maintenance will problem will likely be completed shortly, try waiting a few minutes and refreshing the page. <br/><br/>
++			<b>Thanks for your patience.</b><br/><br/>
++			In the meantime, you can try accessing <a href='http://72.14.209.104/search?q=cache:" . $_SERVER['SCRIPT_URI'] . "'>Google's cached copy of this page</a>.
++			<!-- (Can't contact the database server: $1) -->
++			</p>";
+ 		$mainpage = 'Main Page';
+ 		$searchdisabled = <<<EOT
+ <p style="margin: 1.5em 2em 1em">$wgSitename search is disabled for performance reasons. You can search via Google in the meantime.
+@@ -134,7 +141,7 @@
+ 		}
+ 
+ 		$text = str_replace( '$1', $this->error, $noconnect );
+-		$text .= wfGetSiteNotice();
++//		$text .= wfGetSiteNotice();
+ 
+ 		if($wgUseFileCache) {
+ 			if($wgTitle) {

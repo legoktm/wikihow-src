@@ -1,0 +1,156 @@
+#editfinder_preview, #editfinder_preview_updated {
+
+}
+#editfinder_preview_updated { padding-top: 0; }
+
+#editfinder_preview .edit {
+	display: none;
+}
+
+#editfinder_upper {
+	background: url(eraser.jpg) no-repeat top right;
+	height: 82px;
+	line-height: 82px;
+	padding-left: 20px;
+}
+
+
+#editfinder_options {
+	font-size: 1em;
+	float: right;
+}
+#editfinder_options .button {
+	float: right;
+}
+
+.editfinder_button_yes {
+	background:url(./editfinder_yes.png) no-repeat scroll left top transparent;
+	height:26px;
+	line-height:25px;
+	width:153px;
+	padding-left: 10px;
+	font-size: .9em;
+}
+.editfinder_button_yes:hover { background-position: 0 -28px; }
+.editfinder_button_yes:active { background-position: 0 -57px; }
+
+#efcc_choices {
+	text-align: right;
+	line-height: 27px;
+	}
+	#efcc_yes { margin-right: 8px; }
+	#efcc_no { float: right; }
+
+#editfinder_title {
+	margin: 15px 15px 0 15px;
+	border: 1px solid #CDCDCD;
+	background-color: #F5F5F5;
+}
+#editfinder_title h1 {
+	font-size: 1.5em;
+	padding: 10px 15px;
+}
+
+#editfinder_spinner {
+	display: none;
+	margin: 50px;
+	text-align: center;
+}
+
+#editfinder_cat_footer {
+	padding: 0 0 25px 0;
+	text-align: center;
+	font-size: 18px;
+	border-top: #CDCDCD;
+}
+#editfinder_cat_footer a {
+	padding-left: 2px;
+}
+
+h2 .editsectionbutton {
+	display: none;
+}
+
+.template_top {
+	display: none;
+}
+
+#article_tabs_line {
+	display: none;
+}
+
+div#article { padding-bottom: 0; }
+
+#drafts-list-box { display: none; }
+#wpDiff { display: none; }
+#othereditlink { display: none; }
+
+.editfinder_stats table {
+    border-collapse: collapse;
+    color: #555555;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2px;
+    width: 90%;
+}
+
+.editfinder_stats td {
+	border-bottom: 1px dotted #A59983;
+    border-collapse: collapse;
+    padding: 2px;
+}
+
+
+#editfinder_preview_updated { display: none; }
+
+#editfinder_preview_updated .previewnote {
+	background: #FDFCDE;
+	padding:15px;
+	border-bottom: 1px solid #CCC;
+	margin-bottom: 20px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.editfinder_modal p {
+	padding-bottom: 1em;
+}
+
+.editfinder_modal .template_type {
+	font-weight: bold;
+}
+
+a.clickfail {
+	color: #888;
+	cursor: default;
+	background-position: 0 -87px;
+}
+a.clickfail:hover {
+	text-decoration: none;
+	background-position: 0 -87px;
+}
+
+.editOptions #wpSummary {
+	height: 17px;
+	font-size: 12px;
+	margin-bottom: 5px;
+}
+
+.editOptions {
+	font-size:14px;
+}
+
+#wpTextbox1{
+	height: auto;
+}
+
+.editButtons {
+	padding-top:13px;
+	text-align: right;
+}
+
+#editfinder_cat_header {
+	font-size: .75em;
+	padding-top: .5em;
+}

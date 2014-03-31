@@ -1,0 +1,10 @@
+--- mediawiki-1.9.3/includes/SpecialContributions.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialContributions.php	2007-06-07 09:03:26.000000000 -0500
+@@ -262,6 +262,7 @@
+ 	$id = User::idFromName( $nt->getText() );
+ 	wfRunHooks( 'SpecialContributionsBeforeMainOutput', $id );
+ 
++	$wgOut->addHTML("<div style='font-size:95%; margin-bottom:10px;'>" . contributionsSub( $nt ) . "</div>" );
+ 	$wgOut->addHTML( contributionsForm( $options) );
+ 
+ 	$contribs = $finder->find();

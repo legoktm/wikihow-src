@@ -1,0 +1,19 @@
+
+#searchresults_list {
+	font-size: 110%;
+}
+
+div.searchresult_0 {
+	width: 600px;	
+	margin-bottom: 5px;
+	padding: 3px;
+	padding-left: 10px;
+}
+div.searchresult_1 {
+	width: 600px;	
+	background: #eee;
+	margin-bottom: 5px;
+	padding: 3px;
+	padding-left: 10px;
+}
+

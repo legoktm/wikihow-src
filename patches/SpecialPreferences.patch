@@ -1,0 +1,112 @@
+--- mediawiki-1.9.3/includes/SpecialPreferences.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialPreferences.php	2008-03-17 09:44:00.000000000 -0500
+@@ -29,6 +29,9 @@
+ 	var $mReset, $mPosted, $mToggles, $mSearchNs, $mRealName, $mImageSize;
+ 	var $mUnderline, $mWatchlistEdits;
+ 
++	//XXADDED
++	var $mUseAdvanced, $mIgnoreFanMail, $mScrollTalk;
++
+ 	/**
+ 	 * Constructor
+ 	 * Load some values
+@@ -71,6 +74,12 @@
+ 			$this->mPosted &&
+ 			$wgUser->matchEditToken( $request->getVal( 'wpEditToken' ) );
+ 
++        // XXADDED
++        $this->mUseAdvanced = $request->getVal('wpOpuseadvanced');
++        $this->mDisableWarning = $request->getVal('wpOpdisablewarning');
++		$this->mIgnoreFanMail = $request->getVal('wpOpignorefanmail');
++		$this->mScrollTalk = $request->getVal('wpOpscrolltalk');
++
+ 		# User toggles  (the big ugly unsorted list of checkboxes)
+ 		$this->mToggles = array();
+ 		if ( $this->mPosted ) {
+@@ -79,7 +88,6 @@
+ 				$this->mToggles[$tname] = $request->getCheck( "wpOp$tname" ) ? 1 : 0;
+ 			}
+ 		}
+-
+ 		$this->mUsedToggles = array();
+ 
+ 		# Search namespace options
+@@ -273,6 +281,12 @@
+ 		$wgUser->setOption( 'underline', $this->validateInt($this->mUnderline, 0, 2) );
+ 		$wgUser->setOption( 'watchlistdays', $this->validateFloat( $this->mWatchlistDays, 0, 7 ) );
+ 
++        // XXADDED
++        $wgUser->setOption( "useadvanced", $this->mUseAdvanced);
++        $wgUser->setOption( "disablewarning", $this->mDisableWarning);
++		$wgUser->setOption( "ignorefanmail", $this->mIgnoreFanMail);
++		$wgUser->setOption( "scrolltalk", $this->mScrollTalk);
++
+ 		# Set search namespace options
+ 		foreach( $this->mSearchNs as $i => $value ) {
+ 			$wgUser->setOption( "searchNs{$i}", $value );
+@@ -369,6 +383,11 @@
+ 		$this->mUnderline = $wgUser->getOption( 'underline' );
+ 		$this->mWatchlistDays = $wgUser->getOption( 'watchlistdays' );
+ 
++        // XXADDED
++		$this->mUseAdvanced = $wgUser->getOption("useadvanced");
++		$this->mIgnoreFanMail = $wgUser->getOption('ignorefanmail');
++		$this->mScrollTalk = $wgUser->getOption('scrolltalk');
++
+ 		$togs = User::getToggles();
+ 		foreach ( $togs as $tname ) {
+ 			$this->mToggles[$tname] = $wgUser->getOption( $tname );
+@@ -715,7 +734,7 @@
+ 			# otherwise the preference will get reset to 0 on submit
+ 			$wgOut->addHtml( wfHidden( 'wpQuickbar', $this->mQuickbar ) );
+ 		}
+-
++/*
+ 		# Skin
+ 		#
+ 		$wgOut->addHTML( "<fieldset>\n<legend>\n" . wfMsg('skin') . "</legend>\n" );
+@@ -757,7 +776,7 @@
+ 			}
+ 			$wgOut->addHTML( "</fieldset>\n\n" );
+ 		}
+-
++*/
+ 		# Files
+ 		#
+ 		$wgOut->addHTML(
+@@ -838,7 +857,7 @@
+ 
+ 		# Editing
+ 		#
+-		global $wgLivePreview, $wgUseRCPatrol;
++		global $wgLivePreview, $wgUseRCPatrol, $wgUser;
+ 		$wgOut->addHTML( '<fieldset><legend>' . wfMsg( 'textboxsize' ) . '</legend>
+ 			<div>' .
+ 				wfInputLabel( wfMsg( 'rows' ), 'wpRows', 'wpRows', 3, $this->mRows ) .
+@@ -847,9 +866,13 @@
+ 			"</div>" .
+ 			$this->getToggles( array(
+ 				'editsection',
+-				'editsectiononrightclick',
++				//'editsectiononrightclick',
+ 				'editondblclick',
+ 				'editwidth',
++				'useadvanced',
++				'disablewarning',
++				'ignorefanmail',
++				'scrolltalk',
+ 				'showtoolbar',
+ 				'previewonfirst',
+ 				'previewontop',
+@@ -857,9 +880,11 @@
+ 				'externaleditor',
+ 				'externaldiff',
+ 				$wgLivePreview ? 'uselivepreview' : false,
++				$wgUser->isSysop() ? 'autopatrol' : false,
+ 				'forceeditsummary',
+ 			) ) . '</fieldset>'
+ 		);
++		$this->mUsedToggles['autopatrol'] = true; # Don't show this up for users who can't; the handler below is dumb and doesn't know it
+ 
+ 		$wgOut->addHTML( '<fieldset><legend>' . htmlspecialchars(wfMsg('prefs-rc')) . '</legend>' .
+ 					wfInputLabel( wfMsg( 'recentchangescount' ),

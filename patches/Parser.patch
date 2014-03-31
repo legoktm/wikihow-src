@@ -1,0 +1,142 @@
+--- mediawiki-1.9.3/includes/Parser.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/Parser.php	2007-12-13 08:44:48.000000000 -0600
+@@ -225,7 +225,8 @@
+  		$this->mTemplates = array();
+  		$this->mTemplatePath = array();
+ 
+-		$this->mShowToc = true;
++		// XXCHANGED
++		$this->mShowToc = false;
+ 		$this->mForceTocPosition = false;
+ 		$this->mIncludeSizes = array(
+ 			'pre-expand' => 0,
+@@ -727,6 +728,7 @@
+ 			2 => array('file', '/dev/null', 'a')
+ 		);
+ 		$pipes = array();
++
+ 		$process = proc_open("$wgTidyBin -config $wgTidyConf $wgTidyOpts$opts", $descriptorspec, $pipes);
+ 		if (is_resource($process)) {
+ 			// Theoretically, this style of communication could cause a deadlock
+@@ -3394,6 +3396,9 @@
+ 	function formatHeadings( $text, $isMain=true ) {
+ 		global $wgMaxTocLevel, $wgContLang;
+ 
++		//XXADDED
++		global $wgShowEditSectionLink, $wgTitle;
++		
+ 		$doNumberHeadings = $this->mOptions->getNumberHeadings();
+ 		if( !$this->mTitle->userCanEdit() ) {
+ 			$showEditLink = 0;
+@@ -3407,6 +3412,9 @@
+ 			$showEditLink = 0;
+ 		}
+ 
++		//XXADDED
++		$showEditLink = $showEditLink && $wgShowEditSectionLink;
++		
+ 		# Get all headlines for numbering them and adding funky stuff like [edit]
+ 		# links - this is for later, but we need the number of headlines right now
+ 		$matches = array();
+@@ -3414,6 +3422,10 @@
+ 
+ 		# if there are fewer than 4 headlines in the article, do not show TOC
+ 		# unless it's been explicitly enabled.
++		
++		//XXADDED
++		$mw =& MagicWord::get( 'forceadv' );
++		$mw->matchAndRemove( $text ) ;
+ 		$enoughToc = $this->mShowToc &&
+ 			(($numMatches >= 4) || $this->mForceTocPosition);
+ 
+@@ -3432,7 +3444,8 @@
+ 		}
+ 
+ 		# Never ever show TOC if no headers
+-		if( $numMatches < 1 ) {
++		//XXCHANGED
++		if( $numMatches < 7 ) {
+ 			$enoughToc = false;
+ 		}
+ 
+@@ -3536,6 +3549,9 @@
+ 			# Avoid insertion of weird stuff like <math> by expanding the relevant sections
+ 			$canonized_headline = $this->mStripState->unstripBoth( $headline );
+ 
++		//XXXADDED
++			$sectionName = $headline;
++
+ 			# Remove link placeholders by the link text.
+ 			#     <!--LINK number-->
+ 			# turns into
+@@ -3584,11 +3600,40 @@
+ 			}
+ 			$head[$headlineCount] = $sk->makeHeadline( $level, $matches['attrib'][$headlineCount], $anchor, $headline, $editlink );
+ 
++//XXXX
++                        /// XXCHANGED
++                        if (!is_a($wgTitle, "FakeTitle") && Namespace::isTalk($wgTitle->getNamespace())) {
++                                @$head[$headlineCount] .= "\n<div class=\"talk-section\">";
++                        } else {
++                                // eg: id="steps", id="warnings", etc etc
++                                //$s = str_replace("_", " ", $anchor); // CSS doesn't like periods in them
++								$s = getDivIdForAnchor($sectionName); 
++
++							if (strpos($head[$headlineCount], "<h2>") !== false)
++                                @$head[$headlineCount] = "\n<div id=\"$s\"><div class='SecL'></div><div class='SecR'></div>" .$head[$headlineCount];
++                             else
++								@$head[$headlineCount] = "\n<div>" .$head[$headlineCount];
++                        }
++                        // have specific formatting for sections, such as TIPS WARNINGS STEPS
++                        if ($headlineCount > 0) {
++                                @$head[$headlineCount] = "\n</div> " . $head[$headlineCount];
++                        }
++
++//XXXX
+ 			$headlineCount++;
+ 			if( !$istemplate )
+ 				$sectionCount++;
+ 		}
+ 
++//XXXX
++
++                // XXADDED
++                if ($headlineCount > 0) {
++                        @$head[$headlineCount] .= "\n</div> \n";
++                }
++
++//XXXX
++
+ 		if( $enoughToc ) {
+ 			if( $toclevel<$wgMaxTocLevel ) {
+ 				$toc .= $sk->tocUnindent( $toclevel - 1 );
+@@ -3694,7 +3739,8 @@
+ 		$text = strtr( $text, array(
+ 			'~~~~~' => $d,
+ 			'~~~~' => "$sigText $d",
+-			'~~~' => $sigText
++			'~~~' => $sigText,
++			'~~#' => date('Y-m-d'),
+ 		) );
+ 
+ 		# Context links: [[|name]] and [[name (context)|]]
+@@ -4971,4 +5017,19 @@
+ 	}
+ }
+ 
++function getDivIdForAnchor ($anchor) {
++
++	$result = '';
++	$anchor = trim($anchor);
++	switch ($anchor)  {
++		case wfMsg('steps') : $result = 'steps'; break;
++		case wfMsg('tips') : $result = 'tips'; break;
++		case wfMsg('warnings') : $result = 'warnings'; break;
++		case wfMsg('thingsyoullneed') : $result = 'thingsyoullneed'; break;
++		case wfMsg('relatedwikihows') : $result = 'relatedwikihows'; break;
++		case wfMsg('sources') : $result = 'sources'; break;
++		case wfMsg('ingredients') : $result = 'ingredients'; break;
++	}
++	return $result;
++}
+ ?>

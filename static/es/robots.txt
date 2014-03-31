@@ -1,0 +1,262 @@
+#
+# robots.txt for non-en lang domains
+# based on wikipedia.org's robots.txt
+#
+# Note: contains /Special page prefixes for:
+# en, fr: /Special
+# es, pt: /Especial
+# de: /Spezial
+# it: /Speciale
+# nl: /Speciaal
+#
+
+# If your bot supports such a thing using the 'Crawl-delay' or another
+# instruction, please let us know.  We can add it to our robots.txt.
+#
+# Friendly, low-speed bots are welcome viewing article pages, but not
+# dynamically-generated pages please. Article pages contain our site's
+# real content.
+
+User-agent: UbiCrawler
+Disallow: /
+
+User-agent: DOC
+Disallow: /
+
+User-agent: Zao
+Disallow: /
+
+# Some bots are known to be trouble, particularly those designed to copy
+# entire sites. Please obey robots.txt.
+User-agent: sitecheck.internetseer.com
+Disallow: /
+
+User-agent: Zealbot
+Disallow: /
+
+User-agent: MSIECrawler
+Disallow: /
+
+User-agent: SiteSnagger
+Disallow: /
+
+User-agent: WebStripper
+Disallow: /
+
+User-agent: WebCopier
+Disallow: /
+
+User-agent: Fetch
+Disallow: /
+
+User-agent: Offline Explorer
+Disallow: /
+
+User-agent: Teleport
+Disallow: /
+
+User-agent: TeleportPro
+Disallow: /
+
+User-agent: WebZIP
+Disallow: /
+
+User-agent: linko
+Disallow: /
+
+User-agent: HTTrack
+Disallow: /
+
+User-agent: Microsoft.URL.Control
+Disallow: /
+
+User-agent: Xenu
+Disallow: /
+
+User-agent: larbin
+Disallow: /
+
+User-agent: libwww
+Disallow: /
+
+User-agent: ZyBORG
+Disallow: /
+
+User-agent: Download Ninja
+Disallow: /
+
+# wget in recursive mode uses too many resources for us.
+# Please read the man page and use it properly; there is a
+# --wait option you can use to set the delay between hits,
+# for instance.  Please wait 3 seconds between each request.
+User-agent: wget
+Disallow: /
+
+# Doesn't follow robots.txt anyway, but...
+User-agent: k2spider
+Disallow: /
+
+# Requests many pages per second
+# http://www.nameprotect.com/botinfo.html
+User-agent: NPBot
+Disallow: /
+
+# A capture bot, downloads gazillions of pages with no public benefit
+# http://www.webreaper.net/
+User-agent: WebReaper
+Disallow: /
+
+User-agent: HMSE_Robot
+Disallow: / 
+
+User-agent: Googlebot
+Allow: /Special:Categorylisting
+Allow: /Special:AllPages
+Allow: /Special:PopularPages
+Allow: /Special:NewPages
+Allow: /Special:Sitemap
+Allow: /Special:LSearch
+Allow: /Special:UserLogin
+Allow: /Special:BlockList
+Allow: /Special:Block
+Allow: /Special:EmailUser
+Allow: /Special:ThankAuthors
+Allow: /Especial:Categorylisting
+Allow: /Especial:AllPages
+Allow: /Especial:PopularPages
+Allow: /Especial:NewPages
+Allow: /Especial:Sitemap
+Allow: /Especial:LSearch
+Allow: /Especial:UserLogin
+Allow: /Especial:BlockList
+Allow: /Especial:Block
+Allow: /Especial:EmailUser
+Allow: /Especial:ThankAuthors
+Allow: /Spezial:Categorylisting
+Allow: /Spezial:AllPages
+Allow: /Spezial:PopularPages
+Allow: /Spezial:NewPages
+Allow: /Spezial:Sitemap
+Allow: /Spezial:LSearch
+Allow: /Spezial:UserLogin
+Allow: /Spezial:BlockList
+Allow: /Spezial:Block
+Allow: /Spezial:EmailUser
+Allow: /Spezial:ThankAuthors
+Allow: /Speciale:Categorylisting
+Allow: /Speciale:AllPages
+Allow: /Speciale:PopularPages
+Allow: /Speciale:NewPages
+Allow: /Speciale:Sitemap
+Allow: /Speciale:LSearch
+Allow: /Speciale:UserLogin
+Allow: /Speciale:BlockList
+Allow: /Speciale:Block
+Allow: /Speciale:EmailUser
+Allow: /Speciale:ThankAuthors
+Allow: /Speciaal:Categorylisting
+Allow: /Speciaal:AllPages
+Allow: /Speciaal:PopularPages
+Allow: /Speciaal:NewPages
+Allow: /Speciaal:Sitemap
+Allow: /Speciaal:LSearch
+Allow: /Speciaal:UserLogin
+Allow: /Speciaal:BlockList
+Allow: /Speciaal:Block
+Allow: /Speciaal:EmailUser
+Allow: /Speciaal:ThankAuthors
+Allow: /index.php?*action=credits
+Allow: /index.php?*action=edit
+Allow: /index.php?*action=watch
+Allow: /index.php?*action=protect
+Allow: /index.php?*printable
+Allow: /index.php?title=Special:Booksources
+Disallow: /w/
+Disallow: /forum/
+Disallow: /index.php
+Disallow: /*feed=rss
+Disallow: /*action=history
+Disallow: /*action=delete
+Disallow: /Special:
+Disallow: /Especial:
+Disallow: /Spezial:
+Disallow: /Speciale:
+Disallow: /Speciaal:
+Disallow: /api.php
+Disallow: /images/samplepdfs
+Disallow: /images/sampledocs*pdf
+Disallow: /images/sampledocs*doc
+Disallow: /images/sampledocs*txt
+Disallow: /*platform=
+Disallow: /*variant=
+Noindex: /w/
+Noindex: /forum/
+Noindex: /index.php
+Noindex: /*feed=rss
+Noindex: /*action=history
+Noindex: /*action=delete
+Noindex: /Special:
+Noindex: /Especial:
+Noindex: /Spezial:
+Noindex: /Speciale:
+Noindex: /Speciaal:
+Noindex: /api.php
+Noindex: /images/samplepdfs
+Noindex: /images/sampledocs*pdf
+Noindex: /images/sampledocs*doc
+Noindex: /images/sampledocs*txt
+Noindex: /*platform=
+Noindex: /*variant=
+
+User-agent: *
+Allow: /Special:Categorylisting
+Allow: /Special:AllPages
+Allow: /Special:PopularPages
+Allow: /Special:NewPages
+Allow: /Special:Sitemap
+Allow: /Special:LSearch
+Allow: /Especial:Categorylisting
+Allow: /Especial:AllPages
+Allow: /Especial:PopularPages
+Allow: /Especial:NewPages
+Allow: /Especial:Sitemap
+Allow: /Especial:LSearch
+Allow: /Spezial:Categorylisting
+Allow: /Spezial:AllPages
+Allow: /Spezial:PopularPages
+Allow: /Spezial:NewPages
+Allow: /Spezial:Sitemap
+Allow: /Spezial:LSearch
+Allow: /Speciale:Categorylisting
+Allow: /Speciale:AllPages
+Allow: /Speciale:PopularPages
+Allow: /Speciale:NewPages
+Allow: /Speciale:Sitemap
+Allow: /Speciale:LSearch
+Allow: /Speciaal:Categorylisting
+Allow: /Speciaal:AllPages
+Allow: /Speciaal:PopularPages
+Allow: /Speciaal:NewPages
+Allow: /Speciaal:Sitemap
+Allow: /Speciaal:LSearch
+Disallow: /w/
+Disallow: /forum/
+Disallow: /index.php
+Disallow: /*feed=rss
+Disallow: /*action=edit
+Disallow: /*action=history
+Disallow: /*action=delete
+Disallow: /*action=watch
+Disallow: /Special:
+Disallow: /Especial:
+Disallow: /Spezial:
+Disallow: /Speciale:
+Disallow: /Speciaal:
+Disallow: /images/samplepdfs
+Disallow: /images/sampledocs*pdf
+Disallow: /images/sampledocs*doc
+Disallow: /images/sampledocs*txt
+Disallow: /*platform=
+Disallow: /*variant=
+Crawl-delay: 2
+

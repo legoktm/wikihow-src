@@ -1,0 +1,170 @@
+***************
+*** 200,206 ****
+  		$status = $this->addNewaccountInternal();
+  		if( !$status->isGood() ) {
+  			$error = $this->getOutput()->parse( $status->getWikiText() );
+- 			$this->mainLoginForm( $error );
+  			return;
+  		}
+  
+--- 209,223 ----
+  		$status = $this->addNewaccountInternal();
+  		if( !$status->isGood() ) {
+  			$error = $this->getOutput()->parse( $status->getWikiText() );
++ 			//XXXXX
++ 			// Core hack by Gershon Bialer on December 2, 2013 to add full list of errors 
++ 			// for WikiHow design
++ 			$errorArray = $status->getErrorsArray();
++ 			$errorlist = array();
++ 			foreach($errorArray as $error) {
++ 				$errorlist[$error['message']] = $error;	
++ 			}
++ 			$this->mainLoginForm( $error, 'error', $errorlist );
+  			return;
+  		}
+  
+***************
+*** 236,242 ****
+  		$status = $this->addNewAccountInternal();
+  		if( !$status->isGood() ) {
+  			$error = $this->getOutput()->parse( $status->getWikiText() );
+- 			$this->mainLoginForm( $error );
+  			return false;
+  		}
+  
+--- 253,297 ----
+  		$status = $this->addNewAccountInternal();
+  		if( !$status->isGood() ) {
+  			$error = $this->getOutput()->parse( $status->getWikiText() );
++ 			//XXXXX
++ 			// Core hack by Gershon Bialer on December 2, 2013 to add full list of errors 
++ 			// for WikiHow design
++ 			$errorArray = $status->getErrorsArray();
++ 			$errorlist = array();
++ 			foreach($errorArray as $error) {
++ 				// We determine where the message goes
++ 				// AbortUserLogin stuff is a raw message, and so we consider all raw messages 
++ 				if($error && is_object($error) && get_class($error) == 'RawMessage') {
++ 					if(preg_match("@confirmation code@", $error->parse(), $matches)) {
++ 						$errorlist['captcha'][] = $error;
++ 					}
++ 					else {
++ 						$errorlist['username'][] = $error;	
++ 					}
++ 				}
++ 				elseif(is_array($error)) {
++ 					if(in_array($error[0], self::$BAD_USER_ERRORS)) {
++ 						if(!isset($errorlist['username'])) {
++ 							$errorlist['username'] = array();	
++ 						}
++ 						$errorlist['username'][] = $error;
++ 					}
++ 					elseif(in_array($error[0], self::$BAD_PASSWORD_ERRORS)) {
++ 						if(!isset($errorlist['password'])) {
++ 							$errorlist['password'] = array();	
++ 						}
++ 						$errorlist['password'][] = $error;
++ 					}
++ 					elseif(in_array($error[0], self::$BAD_EMAIL_ERRORS)) {
++ 						if(!isset($errorlist['email'])) {
++ 							$errorlist['email'] = array();	
++ 						}
++ 						$errorlist['email'][] = $error;
++ 					}
++ 				}
++ 			}
++ 
++ 			$this->mainLoginForm( $error, 'error', $errorlist );
+  			return false;
+  		}
+  
+***************
+*** 581,593 ****
+  		}
+  
+  		$this->mExtUser = ExternalUser::newFromName( $this->mUsername );
+  
+- 		# TODO: Allow some magic here for invalid external names, e.g., let the
+- 		# user choose a different wiki name.
+  		$u = User::newFromName( $this->mUsername );
+- 		if( !( $u instanceof User ) || !User::isUsableName( $u->getName() ) ) {
+  			return self::ILLEGAL;
+  		}
+  
+  		$isAutoCreated = false;
+  		if ( $u->getID() == 0 ) {
+--- 645,675 ----
+  		}
+  
+  		$this->mExtUser = ExternalUser::newFromName( $this->mUsername );
++ 		$u = null;
+  
++ 		// Check if $this->mName is actually an email address
++ 		$looksLikeEmail = strpos($this->mUsername, '@') !== false;
++ 		if ( $looksLikeEmail ) {
++ 			list($u, $count) = WikihowUser::newFromEmailAddress( $this->mUsername );
++ 		}
++ 		// Only do the username lookup if it didn't look like an email address
++ 		// or the email addresses didn't have exactly 1 account attached
++ 		if ( is_null( $u ) ) {
+  		$u = User::newFromName( $this->mUsername );
++ 			// Show error specific to email addresses if there's no username
++ 			// with an '@' in it either
++ 			if ($looksLikeEmail) {
++ 				if ($count < 1) {
++ 					return self::NO_EMAIL;
++ 				} elseif ($count > 1) {
++ 					return self::MULTIPLE_EMAILS;
++ 				}
++ 			}
++ 
++ 			if ( is_null( $u ) || !User::isUsableName( $u->getName() ) ) {
+  			return self::ILLEGAL;
+  		}
++ 		}
+  
+  		$isAutoCreated = false;
+  		if ( $u->getID() == 0 ) {
+***************
+*** 840,859 ****
+  			case self::NOT_EXISTS:
+  				if( $this->getUser()->isAllowed( 'createaccount' ) ) {
+  					$this->mainLoginForm( $this->msg( 'nosuchuser',
+- 						wfEscapeWikiText( $this->mUsername ) )->parse() );
+  				} else {
+  					$this->mainLoginForm( $this->msg( 'nosuchusershort',
+- 						wfEscapeWikiText( $this->mUsername ) )->text() );
+  				}
+  				break;
+  			case self::WRONG_PASS:
+- 				$this->mainLoginForm( $this->msg( 'wrongpassword' )->text() );
+  				break;
+  			case self::EMPTY_PASS:
+- 				$this->mainLoginForm( $this->msg( 'wrongpasswordempty' )->text() );
+  				break;
+  			case self::RESET_PASS:
+- 				$this->resetLoginForm( $this->msg( 'resetpass_announce' )->text() );
+  				break;
+  			case self::CREATE_BLOCKED:
+  				$this->userBlockedMessage( $this->getUser()->mBlock );
+--- 922,941 ----
+  			case self::NOT_EXISTS:
+  				if( $this->getUser()->isAllowed( 'createaccount' ) ) {
+  					$this->mainLoginForm( $this->msg( 'nosuchuser',
++ 								wfEscapeWikiText( $this->mUsername ) )->parse(), 'error', array('username') );
+  				} else {
+  					$this->mainLoginForm( $this->msg( 'nosuchusershort',
++ 								wfEscapeWikiText( $this->mUsername ) )->text(), 'error', array('username') );
+  				}
+  				break;
+  			case self::WRONG_PASS:
++ 				$this->mainLoginForm( $this->msg( 'wrongpassword' )->text(), 'error',array('password') );
+  				break;
+  			case self::EMPTY_PASS:
++ 				$this->mainLoginForm( $this->msg( 'wrongpasswordempty' )->text(), 'error', array('password') );
+  				break;
+  			case self::RESET_PASS:
++ 				$this->resetLoginForm( $this->msg( 'resetpass_announce' )->text());
+  				break;
+  			case self::CREATE_BLOCKED:
+  				$this->userBlockedMessage( $this->getUser()->mBlock );

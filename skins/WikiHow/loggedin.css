@@ -1,0 +1,7 @@
+#aside DIV.side_ad { display: none; }
+#lower_ads { display: none; }
+#sponsoredlinks { display: none; }
+#side_adm { display: inline; }
+#watch_tab {display:inline; }
+#user_action LI#nav_talk        { background-image: url(/skins/WikiHow/icon_talk.gif); color: #ccc; display:inline; }
+.tmp_li { display: block; }

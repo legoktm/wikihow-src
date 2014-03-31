@@ -1,0 +1,119 @@
+.hillary-static {
+    position: fixed;
+	top: 0;
+	z-index: 2;
+	width: 100%;
+	min-width: 320px;
+	border-top: 1px solid #cccccc;
+	background-color: #f4f4f4;
+	box-shadow: 0 2px 4px 2px #CCC;
+	-webkit-box-shadow: 0 2px 4px 2px #CCC;
+	-moz-box-shadow: 0 2px 4px 2px #CCC;
+}
+
+.hillary-head {
+	background-color: #93b874;
+	height: 34px;
+	text-align: center;
+	color: #FFF;
+	font-size: .75em;
+}
+
+.hillary-wikihow {
+	margin-top: 23px;
+	margin-left: -183px;
+	width: 68px;
+	height: 23px;
+}
+
+.hill-button-green {
+	background-color: #b3cd9e;
+	color: #FFF;
+	border-radius: 5px;
+	padding: 5px;
+	margin: 5px;
+}
+.hill-btn-done { float: left; }
+.hill-btn-skip { float: right; }
+
+.hill-text {
+	text-align: center;
+	font-weight: bold;
+	/*padding-top: 5px;*/
+	color: #FFF;
+	line-height: 34px;
+	font-size: 1.1em;
+}
+
+.hill-meter {
+	margin: 4px auto;
+	width: 300px;
+	height: 82px;
+	color: #FFF;
+	font-size: .75em;
+	font-weight: bold;
+}
+.hill-meter-piece {
+	background: url(/extensions/wikihow/stubs/images/hillary_meter.png) no-repeat 0 0;
+	background-size: 300px;
+	height: 82px;
+	width: 150px;
+	float:left;
+}
+.hmp-left { background-position: 0 0; }
+.hmp-right { background-position: -150px 0; }
+.hmp-left-voted { background-position: 0 -88px; }
+.hmp-right-voted { background-position: -150px -88px; }
+.hmp-left-check { background-position: 0 -176px; }
+.hmp-right-check { background-position: -150px -265px; }
+.hmp-left-x { background-position: 0 -265px; }
+.hmp-right-x { background-position: -150px -176px; }
+
+
+.hmp-yeses, .hmp-nos {
+    position: absolute;
+    top: 96px;
+}
+.hmp-yeses { margin-left: 90px; }
+.hmp-nos { margin-left: 203px; }
+
+#hill-can {
+	position: relative;
+	z-index: 3;
+	width: 147px;
+	height: 147px;
+	margin: -87px 0 0 76px;
+}
+
+.hill-prog {
+	text-align: center;
+	padding-top: 25px;
+	display: none;
+}
+
+.hill-votes {
+}
+/*
+#hill-yes {
+	background-color: #aaaaaa;
+	line-height: 35px;
+}
+
+#hill-no {
+	background-color: #aaaaaa;
+	line-height: 35px;
+}
+*/
+.hill-msg {
+	color: #222525;
+	text-align: center;
+}
+
+.hill-voters {
+	color: #ffffff;
+}
+
+.hill-voters img {
+	width: 20px;
+	height: 20px;
+}

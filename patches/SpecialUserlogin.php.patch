@@ -1,0 +1,15 @@
+--- mediawiki-1.9.3/includes/SpecialUserlogin.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialUserlogin.php	2008-01-30 07:11:56.000000000 -0600
+@@ -256,6 +256,12 @@
+ 			return false;
+ 		}
+ 
++		//XXADDED
++		if (strpos($this->mName, "_") === 0) {
++			$this->mainLoginForm( wfMsg( 'invalidusernamechar', "_" ) );
++			return false;
++		}
++
+ 		if ( 0 != strcmp( $this->mPassword, $this->mRetype ) ) {
+ 			$this->mainLoginForm( wfMsg( 'badretype' ) );
+ 			return false;

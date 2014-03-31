@@ -1,0 +1,882 @@
+#body_style, html_style { 
+	height: 100%;
+	background-color: #FFC;
+	margin: 0px; 
+	padding: 0px; 
+	color: #000;
+	font-family: Arial, Helvetica, Sans-Serif;
+	font-size: small;
+	
+}
+
+#body_style_printable { 
+	height: 100%;
+	background-color: #FFF;
+	margin: 0px; 
+	padding: 0px; 
+	color: #000;
+	font-family: Arial, Helvetica, Sans-Serif;
+	font-size: small;
+	
+}
+
+
+
+
+#content     { height: auto; 
+			   background-image: url(/skins/common/images/newpageback.gif); 
+               width: 732px; 
+               border-top: 1px solid #000;
+               border-bottom-style: none; 
+               border-bottom-width: 0px; 
+               margin-left: 0px; 
+               margin-right: 0px; 
+               margin-top: 32px; 
+               margin-bottom: 0px; 
+               padding-left: 39px; 
+               padding-right: 5px; 
+               padding-top: 3px; 
+               padding-bottom: 5px 
+}
+
+#content_printable
+      { height: auto; 
+               width: 732px; 
+               border-bottom-style: none; 
+               border-bottom-width: 0px; 
+               margin-left: 0px; 
+               margin-right: 0px; 
+               margin-top: 32px; 
+               margin-bottom: 0px; 
+               padding-left: 39px; 
+               padding-right: 5px; 
+               padding-top: 3px; 
+               padding-bottom: 5px }
+
+               
+#topbar { 
+	font-size: 13px;
+	color: #000;
+	margin-left: 10px;
+}
+
+#crumbs, #crumbs #browse {
+	color: #933;
+}
+
+#crumbs #browse { text-decoration: underline; }
+
+#theCorner {
+	position: absolute;
+	left: 755px;
+	top: 32px;
+}
+
+#yello {
+	position: absolute;
+	left: 0px;
+	top: 24px;
+	background-color: #FFC;
+	width: 12px;
+	height: 17px;
+}
+
+
+
+/* THE ARTICLE */
+/***************/
+
+h1.pagetitle { 
+	padding-bottom: 0; 
+	margin-bottom: 0; 
+	margin-top: 0; 
+}
+
+#article {
+       width: 730px;
+       overflow: hidden;
+}
+
+#article p {
+	padding-top: 0px; 
+	padding-bottom: 0px;
+ 	margin-top: 1ex; 
+	margin-bottom: 0px;
+}
+
+#article LI { margin-bottom: 15px; }
+
+#article A[href ^="http://www.ehow.com"] {
+  background: none;
+  padding-right: 0px;
+}
+
+#article .external[href^="http://www.wikihow.com"] {
+  background: none;
+  padding-right: 0px;
+}
+
+
+#article .external
+{
+  background: url(/skins/common/images/external.png) center right no-repeat;
+  padding-right: 13px;
+}
+
+#article a[ href^="http://www.wikihow.com"] {
+  background: none;
+  padding-right: 0px;
+}
+
+
+#Ingredients UL LI {
+     margin: 0px;
+}
+
+#article2 {
+       width: 700px;
+       overflow: visible;
+}
+
+#article2 p {
+	padding-top: 0px; 
+	padding-bottom: 0px;
+ 	margin-top: 1ex; 
+	margin-bottom: 0px;
+}
+
+#article2 LI { margin-bottom: 15px; }
+
+#article2 .external 
+{
+  background: url(/skins/common/images/external.png) center right no-repeat;
+  padding-right: 13px;
+}
+
+#article2 A[href ^="http://www.ehow.com"] {
+  background: none;
+  padding-right: 0px;
+}
+
+#article2 a[ href ^="http://www.wikihow.com"] {
+  background: none;
+  padding-right: 0px;
+}
+
+#article h2 {
+   font-size: 10pt;
+   font-family: Arial;
+} 
+
+#Steps h2, Schritte h2, #Pasos h2 {
+	color: #F60;
+	background: url(/skins/common/images/step.gif) center left no-repeat;
+	padding-left: 20px;
+}
+
+#Steps LI, #Schritte LI, #Pasos h2 { clear: both; }
+
+#Related_wikiHows h2 {
+	color: #009900;
+	background: url(/skins/common/images/related.gif) center left no-repeat;
+        padding-left: 20px;
+}
+
+#Technorati_Tags h2 {
+	color: #3BB000;
+	background: url(/skins/common/images/tn-logo.gif) center left no-repeat;
+	padding-left: 20px;
+}
+#Technorati_Tags UL LI {
+        margin-bottom: 0;
+}  
+
+#Related_wikiHows UL LI {
+	margin-bottom: 0;
+}
+
+#Related_wikiHows2 {
+	padding: 5px;
+	width: 160px;
+}
+
+#Related_wikiHows2 ul {
+	margin-left: 1em;
+	margin-top: -1em;
+	padding-left: 0;
+}
+#Related_wikiHows2 li {
+	margin-bottom: 0;
+}
+
+#Related_ads  {
+	padding: 0px;
+}
+
+#Related_ads ul {
+        margin-left: 1em;
+        margin-top: -1em;
+        padding-left: 0;
+}
+#Related_ads li {
+        margin-bottom: 0;
+}
+
+#rss_info {
+	margin-top:15px;
+        border: solid #ccc 1px;
+	padding: 5px;
+	width: 160px;
+	font-size: 10px;
+}
+
+
+#rss_info img {
+	padding: 5px;
+}
+
+#rss_info ul {
+	margin-left: 1em;
+	padding-left: 0;
+}
+#rss_info li {
+	margin-bottom: 0;
+}
+
+
+#External_Links h2 {
+	color: #0F71FF;
+	background: url(/skins/common/images/external.gif) center left no-repeat;
+        padding-left: 20px;
+}
+
+#External_Links UL LI {
+	margin-bottom: 0;
+}
+
+#Things_You27ll_Need h2 {
+	color: #FFAE00;
+	background: url(/skins/common/images/thingsyoullneed.gif) center left no-repeat;
+        padding-left: 20px;
+}
+
+#Things_You27ll_Need UL LI {
+	margin-bottom: 0;
+}
+
+#Tips h2, #Tipps h2, #Consejos h2 {
+	background: url(/skins/common/images/tip.gif) center left no-repeat;
+	padding-left: 20px;
+	color: #69F;
+}
+
+#Tips UL, #Tipps UL {
+}
+
+#Warnings h2, #Achtung h2, #Advertencias h2{
+	background: url(/skins/common/images/warning.gif) center left no-repeat;
+	padding-left: 20px;
+	color: #C00;
+}
+
+#Warnings UL, #Achtung UL {
+} 
+
+/* Placement for new div strategy */
+
+#steps h2 {
+    color: #F60;
+    background: url(/skins/common/images/step.gif) center left no-repeat;
+    padding-left: 20px;
+}
+
+#steps LI { clear: both; }
+
+#relatedwikihows h2 {
+    color: #009900;
+    background: url(/skins/common/images/related.gif) center left no-repeat;
+        padding-left: 20px;
+} 
+
+#relatedwikihows UL LI {
+    margin-bottom: 0;
+}
+
+#externallinks h2 {
+    color: #0F71FF;
+    background: url(/skins/common/images/external.gif) center left no-repeat;
+        padding-left: 20px;
+}
+
+#externallinks UL LI {
+    margin-bottom: 0;
+}
+
+#thingsyoullneed h2 {
+    color: #FFAE00;
+    background: url(/skins/common/images/thingsyoullneed.gif) center left no-repeat;
+        padding-left: 20px;
+}
+
+#thingsyoullneed UL LI {
+    margin-bottom: 0;
+}
+
+#tips h2 {
+    background: url(/skins/common/images/tip.gif) center left no-repeat;
+    padding-left: 20px;
+    color: #69F;
+}
+
+#tips  UL {
+}
+
+#warnings h2{
+    background: url(/skins/common/images/warning.gif) center left no-repeat;
+    padding-left: 20px;
+    color: #C00;
+}
+
+#warnings UL {
+}
+
+#ingredients UL LI {
+     margin: 0px; 
+} 
+
+/* ARTICLE END LINKS BOX */
+/*************************/
+
+#article_end {
+       padding: 0px;
+       font-size: 13px;
+       width: 100%;
+       text-align: left;
+}
+
+#article_end_outer {
+       width: 397px;
+       border: solid #999;
+       border-width: 3px 1px 2px 1px;
+       padding: 5px 2px 5px 2px;
+}
+
+
+#article_end A {
+       color: #000;
+       text-decoration: underline;
+}
+
+#article_end UL {
+       color: #933;
+       list-style-position: inside;
+       margin: 0px 0px 0px 8px;
+       padding-left: 2px;
+}
+
+#article_end LI {
+       margin-bottom: 1px;
+}
+
+#article_end .L {
+       float: left;
+       width: 220px;
+}
+
+#article_end .R {
+       float: right;
+       width: 200px;
+}
+
+
+
+/* RIGHT-SIDE COLUMN */
+/*********************/
+
+#Skyscraper { width: 160px; }
+#Skyscraper A { color: #369; font-weight: bold; }
+
+#Tools {
+	text-align: left;
+	font-size: 12px;
+	font-weight: bold;
+	border-width: 3px 1px 2px 1px;
+	padding: 6px;
+	width: 225px;
+	position: absolute;
+	left: 535px;
+	top: 127px;
+	
+}
+
+
+
+/* THE FOOTER */
+/**************/
+
+#footerbar { 
+	border-top: 1px solid #933;
+	width: 600px;
+	margin: 40px 20px 0px 0px;
+}
+
+#footer { 
+	padding: 4px;
+	width: 550px;
+	font-size: x-small;
+	text-align: center;
+	margin-bottom: 20px;
+	color: #000;	
+	padding-left: 100px;
+}
+
+#footer #credits, #footer #search { font-size: small;}
+#footer #credits { text-align: left; }
+#userstats {text-align:left; font-size:larger; font-weight:bold}
+#pagestats {
+	text-align:left; 
+	font-size:larger;
+}
+
+
+#iconDude {
+	background: url(/skins/common/images/user.gif) center left no-repeat;
+	padding-left: 16px;
+	position: absolute;
+	left: 12px;
+	top: 10px;
+	text-align: center;
+	font-size: 12px;
+}
+
+.usermessage {
+	text-align: left;
+	color: #972002;
+	font-size: 14px;
+	font-weight: bold;
+	border-width: 3px 1px 2px 1px;
+	width: 300px;
+	position: absolute;
+	left: 450px;
+	top: 80px;
+	
+}
+
+/* TABS AND SUB-TAB MENU */
+/*************************/
+
+#TeHow {
+	position: absolute;
+	left: 575px;
+	top: 7px;
+}
+
+#TwikiHow {
+	position: absolute;
+	left: 655px;
+	top: 7px;
+}
+
+
+#SubTabMenu {
+   position: absolute;
+   top: 39px;
+   width: 732px;
+   font-size: 15px;
+   color: #933;
+   text-align: right;
+}
+
+#SubTabMenu A {
+	color: #000;
+	font-size: 13px;
+	text-decoration: underline;
+}
+
+#SubTabMenu A:hover {
+	color: #933;
+/*	color: #06C;*/
+	text-decoration: none;
+}
+
+
+
+/* BASIC FORMATTING */
+/********************/
+
+A { color: #330099; text-decoration: none; }
+A:hover { text-decoration: underline; }
+A:visited { color: #330099; }
+
+p, pre, td, th, li, dd, dt { line-height: 12pt; }
+
+h1 { 
+ 	font-size: x-large; 
+	line-height: 21pt;
+        margin: 0;
+        padding: 0;	
+}
+
+h2 { 
+ 	font-size: large; 
+	line-height: 17pt;
+}
+
+
+
+/* FORM VARIABLES */
+/******************/
+
+INPUT { font-size: 12px; }
+
+INPUT.SearchMe {
+	font-weight: bold;
+        margin-top: 2px;
+        margin-left: 5px;
+}
+
+TEXTAREA { overflow: auto; }
+
+#Tools SELECT {
+	width: 180px;
+	font-size: 12px;
+	background-color: #FFC;
+}
+
+.m2 {
+	height: 600px;
+}
+
+#Tools .menusubmit {
+	font-weight: bold;
+	margin-top: 2px;
+	margin-left: 5px;
+}
+
+#toc {
+        border: 1px solid #8888aa;
+        background-color: #f7f8ff;
+        padding: 5px;
+        font-size: 95%;
+}
+#toc .tocindent { margin-left: 2em; }
+#toc .tocline { margin-bottom: 0px; }
+#toc p { margin: 0 }
+#toc .toctoggle { font-size: 95%; }
+#toc .editsection { 
+    margin-top: 0.7em; 
+    font-size: 94%;
+}
+
+
+/*
+** Diff rendering
+*/
+table.diff { 
+	background:white;
+}
+td.diff-otitle { background:#ffffff; }
+td.diff-ntitle { background:#ffffff; }
+td.diff-addedline {
+    background:#ccffcc;
+    font-size: smaller;
+}
+td.diff-deletedline {
+    background:#ffffaa;
+    font-size: smaller;
+}
+td.diff-context {
+	background:#eeeeee;
+    font-size: smaller;
+}
+span.diffchange { color: red; font-weight: bold; }
+
+
+
+input.btn{
+	color:#000;
+	font-family:arial,helvetica,sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	background-color:#FFFFCC;
+	border:1px solid;
+	padding-left:5px; 
+	padding-right:5px;		
+	border-top-color:#696;
+	border-left-color:#696;
+	border-right-color:#363;
+	border-bottom-color:#363;}
+
+input.btnhov{
+	border-top-color:#c63;
+	border-left-color:#c63;
+	border-right-color:#930;
+	border-bottom-color:#930;}
+	
+a.stub,
+a.new{ color:#ba0000; text-decoration:none; }
+
+img {
+    border: none;
+}
+#gSearch {
+ 	margin-right: 10px;
+	border: 1px solid #ccc;
+}
+
+#catgories_top_row{
+	background-image: url(/skins/common/images/welcome_bg.gif);
+}
+
+#catgories_td {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #000000;
+	width: 33%;
+	text-align:center;
+	vertical-align: top; 
+}
+
+#categories_box {
+	border: 1px solid #000000;
+}
+ 
+.talk-section { 
+      border: 1px dashed #CCCCCC; 
+      padding-left:20px;  
+      padding-bottom:20px;
+      padding-right:20px;
+      margin-top:10px;
+}
+
+#featured_top_row{
+        background-image: url(/skins/common/images/featuredarticle_bg.gif);
+}
+
+
+#subcategories_list {
+		width: 500px;
+}
+#subcategories_list2 {
+		font-size:90%;
+}
+#subcategories ul li:before {
+}
+#subcategories_list UL LI {
+     margin: 2px;
+		list-style-type: disc;
+}
+#articles_list UL LI {
+	margin: 2px;
+}
+
+#discussion_entry {
+	border: 1px solid #CED1FF; 
+	padding: 5px;  
+	margin-bottom:5px
+}
+
+td.discussion_entry_date {
+	font-size: smaller;
+}
+
+td.discussion_entry_user {
+	font-weight: bold;
+}
+
+td.discussion_entry_comment {
+}
+
+#featured_box {
+	vertical-align: top;
+	text-align: left;
+	float: right;
+	padding-right: 20px;
+	margin-top: 18px;
+}
+
+#featured_item{
+     margin-bottom: 10px;
+}
+
+#ads {
+	vertical-align: top;
+	text-align: left;
+	width: 190px;
+	float: right;
+	margin-top: 33px;
+}
+
+#bodyContent {
+   border-width: 5px;
+   border-color: #ccc;
+   width:500px;
+   float: left;
+}
+
+#bodyContent2 {
+}
+
+
+span.newpage, span.minor, span.searchmatch {
+	font-weight: bold;
+}
+
+span.unpatrolled {
+        font-weight:bold;
+        color:red;
+}
+
+pre {
+ font-size:13px;
+}
+
+.searchmatch {
+    color: green;
+    font-weight:bold;
+}
+
+div.floatright, table.floatright {
+    clear: right;
+    float: right;
+    position: relative;
+    margin: 0 0 0.5em 0.5em;
+    border: 0
+/*
+    border: 0.5em solid White;
+    border-width: 0.5em 0 0.8em 1.4em;
+*/
+}
+div.floatright p { font-style: italic; }
+div.floatleft, table.floatleft {
+    float: left;
+    position: relative;
+    margin: 0 0.5em 0.5em 0;
+    border: 0
+/*
+    margin: 0.3em 0.5em 0.5em 0;
+    border: 0.5em solid White;
+    border-width: 0.5em 1.4em 0.8em 0;
+*/
+}
+div.floatleft p { font-style: italic; }
+/* thumbnails */
+div.thumb {
+    margin-bottom: 0.5em;
+    border-style: solid; border-color: White;
+    width: auto;
+}
+div.thumb div {
+    border:1px solid #cccccc;
+    padding: 3px !important;
+    background-color:#f9f9f9;
+    font-size: 94%;
+    text-align: center;
+    overflow: hidden;
+}
+div.thumb div a img {
+    border:1px solid #cccccc;
+}
+div.thumb div div.thumbcaption {
+    border: none;
+    text-align: left;
+    line-height: 1.4em;
+    padding: 0.3em 0 0.1em 0;
+}
+div.magnify {
+    float: right;
+    border: none !important;
+    background: none !important;
+}
+div.magnify a, div.magnify img {
+    display: block;
+    border: none !important;
+    background: none !important;
+}
+div.tright {
+    clear: right;
+    float: right;
+    border-width: 0.5em 0 0.8em 1.4em;
+}
+div.tleft {
+    float: left;
+    margin-right:0.5em;
+    border-width: 0.5em 1.4em 0.8em 0;
+}
+#editpage-copywarn {
+ width: 700px;
+}
+
+.MisspeltWord { color :#FF0000 ; text-decoration: underline;
+font-weight:bold ; cursor: pointer;}
+.CorrectedWord { color :#008800 ; text-decoration: underline;
+font-weight:bold ; cursor: pointer;}
+/* Can't use hover because IE doesn't support it
+ * Instead we use two classes and have javascript change between the two in
+code */
+.suggestDiv       { background-color:#ccFFcc; cursor: pointer;}
+.suggestDiv-hover { background-color:#FF0000; cursor: pointer;}
+#editform textarea {
+  border: inset 1px gray;
+  background-color: #fdfdfd;
+  padding: 2px;
+}
+.spellCheckDiv    {
+  border: inset 1px gray;
+  background-color:#f0f5ff;
+  margin: 0;
+  font-family: "Courier New";
+}
+.spellCheckPre {
+  margin: 0;
+  border: none;
+}
+
+
+#category_entry {
+	margin: 5px;
+}
+
+#article_info {
+	text-align: right;
+	font-size: x-small;
+	margin-left: 5px;
+}
+
+#category_featured_entries {
+	font-size: medium;
+	font-weight: bold;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #CDEB8B;
+	padding: 10px;
+	width: 500px;
+}
+
+table.requests_categories {
+}
+.requests_categories td {
+    background: #03D;
+    background: url(/images/c/c3/Request-category-arrow.gif) center left no-repeat;
+	padding-left: 20px;
+	vertical-align: middle;
+}
+
+.editsection {
+	display:none;
+}
+
+#wikiwyg-enabler {
+	display:none;
+}
+
+.guided-button {
+	background: #F9F7ED;
+	padding-right:10px;
+	padding-right: 5px;
+	margin-right: 8px;
+	border: 1px solid #73880A; 
+	font-family: Arial;
+	font-size: 95%;
+}
+

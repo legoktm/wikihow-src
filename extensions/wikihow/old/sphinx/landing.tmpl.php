@@ -1,0 +1,1 @@
+<?= SSearch::searchBox('') ?>

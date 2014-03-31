@@ -1,0 +1,179 @@
+
+
+3d
+3g
+4d
+4g
+4wd
+aaa
+abc
+abc
+agp
+amd
+api
+apr
+ascii
+atm
+avi
+avi
+bac
+bbq, Barbecue
+bcc
+bin
+bios
+blt
+bmx
+btu
+cad
+cbs
+cbt
+cd
+cmyk
+cnn
+cpa
+cpu
+css
+css
+cto
+ddr
+dea
+diy
+dj
+dll
+dmca
+dmv
+dns
+dtd
+dui
+dvd
+dvds, DVDs
+dvd's, DVDs
+dvr
+dwi
+ebay, eBay
+ecg
+eeg
+ejb
+ekg
+ekg
+emt
+fifa
+ftp
+gfdl
+gm
+gpl
+gta
+hd
+hdd
+hdtv
+hgh
+html
+ias
+ibm
+icann
+id
+ide
+ip
+ipod, iPod
+ira
+irc
+isbn
+iso
+jre
+jsp
+kd
+kw, kW
+lcd
+led
+lfo
+lg
+llc
+lp
+mc
+mcat
+mig
+mkv
+mla
+mlb
+mmorpg
+mp3
+msi
+msn
+mvp
+myspace, MySpace
+mysql, MySQL
+nba
+nbc
+ncaa
+nfl
+nra
+ntfs
+nyse
+ocr
+oem
+pbs
+pc
+pcb
+pda
+pdf
+ph
+ph, pH
+php
+pps
+ps2
+ps3
+psp
+psps, PSPs
+psx
+ptsd
+rar
+rc
+rgb
+riaa
+ro
+roi
+rom
+rpg
+rpm
+rpm's, RPM
+rss
+rss
+rsvp
+rv
+sap
+sim
+sms
+smtp
+sp2
+sql
+svg
+tcp
+tmobile, T-Mobile
+ttf
+tv
+ucsd
+uhf
+uk
+un
+url
+usb
+usb
+vb
+vcr
+vmware, VMWare
+vnc
+vob
+vp6
+vw
+wav
+wcw
+wifi, W-Fi
+wii, Wii
+wmv
+wpm
+wwii
+xml
+xp
+xxx
+you tube, YouTube
+youtube, YouTube

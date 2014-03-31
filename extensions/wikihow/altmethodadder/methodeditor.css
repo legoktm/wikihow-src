@@ -1,0 +1,155 @@
+
+#method_method_container{
+	width:98%;
+	white-space: nowrap;
+	margin-bottom: 10px;
+}
+
+#method_icon_container{
+	float:left;
+	margin-top:6px;
+}
+
+#method_method{
+	width: 95.8%;
+	padding:5px;
+}
+
+#method_keep, #method_delete{
+	float:right;
+}
+
+#method_article {
+	margin:15px 0;
+}
+
+#method_article #featurestar{
+	display: none;
+}
+
+#method_skip{
+	float:left;
+	margin-left:0;
+}
+
+#method_icon {
+	display: inline;
+	margin-right: 10px;
+}
+
+#method_count{
+	float: right;
+    height: 40px;
+    margin-bottom: -14px;
+    padding-right: 14px;
+    text-align: right;
+    width: 120px;
+}
+
+#method_count h3{
+	font-size: 28px;
+	font-weight: bold;
+	background-color: inherit;
+	margin: 0;
+	color: inherit;
+	padding:0;
+}
+
+#method_count span{
+	font-size:12px;
+}
+
+#method_waiting{
+	text-align:center;
+}
+
+#method_header a.clickfail {
+	color: #888;
+	cursor: default;
+	background-position: 0 -78px;
+}
+#method_header a.clickfail:hover { 
+	text-decoration: none;
+	background-position: 0 -78px; 
+}
+
+#method_read {
+    margin:0 5px 10px 0;
+}
+
+.altmethod_bubble {
+    clear: both;
+    position: absolute;
+    top: -68px;
+    left: 437px;
+    width: 200px;
+    padding: 15px;
+    margin: 1em 0 3em;
+    border: 4px solid #dbd6c0;
+    color: #333;
+    background: #fdfbde;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+	font-size: 13px;
+}
+
+.altmethod_bubble:before {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 40px;
+    border-width: 20px 20px 0;
+    border-style: solid;
+    border-color: #dbd6c0 transparent;
+    display: block;
+    width: 0;
+}
+
+.altmethod_bubble:after {
+    content: "";
+    position: absolute;
+    bottom: -13px;
+    left: 47px;
+    border-width: 13px 13px 0;
+    border-style: solid;
+    border-color: #fdfbde transparent;
+    display: block;
+    width: 0;
+}
+.altmethod_bubble_outer {
+    position: relative;
+    display: none;
+}
+.altmethod_x {
+    float: right;
+    font-weight: bold;
+}
+.altmethod_x:hover {
+    text-decoration: none;
+    cursor: hand;
+    cursor: pointer;
+}
+.altmethod_txt {
+    margin-top: 5px;
+}
+
+#editform .minor_section {
+	margin: 0;
+	padding-right:0;
+}
+#method_editor #article_contents {
+	height:auto;
+	overflow:visible;
+}
+.altmethod_bubble {
+	z-index:999;
+}
+#method_steps {
+	position:relative;
+	z-index:998;
+}
+#wpTextbox1 {
+	position:relative;
+	z-index:998;
+}

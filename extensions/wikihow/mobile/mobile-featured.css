@@ -1,0 +1,42 @@
+/*******************
+featured articles
+********************/
+#featured_articles{
+	background-color:#f7f5f2;
+	text-align:center;
+	padding-bottom:15px;
+}
+
+#featured_articles table{
+	padding:7px 10px;
+}
+
+#featured_articles td{
+	width:33%;
+	text-align:center;
+	padding:7px 5px;
+	vertical-align:top;
+}
+
+#featured_articles td img{
+	width:90px;
+	height:54px;
+}
+
+#featured_articles td .rounders{
+	margin-bottom:5px;
+}
+
+#featured_articles a{
+	font-size:12px;
+}
+
+.wikihow_world{
+	line-height:21px;
+	margin:0 auto;
+}
+
+.wikihow_world img{
+	vertical-align:middle;
+}
+

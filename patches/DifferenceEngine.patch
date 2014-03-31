@@ -1,0 +1,180 @@
+--- mediawiki-1.9.3/includes/DifferenceEngine.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/DifferenceEngine.php	2007-12-07 07:38:57.000000000 -0600
+@@ -23,6 +23,8 @@
+ 	var $mOldRev, $mNewRev;
+ 	var $mRevisionsLoaded = false; // Have the revisions been loaded
+ 	var $mTextLoaded = 0; // How many text blobs have been loaded, 0, 1 or 2?
++	var $mRcidMarkPatrolledMax, $mRcidMarkPatrolledMin, $mRcidMarkPatrolledCount;
++
+ 	/**#@-*/
+ 
+ 	/**
+@@ -60,11 +62,99 @@
+ 			$this->mOldid = intval($old);
+ 			$this->mNewid = intval($new);
+ 		}
++//******* RC Changes *****/
++		global $wgRequest;
++		$this->mRcidMarkPatrolledCount = $this->mRcidMarkPatrolled = $this->mRcidMarkPatrolled = 0;
++
++		if ($wgRequest->getVal('fromrc', null) != null && $rcid != '') {
++			// try moving forward
++			$dbr = &wfGetDB(DB_MASTER);
++			$user_text = $dbr->selectField('recentchanges', 'rc_user_text', array ("rc_id=$rcid") );
++			$xx = $dbr->selectField('recentchanges', 'min(rc_id)', 			
++				array ('rc_cur_id' => $this->mTitle->getArticleID(),
++					"rc_user_text != " . $dbr->addQuotes($user_text),
++					"rc_id > $rcid"
++				)
++			);
++			if ($xx != null) {
++				$yy = $dbr->selectField('recentchanges', 'max(rc_id)',                  
++                                array ('rc_cur_id' => $this->mTitle->getArticleID(),
++					"rc_user_text = " . $dbr->addQuotes($user_text),
++					"rc_id < $xx",
++		
++                                	)
++                        	);
++			} else {
++				// current author is the most recent one, select that one
++				$yy = $dbr->selectField('recentchanges', 'max(rc_id)',
++                                array ('rc_cur_id' => $this->mTitle->getArticleID(),
++					"rc_user_text = " . $dbr->addQuotes($user_text),
++                                        )
++				);		
++			} 
++			if ($yy != "") {
++				$new = $dbr->selectField('recentchanges', 'rc_this_oldid', array ("rc_id=$yy"));
++				$this->mNewid = $new;
++				$this->mRcidMarkPatrolledMax = $yy;
++
++				// try moving back 
++                        $xx = $dbr->selectField('recentchanges', 'max(rc_id)', 
++                                array ('rc_cur_id' => $this->mTitle->getArticleID(),
++					"rc_user_text != " . $dbr->addQuotes($user_text),
++                                        "rc_id < $rcid"
++                                )
++                        );
++            if ($xx != "") {
++                                $yy = $dbr->selectField('recentchanges', 'min(rc_id)',
++                                array ('rc_cur_id' => $this->mTitle->getArticleID(),
++					"rc_user_text = " . $dbr->addQuotes($user_text),
++                                        "rc_id > $xx",
++                                        )
++                                );	
++				$old = $dbr->selectField('recentchanges', 'rc_this_oldid', array ("rc_id=$xx"));
++				$this->mOldid = $old;
++				$this->mRcidMarkPatrolledMin = $yy;
++			} else {
++				// most recent edit is not in recentchanges, or author is only editor
++				$this->mRcidMarkPatrolledMin = $rcid;
++                                $yy = $dbr->selectField('recentchanges', 'min(rc_id)',
++                                array ('rc_cur_id' => $this->mTitle->getArticleID(),
++					"rc_user_text = " . $dbr->addQuotes($user_text),
++                                        )
++                                ); 
++				if ($yy != "")
++					$this->mRcidMarkPatrolledMin = $yy;
++				// get the old did 
++                        	$xx = $dbr->selectField('revision', 'max(rev_id)',
++                                	array ('rev_page' => $this->mTitle->getArticleID(),
++										"rev_user_text != " . $dbr->addQuotes($user_text),
++                                            "rev_id < {$this->mNewid}",
++                                	)
++                        	);
++				// can we get the first edit in rc on this page by this author??
++				if ($xx != "") {
++					$this->mOldid = $xx;
++		
++				}
++			}
++			$this->mRcidMarkPatrolledCount = $dbr->selectField('recentchanges', 'count(*)', 
++				array ('rc_cur_id' => $this->mTitle->getArticleID(),	
++					'rc_patrolled=0',
++					"rc_id >= {$this->mRcidMarkPatrolledMin}",
++					"rc_id <= {$this->mRcidMarkPatrolledMax}",
++					)
++				);
++			
++			} // $yy != ""
++		}
++//******* RC Changes *****/
+ 		$this->mRcidMarkPatrolled = intval($rcid);  # force it to be an integer
++
++		
+ 	}
+ 
+-	function showDiffPage() {
+-		global $wgUser, $wgOut, $wgContLang, $wgUseExternalEditor, $wgUseRCPatrol;
++	function showDiffPage($suppressCurrent = false) {
++		global $wgUser, $wgOut, $wgContLang, $wgUseExternalEditor, $wgUseRCPatrol, $wgRequest;
+ 		$fname = 'DifferenceEngine::showDiffPage';
+ 		wfProfileIn( $fname );
+ 
+@@ -143,17 +233,46 @@
+ 
+ 		$sk = $wgUser->getSkin();
+ 
+-		if ( $this->mNewRev->isCurrent() && $wgUser->isAllowed('rollback') ) {
++		//XXADDED userCanEdit
++		if ( $this->mNewRev->isCurrent() && $wgUser->isAllowed('rollback')  && $this->mTitle->userCanEdit() ) {
+ 			$rollback = '&nbsp;&nbsp;&nbsp;' . $sk->generateRollback( $this->mNewRev );
+ 		} else {
+ 			$rollback = '';
+ 		}
+ 		if( $wgUseRCPatrol && $this->mRcidMarkPatrolled != 0 && $wgUser->isAllowed( 'patrol' ) ) {
+-			$patrol = ' [' . $sk->makeKnownLinkObj( $this->mTitle, wfMsg( 'markaspatrolleddiff' ), "action=markpatrolled&rcid={$this->mRcidMarkPatrolled}" ) . ']';
++		//XXCHANGED for recent changes patrolling
++			$show_namespace = $wgRequest->getVal('show_namespace');
++			$invert = $wgRequest->getVal('invert');
++			$featured = $wgRequest->getVal('featured');
++			$reverse = $wgRequest->getVal('reverse');
++			//XXCHANGED
++			$fromrc = "";
++			if ($wgRequest->getVal('fromrc', null) != null) 
++				$fromrc = "&fromrc=1";
++			if ($this->mRcidMarkPatrolledCount > 1) {
++				$msg = wfMsg( 'markaspatrolleddiff_multiple', $this->mRcidMarkPatrolledCount);
++				$patrol =  ' [' . $sk->makeKnownLinkObj( $this->mTitle, $msg, 
++						"action=markpatrolled&rcid={$this->mRcidMarkPatrolled}&show_namespace=$show_namespace"
++						. "&invert=$invert&reverse=$reverse&featured=$featured"
++						. "&rchi={$this->mRcidMarkPatrolledMax}&rclow={$this->mRcidMarkPatrolledMin}$fromrc", '', '', "accesskey='p'"  ) 
++						. ']';
++		        $patrol .=  ' [' . $sk->makeKnownLinkObj( $this->mTitle, wfMsg('skip'),
++                        "action=markpatrolled&rcid={$this->mRcidMarkPatrolled}&show_namespace=$show_namespace"
++                        . "&invert=$invert&reverse=$reverse&featured=$featured"
++                        . "&rchi={$this->mRcidMarkPatrolledMax}&rclow={$this->mRcidMarkPatrolledMin}$fromrc&skip=1", '', '', ""  )
++                        . ']';
++			} else {
++				$patrol = ' [' . $sk->makeKnownLinkObj( $this->mTitle, wfMsg( 'markaspatrolleddiff' ), "action=markpatrolled&rcid={$this->mRcidMarkPatrolled}&show_namespace=$show_namespace&invert=$invert&reverse=$reverse&featured=$featured$fromrc", '', '', "accesskey='p'"  ) . ']';
++				$patrol .= ' [' . $sk->makeKnownLinkObj( $this->mTitle, wfMsg( 'skip' ), "action=markpatrolled&rcid={$this->mRcidMarkPatrolled}&show_namespace=$show_namespace&invert=$invert&reverse=$reverse&featured=$featured&skip=1$fromrc" ) . ']';
++			}
++			//XXADDED
+ 		} else {
+ 			$patrol = '';
+ 		}
+-
++		//XXADDED
++		if ($wgUser->isAllowed('rollback') && $this->mTitle->userCanEdit() ) {
++			$rollback .= '<br/>&nbsp;&nbsp;&nbsp;<strong>' . wfSpamDiffLink($this->mTitle) . '</strong>';
++		}
+ 		$prevlink = $sk->makeKnownLinkObj( $this->mTitle, wfMsgHtml( 'previousdiff' ),
+ 			'diff=prev&oldid='.$this->mOldid, '', '', 'id="differences-prevlink"' );
+ 		if ( $this->mNewRev->isCurrent() ) {
+@@ -186,6 +305,7 @@
+ 			$nextlink . $patrol;
+ 
+ 		$this->showDiff( $oldHeader, $newHeader );
++		if (!$suppressCurrent) {
+ 		$wgOut->addHTML( "<hr /><h2>{$this->mPagetitle}</h2>\n" );
+ 
+ 		if( !$this->mNewRev->isCurrent() ) {
+@@ -201,7 +321,7 @@
+ 		if( !$this->mNewRev->isCurrent() ) {
+ 			$wgOut->parserOptions()->setEditSection( $oldEditSectionSetting );
+ 		}
+-
++		}
+ 		wfProfileOut( $fname );
+ 	}
+ 

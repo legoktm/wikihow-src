@@ -1,0 +1,22 @@
+--- mediawiki-1.9.3/includes/SpecialBlockip.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialBlockip.php	2008-03-03 09:09:39.000000000 -0600
+@@ -58,14 +58,17 @@
+ 	function showForm( $err ) {
+ 		global $wgOut, $wgUser, $wgSysopUserBans;
+ 
+-		$wgOut->setPagetitle( wfMsg( 'blockip' ) );
+-		$wgOut->addWikiText( wfMsg( 'blockiptext' ) );
+ 
+ 		if($wgSysopUserBans) {
+ 			$mIpaddress = wfMsgHtml( 'ipadressorusername' );
+ 		} else {
+ 			$mIpaddress = wfMsgHtml( 'ipaddress' );
+ 		}
++
++		//XXCHANGED	
++		$wgOut->setPagetitle( wfMsg( 'blockip' ) );
++		$wgOut->addWikiText( wfMsg( 'blockiptext', $this->BlockAddress));
++		
+ 		$mIpbexpiry = wfMsgHtml( 'ipbexpiry' );
+ 		$mIpbother = wfMsgHtml( 'ipbother' );
+ 		$mIpbothertime = wfMsgHtml( 'ipbotheroption' );

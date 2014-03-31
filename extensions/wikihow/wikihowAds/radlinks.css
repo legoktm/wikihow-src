@@ -1,0 +1,33 @@
+    #aside, #article_tabs, #location { display: none; }
+    #Actions_table, #Categories, #pagestats, #lower_ads { display: none; }
+    
+    DIV#main DIV#article { border: none; padding: 0; }
+    
+    #RADbox {
+            float: right;
+            border: 1px solid #DDD;
+            width: 20%;
+            padding: 8px;
+            margin-top: 30px;
+        }
+        
+        #RADbox UL {
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        
+        #RADbox UL LI {
+            padding-bottom: 2px;
+            color: #999;
+        }
+    
+    #AdExposition {
+        font-size: 12px;
+        margin: 40px 0;
+        padding: 10px;
+        background-color: #EEE;
+        color: #888;
+    }
+	.firstHeading{
+		display: none;
+	}	

@@ -1,0 +1,31 @@
+--- mediawiki-1.9.3/includes/ChangesList.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/ChangesList.php	2007-06-11 10:38:16.000000000 -0500
+@@ -155,7 +155,14 @@
+ 				wfArrayToCGI( array(
+ 					'curid' => $rc->mAttribs['rc_cur_id'],
+ 					'diff'  => $rc->mAttribs['rc_this_oldid'],
+-					'oldid' => $rc->mAttribs['rc_last_oldid'] ),
++					// XXADDED for recent changes patrolling
++					'show_namespace' => $rc->show_namespace,
++					'invert' => $rc->invert,
++					'featured' => $rc->featured,
++					'reverse' => $rc->reverse,					
++					'oldid' => $rc->mAttribs['rc_last_oldid'],
++					'fromrc' => true
++					 ),
+ 					$rcidparam ),
+ 				'', '', ' tabindex="'.$rc->counter.'"');
+ 		}
+@@ -174,7 +181,11 @@
+ 		# If it's a new article, there is no diff link, but if it hasn't been
+ 		# patrolled yet, we need to give users a way to do so
+ 		$params = ( $unpatrolled && $rc->mAttribs['rc_type'] == RC_NEW )
+-			? 'rcid='.$rc->mAttribs['rc_id']
++			//XXCHANGED added invert, reverse, featured
++			? 'rcid='.$rc->mAttribs['rc_id'] . "&invert=" .$rc->invert 
++			. "&featured=" . $rc->featured
++			. "&reverse=" . $rc->reverse
++			. "&show_namespace=" . $rc->show_namespace
+ 			: '';
+ 		$articlelink = ' '. $this->skin->makeKnownLinkObj( $rc->getTitle(), '', $params );
+ 		if($watched) $articlelink = '<strong>'.$articlelink.'</strong>';

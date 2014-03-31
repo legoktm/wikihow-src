@@ -1,0 +1,8 @@
+script must be run as part of wikivideo-process-videos-hourly.sh
+string(239) "REPLACE INTO wikivideo_video_transcoding_status SET 
+			article_id='274916', 
+			aws_job_id='1368809518864-mzbie7',
+			key='274916-1998007176/Balloon-step1.480p.mp4',
+			processed='20130517165159',
+			status='Submitted',
+			status_msg=NULL"

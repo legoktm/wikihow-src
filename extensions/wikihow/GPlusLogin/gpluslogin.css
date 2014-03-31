@@ -1,0 +1,128 @@
+#gpl {
+	border: 1px solid #E5E5E5;
+	color: #222;
+	background-color: #F1F1F1;
+	width: 500px;
+	margin: 0 auto;
+}
+
+.gpl_hidden {
+	display: none;
+	visibility: hidden;
+}
+
+#gpl_header {
+	border-bottom: 1px solid #E5E5E5;
+	padding: 15px;
+}
+
+#gpl_error {
+	color: #A40000;
+	padding-left: 10px;
+}
+
+#gpl_x {
+	float: right;
+	margin-right: 5px;
+	margin-top: 10px;
+	padding: 2px;
+	font-size: 7px;
+	cursor: pointer;
+}
+
+#gpl_x:hover {
+	background: #DB4B39;
+	color: white;
+}
+
+#gpl_icon {
+	margin-right: 1px;
+	vertical-align: middle;
+}
+
+.gpl_header_text {
+	display:inline-block;
+	zoom: 1;
+	*display: inline;
+	padding-top: 0px;
+	vertical-align: middle;
+}
+
+#gpl_header_prefill {
+	visibility: hidden;
+	display: none;
+}
+
+#gpl table {
+	margin-top: 15px;
+	margin-bottom: 10px;	
+	width: 100%;
+}
+
+#gpl td {
+	padding: 10px;
+}
+#gpl input[type='text'], #gpl_faux_username {
+	border: 1px solid #BDC7D8;
+	padding: 3px;
+	width: 232px;
+}
+
+#gpl_user_text {
+	display: inline-block;
+	zoom: 1;
+	*display:inline;
+	vertical-align: middle;
+	margin-left: 5px;
+}
+
+#gpl_user_text_username {
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+#gpl_user_text_info {
+	font-size: 9px;
+}
+
+.gpl_readonly {
+	color: #999;
+	background-color: #F0F0F0;
+}
+
+.gpl_label {
+	text-align: right;
+	font-weight: bold;
+}
+
+.gpl_user_avatar {
+	width: 32px;
+	height: 32px;	
+	border: 0px;
+	vertical-align: middle;
+}
+.gpl_avatar {
+	width: 24px;
+	height: 24px;	
+	border: 0px;
+	vertical-align: middle;
+}
+
+.gpl_submit {
+	color: white;
+	font-size: 11px;
+	text-transform: uppercase;
+	font-weight: bold;
+	background-color: #DB4B39;
+	border-radius: 3px;
+	border: none;
+	padding: 8px;
+	cursor: pointer;
+}
+
+#gpl td.gpl_check {
+	text-align: right;
+	padding-right: 65px;
+	font-size: .9em;
+}
+#gpl td.gpl_check input { margin-left: 5px; }

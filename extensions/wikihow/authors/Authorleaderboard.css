@@ -1,0 +1,54 @@
+/* 
+	Cusco Sky table styles
+	written by Braulio Soncco http://www.buayacorp.com
+*/
+
+#Authorleaderboard table,#Authorleaderboard th,#Authorleaderboard td {
+	border: 1px solid #D4E0EE;
+	border-collapse: collapse;
+	color: #555;
+}
+
+#Authorleaderboard caption {
+	font-size: 150%;
+	font-weight: bold;
+	margin: 5px;
+}
+
+#Authorleaderboard td,#Authorleaderboard th {
+	padding: 4px;
+}
+
+#Authorleaderboard thead th {
+	text-align: center;
+	background: #E6EDF5;
+	color: #4F76A3;
+	font-size: 100% !important;
+}
+
+#Authorleaderboard tbody th {
+	font-weight: bold;
+}
+
+#Authorleaderboard tbody tr { background: #FCFDFE; }
+
+#Authorleaderboard tbody tr.odd { background: #F7F9FC; }
+
+#Authorleaderboard table a:link {
+	color: #718ABE;
+	text-decoration: none;
+}
+
+#Authorleaderboard table a:visited {
+	color: #718ABE;
+	text-decoration: none;
+}
+
+#Authorleaderboard table a:hover {
+	color: #718ABE;
+	text-decoration: underline !important;
+}
+
+#Authorleaderboard tfoot th,#Authorleaderboard tfoot td {
+	font-size: 85%;
+}

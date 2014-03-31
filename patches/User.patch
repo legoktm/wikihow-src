@@ -1,0 +1,304 @@
+--- mediawiki-1.9.3/includes/User.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/User.php	2008-01-18 16:03:44.000000000 -0600
+@@ -50,6 +50,7 @@
+ 		'editwidth',
+ 		'watchcreations',
+ 		'watchdefault',
++		'autopatrol',
+ 		'watchmoves',
+ 		'watchdeletion',
+ 		'minordefault',
+@@ -106,6 +107,9 @@
+ 		$mEmail, $mOptions, $mTouched, $mToken, $mEmailAuthenticated, 
+ 		$mEmailToken, $mEmailTokenExpires, $mRegistration, $mGroups;
+ 
++	//XXADDED
++	var $mNewKudos;
++	
+ 	/**
+ 	 * Whether the cache variables have been loaded
+ 	 */
+@@ -585,7 +589,6 @@
+ 		wfProfileIn( __METHOD__ );
+ 
+ 		global $wgCookiePrefix;
+-
+ 		$this->mId = 0;
+ 		$this->mName = $name;
+ 		$this->mRealName = '';
+@@ -701,7 +704,6 @@
+ 
+ 		$dbr =& wfGetDB( DB_MASTER );
+ 		$s = $dbr->selectRow( 'user', '*', array( 'user_id' => $this->mId ), __METHOD__ );
+-
+ 		if ( $s !== false ) {
+ 			# Initialise user table data
+ 			$this->mName = $s->user_name;
+@@ -744,6 +746,8 @@
+ 	 */
+ 	function clearInstanceCache( $reloadFrom = false ) {
+ 		$this->mNewtalk = -1;
++		///XXADDED
++		$this->mNewkudos = -1;
+ 		$this->mDatePreference = null;
+ 		$this->mBlockedby = -1; # Unset
+ 		$this->mHash = false;
+@@ -1664,7 +1668,8 @@
+ 			wfProfileIn( __METHOD__ );
+ 
+ 			# get the user skin
+-			$userSkin = $this->getOption( 'skin' );
++			//XXCHANGED
++			$userSkin = 'wikihowskin';//$this->getOption( 'skin' );
+ 			$userSkin = $wgRequest->getVal('useskin', $userSkin);
+ 
+ 			$this->mSkin =& Skin::newFromKey( $userSkin );
+@@ -1724,6 +1729,14 @@
+ 			$this->setNewtalk( false );
+ 		}
+ 
++	//XXADDED
++		if ($title->getNamespace() == NS_USER_KUDOS &&
++			$title->getText() == $this->getName() ) {
++			if (!wfRunHooks('UserClearNewKudosNotification', array(&$this)))
++				return;
++			$this->setNewkudos( false );
++		}
++		
+ 		if( !$wgUseEnotif ) {
+ 			return;
+ 		}
+@@ -1844,6 +1857,19 @@
+ 		} else {
+ 			setcookie( $wgCookiePrefix.'Token', '', time() - 3600 );
+ 		}
++
++		//XXADDED just for display purposes only
++		//clear this cookie
++		setcookie( $wgCookiePrefix.'LoggedOut', 0, time() - 3600, $wgCookiePath, $wgCookieDomain, $wgCookieSecure );
++		if ($this->isSysop()) {
++			$_SESSION['wsSysop'] = 'true';
++			setcookie( $wgCookiePrefix.'isSysop', 'true', $exp, $wgCookiePath, $wgCookieDomain, $wgCookieSecure );
++		}
++		$sk = $this->getSkin();	
++	    $userlinks = $sk->getUserLinks();
++	    $currlinks = $_COOKIE[$wgCookiePrefix.'UserLinks'];
++        setcookie( $wgCookiePrefix.'UserLinks', $userlinks, time() + $wgCookieExpiration, $wgCookiePath, $wgCookieDomain, $wgCookieSecure );
++
+ 	}
+ 
+ 	/**
+@@ -1861,6 +1887,7 @@
+ 
+ 		# Remember when user logged out, to prevent seeing cached pages
+ 		setcookie( $wgCookiePrefix.'LoggedOut', wfTimestampNow(), time() + 86400, $wgCookiePath, $wgCookieDomain, $wgCookieSecure );
++		setcookie( $wgCookiePrefix.'isSysop', '', time() - 3600, $wgCookiePath, $wgCookieDomain, $wgCookieSecure );
+ 	}
+ 
+ 	/**
+@@ -2134,6 +2161,7 @@
+ 			/* Auth plugin doesn't allow local authentication */
+ 			return false;
+ 		}
++                $this->loadFromDatabase();
+ 		$ep = $this->encryptPassword( $password );
+ 		if ( 0 == strcmp( $ep, $this->mPassword ) ) {
+ 			return true;
+@@ -2522,6 +2550,197 @@
+ 			}
+ 		}
+ 	}
++	
++	// XXADDED
++        function getNewkudos() {
++                $fname = 'User::getNewkudos';
++		$this->load();
++                # Load the newkudos status if it is unloaded (mNewkudos=-1)
++		if ($this->mId == 0) return false;
++                if ( $this->mNewkudos == -1 ) {
++                        $this->mNewkudos=0; # reset talk page status
++                        $dbr =& wfGetDB( DB_SLAVE );
++                        if($this->mId) {
++                                $res = $dbr->select( 'user_newkudos', 1, array( 'user_id' => $this->mId ), $fname );
++                                if ( $dbr->numRows($res)>0 ) {
++                                        $this->mNewkudos= 1;
++                                }
++                                $dbr->freeResult( $res );
++                        } else {
++                                global $wgDBname, $wgMemc;
++                                $key = "$wgDBname:newkudos:ip:{$this->mName}";
++                                $newkudos = $wgMemc->get( $key );
++                                if( ! is_integer( $newkudos ) ){
++                                        $res = $dbr->select( 'user_newkudos', 1, array( 'user_ip' => $this->mName ), $fname );
++
++                                        $this->mNewkudos = $dbr->numRows( $res ) > 0 ? 1 : 0;
++                                        $dbr->freeResult( $res );
++
++                                        $wgMemc->set( $key, $this->mNewkudos, time() ); // + 1800 );
++                                } else {
++                                        $this->mNewkudos = $newkudos ? 1 : 0;
++                                }
++                        }
++                }
++                return ( 0 != $this->mNewkudos );
++        }
++
++        // XXADDED
++        # Gets just the hashed value of the password
++        #
++        function hashPassword($pass) {
++
++                $sql = "SELECT OLD_PASSWORD('" .
++                  wfStrencode( $pass ) . "') as pass";
++                $res = wfQuery( $sql, DB_READ, "User::hashPassword" );
++                if ( 0 == wfNumRows( $res ) ) { return NULL; }
++
++                $s = wfFetchObject( $res );
++                if ( '' == $s ) return NULL;
++
++                $hashed = $s->pass;
++                wfFreeResult( $res );
++                return $hashed;
++        }
++
++        /* static */ 
++		function getAuthorStats( $userName ) {
++			$dbr =& wfGetDB( DB_SLAVE );
++			$count = $dbr->selectField(
++				array('revision', 'page'),
++				array('count(*)'),
++				array('rev_user_text' => $userName, 
++					'rev_page=page_id',
++					'page_namespace NOT IN (2, 3, 18)'
++				     ),
++				"User::getAuthorStats"
++				);
++			return $count;
++        }
++        /* static */ function createTemporaryUser ($real_name, $email) {
++                $user = new User();
++
++                $maxid = User::getMaxID();
++                $username = "Anonymous" . ($maxid+1);
++
++                $user->setName($username);
++
++                // make sure this hasn't already been created
++                while ($user->idForName() > 0) {
++                        // shouldn't happen
++                        $username = "Anonymous" . rand(0, 100000);
++                        $user->setName($username);
++                }
++
++                if ($real_name != "") {
++                        $user->setRealName($real_name);
++                } else {
++                        $user->setRealName("Anonymous");
++                }
++
++                if ($email != "") {
++                        $user->setEmail($email);
++                }
++
++                $user->setPassword("asdlfkjasdfjasdfj");
++                $user->setOption("disablemail", 1);
++                $user->addToDatabase();
++                return $user;
++        }
++
++        function setNewkudos( $val ) {
++                if( wfReadOnly() ) {
++                        return;
++                }
++                
++				$this->load();
++                $this->mNewKudos = $val;
++                                
++                $fname = 'User::setNewkudos';
++                
++                if( $this->isAnon() ) {
++                        $field = 'user_ip';
++                        $id = $this->getName();
++                } else {
++                        $field = 'user_id';
++                        $id = $this->getId();
++                }       
++ 
++                if( $val ) {
++                        $changed = $this->updateNewkudos( $field, $id );
++                } else {
++                        $changed = $this->deleteNewkudos( $field, $id );
++                }
++
++                if( $changed ) {
++                        if( $this->isAnon() ) {
++                                // Anons have a separate memcached space, since
++                                // user records aren't kept for them.
++                                global $wgDBname, $wgMemc; 
++                                $key = "$wgDBname:newkudos:ip:$val";
++                                $wgMemc->set( $key, $val ? 1 : 0 );
++                        } else { 
++                                if( $val ) { 
++                                        // Make sure the user page is watched, so a notification
++                                        // will be sent out if enabled.
++                                        $this->addWatch( $this->getTalkPage() );
++                                }
++                        }
++                        $this->invalidateCache();
++                        $this->saveSettings();
++                }
++        }   
++
++        function getKudosPage() {
++                return Title::makeTitle( NS_USER_KUDOS, $this->mName );
++        }               
++
++	function updateNewkudos( $field, $id ) {
++                $fname = 'User::updateNewkudos';
++                if( $this->checkNewkudos( $field, $id ) ) {
++                        wfDebug( "$fname already set ($field, $id), ignoring\n" );
++                        return false;
++                }               
++                $dbw =& wfGetDB( DB_MASTER );
++                $dbw->insert( 'user_newkudos',
++                        array( $field => $id ),
++                        $fname,
++                        'IGNORE' ); 
++                wfDebug( "$fname: set on ($field, $id)\n" );
++                return true;            
++        }
++
++        function deleteNewkudos( $field, $id ) {
++                $fname = 'User::deleteNewkudos';
++                if( !$this->checkNewkudos( $field, $id ) ) {
++                        wfDebug( "$fname: already gone ($field, $id), ignoring\n" );
++                        return false;
++                }
++                $dbw =& wfGetDB( DB_MASTER );
++                $dbw->delete( 'user_newkudos',
++                        array( $field => $id ),
++                        $fname );
++                wfDebug( "$fname: killed on ($field, $id)\n" );
++                return true;
++        }
++
++        function checkNewkudos( $field, $id ) {
++                $fname = 'User::checkNewkudos';
++                $dbr =& wfGetDB( DB_SLAVE );
++                $ok = $dbr->selectField( 'user_newkudos', $field,
++                        array( $field => $id ), $fname );
++                return $ok !== false;
++        }
++		
++		function isSysop() {
++			foreach ($this->mGroups as $g) {
++				if ($g == 'sysop') return true;
++			}
++			return false;
++		}
++	
++
+ }
+ 
++
+ ?>

@@ -1,0 +1,49 @@
+#modalPage{
+display: none;
+position: fixed;
+width: 100%;
+height: 100%;
+top: 0px;
+left: 0px;
+}
+
+.modalBackground{
+filter: Alpha(Opacity=80);
+-moz-opacity:0.8;
+opacity: 0.8;
+width: 100%;
+height: 100%;
+background-color: #999999;
+position: fixed;
+z-index: 500;
+top: 0px;
+left: 0px;
+}
+
+.modalContainer
+{
+background-color: #FFF;
+border: 1px solid #999;
+position: relative;
+top: 10%;
+left: 25%;
+z-index: 1000;
+width: 450px;;
+height: 410px;
+padding: 4px;
+}
+
+.modalTitle
+{
+width: 98%;
+background-color: #FFF;
+padding: 3px;
+color: #ffffff;
+text-align: right;
+cursor:pointer;
+}
+
+.modalBody
+{
+padding: 10px;
+}

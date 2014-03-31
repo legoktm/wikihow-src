@@ -1,0 +1,388 @@
+
+
+
+Start request
+GET /Special:Random
+Host: wiki112.wikidiy.com
+User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14
+Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Cookie: __utma=117492239.1628663444.1210954303.1210954303.1210964363.2; __utmc=117492239; __utmz=117492239.1210954303.1.1.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none)
+Authorization: Basic ZGl5OmRpeTI2Nw==
+
+Main cache: MemCachedClientforWiki
+Message cache: MemCachedClientforWiki
+Parser cache: MemCachedClientforWiki
+Unstubbing $wgMessageCache on call of $wgMessageCache->addMessages from wfCite
+Unstubbing $wgParser on call of $wgParser->setHook from Cite::setHooks
+Unstubbing $wgContLang on call of $wgContLang->getMagic from MagicWord::load
+Fully initialised
+Language::loadLocalisation(): got localisation for en from cache
+Unstubbing $wgLoadBalancer on call of $wgLoadBalancer->getConnection from wfGetDB
+Unstubbing $wgOut on call of $wgOut->redirect from RandomPage::execute
+OutputPage::sendCacheControl: private caching;  **
+Profile section ended by close(): -total
+20080520130448	1.875	/Special:Random
+
+Profiling data
+Name                                                                         Calls         Total          Each             %       Mem
+-total                                                                           1      1874.695      1874.695       100.000%  19006104  (     1874.695 -     1874.695) [0]
+WebStart.php-conf                                                                1      1021.728      1021.728        54.501%  10711320  (     1021.728 -     1021.728) [0]
+__autoload                                                                      14       330.978        23.641        17.655%   5141392  (        0.647 -       63.829) [0]
+Setup.php                                                                        1       290.131       290.131        15.476%   4345523  (      290.131 -      290.131) [251]
+MediaWiki::initialize                                                            1       289.365       289.365        15.435%   1053526  (      289.365 -      289.365) [19]
+MediaWiki::initializeSpecialCases                                                1       289.334       289.334        15.434%   1054038  (      289.334 -      289.334) [18]
+SpecialPage::executePath                                                         1       289.246       289.246        15.429%   1054310  (      289.246 -      289.246) [17]
+Special:Randompage                                                               1       263.493       263.493        14.055%    963254  (      263.493 -      263.493) [15]
+Database::query                                                                  4       189.806        47.451        10.125%     -4136  (        0.084 -      189.379) [6]
+query:  SELECT page_title FROM `page` FORCE INDEX (page_random) WHERE page_      1       189.357       189.357        10.101%     -1832  (      189.357 -      189.357) [2]
+main-misc-setup                                                                  1       157.431       157.431         8.398%   2147583  (      157.431 -      157.431) [6]
+Setup.php-extensions                                                             1       151.471       151.471         8.080%   2873652  (      151.471 -      151.471) [240]
+Setup.php-includes                                                               1       100.018       100.018         5.335%    960648  (      100.018 -      100.018) [0]
+Setup.php-extensions-wfCite                                                      1        74.877        74.877         3.994%   1665757  (       74.877 -       74.877) [31]
+Setup.php-extensions-wfWikiHowParserFunction_Setup                               1        66.574        66.574         3.551%    932855  (       66.574 -       66.574) [8]
+StubObject::_unstub-wgParser                                                     1        64.310        64.310         3.430%   1446039  (       64.310 -       64.310) [1]
+LoadBalancer::getConnection                                                      1        63.806        63.806         3.404%    747007  (       63.806 -       63.806) [7]
+LoadBalancer::openConnection                                                     1        63.786        63.786         3.402%    748455  (       63.786 -       63.786) [5]
+MagicWord::get                                                                  12        59.864         4.989         3.193%    796687  (        0.034 -       59.415) [5]
+StubObject::_unstub-wgContLang                                                   1        59.098        59.098         3.152%    769383  (       59.098 -       59.098) [1]
+-setup                                                                           1        54.901        54.901         2.929%         0  (       54.901 -       54.901) [0]
+Language::loadLocalisation                                                       1        50.752        50.752         2.707%    676215  (       50.752 -       50.752) [1]
+Database::open                                                                   1        20.593        20.593         1.098%      2711  (       20.593 -       20.593) [3]
+MediaWiki::finalCleanup                                                          1        18.520        18.520         0.988%      -648  (       18.520 -       18.520) [5]
+memcached::get                                                                   1        13.621        13.621         0.727%    675048  (       13.621 -       13.621) [0]
+StubObject::_unstub-wgMessageCache                                               1        10.286        10.286         0.549%    224191  (       10.286 -       10.286) [2]
+Setup.php-memcached                                                              1         9.888         9.888         0.527%    188087  (        9.888 -        9.888) [1]
+-overhead-total                                                                291         9.108         0.031         0.486%    325944  (        9.108 -        9.108) [291]
+StubObject::_unstub-wgLoadBalancer                                               1         9.095         9.095         0.485%    206047  (        9.095 -        9.095) [1]
+Setup.php-misc1                                                                  1         8.409         8.409         0.449%    141575  (        8.409 -        8.409) [1]
+Setup.php-exception                                                              1         5.121         5.121         0.273%     83072  (        5.121 -        5.121) [0]
+MessageCache::addMessages                                                      157         4.182         0.027         0.223%    231800  (        0.000 -        0.179) [0]
+-overhead-internal                                                             291         3.076         0.011         0.164%     97800  (        0.009 -        0.023) [0]
+OutputPage::output                                                               1         2.493         2.493         0.133%      3831  (        2.493 -        2.493) [1]
+Setup.php-extensions-wfRateArticle                                               1         2.444         2.444         0.130%     27535  (        2.444 -        2.444) [2]
+Setup.php-extensions-wfSpecialRenameuser                                         1         0.995         0.995         0.053%     67893  (        0.995 -        0.995) [36]
+Setup.php-extensions-wfSetupParserFunctions                                      1         0.673         0.673         0.036%     20071  (        0.673 -        0.673) [9]
+Setup.php-extensions-ceSetup                                                     1         0.619         0.619         0.033%     33268  (        0.619 -        0.619) [48]
+Setup.php-SetupSession                                                           1         0.563         0.563         0.030%      9920  (        0.563 -        0.563) [0]
+Language::fixUpSettings                                                          1         0.388         0.388         0.021%      5304  (        0.388 -        0.388) [0]
+StubObject::_unstub-wgOut                                                        1         0.384         0.384         0.020%     10760  (        0.384 -        0.384) [0]
+dbconnect-localhost                                                              1         0.373         0.373         0.020%      2104  (        0.373 -        0.373) [0]
+Setup.php-extensions-wfArticlestats                                              1         0.277         0.277         0.015%      5079  (        0.277 -        0.277) [2]
+Setup.php-extensions-wfBunchpatrol                                               1         0.234         0.234         0.012%     25303  (        0.234 -        0.234) [1]
+Setup.php-extensions-wfSitemap                                                   1         0.210         0.210         0.011%      1943  (        0.210 -        0.210) [1]
+Setup.php-extensions-wfNewarticleboost                                           1         0.205         0.205         0.011%      6287  (        0.205 -        0.205) [1]
+Setup.php-globals                                                                1         0.204         0.204         0.011%      5552  (        0.204 -        0.204) [0]
+query: SET sql_mode = 'X'                                                        1         0.184         0.184         0.010%       640  (        0.184 -        0.184) [0]
+Setup.php-extensions-wfDocentsettings                                            1         0.179         0.179         0.010%      7871  (        0.179 -        0.179) [1]
+Setup.php-extensions-wfYouTubeAuthSub                                            1         0.171         0.171         0.009%      6351  (        0.171 -        0.171) [1]
+Setup.php-extensions-wfPatrolcount                                               1         0.161         0.161         0.009%      6807  (        0.161 -        0.161) [1]
+Setup.php-extensions-wfCategoryhelper                                            1         0.158         0.158         0.008%      4847  (        0.158 -        0.158) [1]
+Setup.php-extensions-wfOLPC                                                      1         0.156         0.156         0.008%     10639  (        0.156 -        0.156) [1]
+Setup.php-extensions-wfChangerealname                                            1         0.151         0.151         0.008%      4703  (        0.151 -        0.151) [1]
+Setup.php-extensions-wfMonitorpages                                              1         0.141         0.141         0.008%      3983  (        0.141 -        0.141) [1]
+Setup.php-extensions-Array                                                       1         0.137         0.137         0.007%      4239  (        0.137 -        0.137) [1]
+query: COMMIT                                                                    1         0.137         0.137         0.007%         0  (        0.137 -        0.137) [0]
+Setup.php-extensions-wfPostComment                                               1         0.135         0.135         0.007%      5207  (        0.135 -        0.135) [1]
+Setup.php-extensions-wfImportFreeImages                                          1         0.134         0.134         0.007%      6175  (        0.134 -        0.134) [1]
+Setup.php-extensions-wfRepublish                                                 1         0.125         0.125         0.007%      2727  (        0.125 -        0.125) [1]
+Setup.php-extensions-wfFacebook                                                  1         0.125         0.125         0.007%      2615  (        0.125 -        0.125) [1]
+SpecialPage::initList                                                            1         0.121         0.121         0.006%      2064  (        0.121 -        0.121) [0]
+Setup.php-extensions-wfCreatePage                                                1         0.120         0.120         0.006%      2527  (        0.120 -        0.120) [1]
+Setup.php-extensions-wfNewuserlog                                                1         0.115         0.115         0.006%      3383  (        0.115 -        0.115) [7]
+Setup.php-extensions-wfSpamDiffTool                                              1         0.114         0.114         0.006%      4399  (        0.114 -        0.114) [1]
+Setup.php-extensions-wfRelatedArticle                                            1         0.106         0.106         0.006%      2567  (        0.106 -        0.106) [1]
+Setup.php-extensions-wfRequestTopic                                              1         0.103         0.103         0.005%      2791  (        0.103 -        0.103) [1]
+Setup.php-extensions-wfInternalLinksPopup                                        1         0.101         0.101         0.005%      6543  (        0.101 -        0.101) [1]
+Setup.php-extensions-wfUploadPopup                                               1         0.098         0.098         0.005%      1543  (        0.098 -        0.098) [1]
+Setup.php-extensions-wfToolbarHelper                                             1         0.096         0.096         0.005%      1983  (        0.096 -        0.096) [1]
+Setup.php-extensions-wfMultipleUpload                                            1         0.094         0.094         0.005%      2687  (        0.094 -        0.094) [1]
+Setup.php-extensions-wfGeneratefeed                                              1         0.094         0.094         0.005%      1359  (        0.094 -        0.094) [1]
+Setup.php-extensions-wfGoogleAPIResults                                          1         0.089         0.089         0.005%      1663  (        0.089 -        0.089) [1]
+Setup.php-extensions-wfEmailLink                                                 1         0.087         0.087         0.005%      1591  (        0.087 -        0.087) [1]
+query: BEGIN                                                                     1         0.086         0.086         0.005%       144  (        0.086 -        0.086) [0]
+Setup.php-extensions-wfDailyStats                                                1         0.083         0.083         0.004%      1535  (        0.083 -        0.083) [1]
+Setup.php-extensions-wfCheckmylinks                                              1         0.083         0.083         0.004%      2839  (        0.083 -        0.083) [1]
+Setup.php-extensions-wfGenerateJSFeed                                            1         0.081         0.081         0.004%      1303  (        0.081 -        0.081) [1]
+Setup.php-extensions-wfPageswithbrokenlinks                                      1         0.080         0.080         0.004%      2303  (        0.080 -        0.080) [1]
+Setup.php-extensions-wfRCBuddy                                                   1         0.079         0.079         0.004%      1831  (        0.079 -        0.079) [1]
+Setup.php-extensions-wfLuceneSearch                                              1         0.072         0.072         0.004%      3111  (        0.072 -        0.072) [1]
+Setup.php-extensions-wfBlockTitles                                               1         0.065         0.065         0.003%      1383  (        0.065 -        0.065) [1]
+Setup.php-extensions-wfFormatEmailInit                                           1         0.064         0.064         0.003%      1047  (        0.064 -        0.064) [1]
+Setup.php-extensions-wfTitlesearch                                               1         0.060         0.060         0.003%      1591  (        0.060 -        0.060) [1]
+Setup.php-extensions-wfNewcontributors                                           1         0.059         0.059         0.003%      1935  (        0.059 -        0.059) [1]
+Setup.php-extensions-wfThankauthors                                              1         0.057         0.057         0.003%      1631  (        0.057 -        0.057) [1]
+Setup.php-extensions-wfRevisionReel                                              1         0.057         0.057         0.003%      3023  (        0.057 -        0.057) [1]
+Setup.php-extensions-wfRadlinks                                                  1         0.037         0.037         0.002%      1536  (        0.037 -        0.037) [0]
+wfParserFunctionsLanguageGetMagic                                                1         0.037         0.037         0.002%      4968  (        0.037 -        0.037) [0]
+Setup.php-extensions-wfSpamBlacklist                                             1         0.037         0.037         0.002%      -472  (        0.037 -        0.037) [1]
+Setup.php-extensions-efKalturaSetup                                              1         0.036         0.036         0.002%      1512  (        0.036 -        0.036) [0]
+Setup.php-User                                                                   1         0.034         0.034         0.002%      1320  (        0.034 -        0.034) [0]
+Setup.php-extensions-wfCheckJS                                                   1         0.032         0.032         0.002%      1688  (        0.032 -        0.032) [0]
+Setup.php-extensions-wfCheckmessages                                             1         0.031         0.031         0.002%      1000  (        0.031 -        0.031) [0]
+Setup.php-extensions-Request ended normally
+
+
+Start request
+GET /Create-a-Wooden-Shuriken
+Host: wiki112.wikidiy.com
+User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14
+Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Cookie: __utma=117492239.1628663444.1210954303.1210954303.1210964363.2; __utmc=117492239; __utmz=117492239.1210954303.1.1.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none)
+Authorization: Basic ZGl5OmRpeTI2Nw==
+
+Main cache: MemCachedClientforWiki
+Message cache: MemCachedClientforWiki
+Parser cache: MemCachedClientforWiki
+Unstubbing $wgMessageCache on call of $wgMessageCache->addMessages from wfCite
+Unstubbing $wgParser on call of $wgParser->setHook from Cite::setHooks
+Unstubbing $wgContLang on call of $wgContLang->getMagic from MagicWord::load
+Fully initialised
+Unstubbing $wgLoadBalancer on call of $wgLoadBalancer->getConnection from wfGetDB
+Unstubbing $wgOut on call of $wgOut->setSquidMaxage from MediaWiki::performAction
+Unstubbing $wgUser on call of $wgUser->getSkin from Article::view
+Language::loadLocalisation(): got localisation for en from cache
+Unstubbing $wgLang on call of $wgLang->getCode from User::getPageRenderingHash
+Invalid user language code
+OutputPage::checkLastModified: client did not send If-Modified-Since header
+Article::tryFileCache(): not cacheable
+Article::view using parser cache: yes
+Trying parser cache wikidb_112:pcache:idhash:192628-0!1!0!!en!2
+Parser cache miss.
+MessageCache::load(): cache is empty
+MessageCache::load(): loading all messages from DB
+IP: 24.36.208.52
+Pulling file metadata from cache key wikidb_112:file:78511ec2adf54f69a5b03d272df67550
+File::transform: Doing stat for /var/www/html/wiki112/images/thumb/7/78/Incomplete_856.gif/35px-Incomplete_856.gif
+BitmapHandler::doTransform: creating 35x33 thumbnail at /var/www/html/wiki112/images/thumb/7/78/Incomplete_856.gif/35px-Incomplete_856.gif
+Tidy error detected!
+Saved in parser cache with key wikidb_112:pcache:idhash:192628-0!1!0!!en!2 and timestamp 20080520130455
+OutputPage::sendCacheControl: private caching; Fri, 16 May 2008 19:17:41 GMT **
+Profile section ended by close(): -total
+20080520130457	8.790	/Create-a-Wooden-Shuriken anon
+
+Profiling data
+Name                                                                         Calls         Total          Each             %       Mem
+-total                                                                           1      8790.022      8790.022       100.000%  28348696  (     8790.022 -     8790.022) [0]
+Database::query                                                                 96      6750.994        70.323        76.803%   1070040  (        0.117 -     4503.051) [101]
+MediaWiki::initialize                                                            1      5591.883      5591.883        63.616%   8502928  (     5591.883 -     5591.883) [980]
+MediaWiki::performAction                                                         1      5506.259      5506.259        62.642%   7572350  (     5506.259 -     5506.259) [951]
+Article::view                                                                    1      5272.437      5272.437        59.982%   4573387  (     5272.437 -     5272.437) [942]
+Article::getContent                                                              2      4624.806      2312.403        52.614%    685609  (        0.020 -     4624.786) [407]
+wfMsgReal                                                                      128      4612.714        36.037        52.477%    675503  (        0.053 -     4588.366) [479]
+MessageCache::load                                                               1      4585.717      4585.717        52.170%    568615  (     4585.717 -     4585.717) [358]
+MessageCache::load-load                                                          1      4565.810      4565.810        51.943%    533372  (     4565.810 -     4565.810) [354]
+MessageCache::loadFromDB                                                         1      4565.694      4565.694        51.942%    533760  (     4565.694 -     4565.694) [353]
+query: SELECT page_title,old_text,old_flags FROM `page`,`revision`,`text` W      1      4503.030      4503.030        51.229%      3736  (     4503.030 -     4503.030) [0]
+MediaWiki::finalCleanup                                                          1      2264.226      2264.226        25.759%    254391  (     2264.226 -     2264.226) [1131]
+OutputPage::output                                                               1      2263.578      2263.578        25.752%    224980  (     2263.578 -     2263.578) [1127]
+Output-skin                                                                      1      2261.063      2261.063        25.723%    221202  (     2261.063 -     2261.063) [1125]
+SkinTemplate::outputPage                                                         1      2260.973      2260.973        25.722%    223077  (     2260.973 -     2260.973) [1124]
+SkinTemplate::outputPage-execute                                                 1      2176.308      2176.308        24.759%    168187  (     2176.308 -     2176.308) [937]
+query:  SELECT cl_from FROM `categorylinks`,`page` WHERE cl_to = 'X' AND (p      1      1522.192      1522.192        17.317%      8432  (     1522.192 -     1522.192) [0]
+__autoload                                                                      39       683.777        17.533         7.779%  11021652  (        0.662 -       68.164) [6]
+WebStart.php-conf                                                                1       586.973       586.973         6.678%  10711256  (      586.973 -      586.973) [0]
+Parser::parse                                                                    4       571.148       142.787         6.498%   2995878  (        5.150 -      543.471) [830]
+Parser::parse-Article::outputWikiText                                            1       543.457       543.457         6.183%   2965942  (      543.457 -      543.457) [482]
+Parser::internalParse                                                            4       458.538       114.635         5.217%   2799062  (        3.874 -      437.403) [699]
+Parser::braceSubstitution                                                       16       369.155        23.072         4.200%   1628719  (        0.682 -      147.296) [615]
+Parser::replaceVariables                                                        39       277.434         7.114         3.156%   1364889  (        0.256 -      256.701) [355]
+query: SELECT rev_user, rev_user_text, user_real_name, MIN(rev_timestamp) a      1       259.099       259.099         2.948%     12344  (      259.099 -      259.099) [0]
+Setup.php                                                                        1       195.300       195.300         2.222%   4347242  (      195.300 -      195.300) [251]
+Parser::replaceInternalLinks                                                     5       168.313        33.663         1.915%   1559292  (        0.051 -      163.042) [127]
+User::getSkin                                                                    1       164.754       164.754         1.874%   2244699  (      164.754 -      164.754) [4]
+query: SELECT * FROM `categorylinks` WHERE cl_from='X' ORDER BY cl_sortkey      36       162.322         4.509         1.847%    253136  (        0.846 -       91.570) [0]
+Parser::replaceInternalLinks-image                                               1       161.446       161.446         1.837%   1500595  (      161.446 -      161.446) [41]
+Setup.php-extensions                                                             1       117.898       117.898         1.341%   2874646  (      117.898 -      117.898) [240]
+MediaWiki::initializeArticle                                                     1        85.488        85.488         0.973%    931923  (       85.488 -       85.488) [26]
+File::transform                                                                  1        79.667        79.667         0.906%     76612  (       79.667 -       79.667) [1]
+-overhead-total                                                               2375        73.454         0.031         0.836%   2648696  (       73.454 -       73.454) [2375]
+Setup.php-extensions-wfCite                                                      1        71.025        71.025         0.808%   1665939  (       71.025 -       71.025) [31]
+Parser::braceSubstitution-pfunc                                                  9        70.231         7.803         0.799%    496897  (        0.003 -       48.026) [91]
+StubObject::_unstub-wgUser                                                       1        68.457        68.457         0.779%    748780  (       68.457 -       68.457) [1]
+Preprocessor_DOM::preprocessToObj                                               42        63.446         1.511         0.722%    204551  (        0.150 -       43.796) [84]
+StubObject::_unstub-wgParser                                                     1        60.759        60.759         0.691%   1445956  (       60.759 -       60.759) [1]
+main-misc-setup                                                                  1        57.452        57.452         0.654%   1461966  (       57.452 -       57.452) [3]
+Parser::braceSubstitution-modifiers                                             16        56.953         3.560         0.648%     94240  (        0.066 -       51.965) [116]
+Parser::braceSubstitution-setup                                                 16        56.361         3.523         0.641%    138482  (        0.088 -       52.396) [88]
+Linker::makeLinkObj                                                             44        52.841         1.201         0.601%     97356  (        0.149 -       10.295) [211]
+Linker::makeLinkObj-immediate                                                   43        51.925         1.208         0.591%    141535  (        0.142 -       10.280) [168]
+Parser::clearState                                                              11        50.141         4.558         0.570%    161114  (        0.216 -       47.439) [24]
+Parser::externalTidy                                                             1        50.093        50.093         0.570%       536  (       50.093 -       50.093) [0]
+Setup.php-includes                                                               1        50.054        50.054         0.569%    960600  (       50.054 -       50.054) [0]
+query: select avg(rat_rating) as R from rating where rat_page=N;                 1        47.255        47.255         0.538%     11872  (       47.255 -       47.255) [0]
+Preprocessor_DOM::preprocessToObj-loadXML                                       42        46.968         1.118         0.534%     23768  (        0.065 -       42.585) [0]
+Revision::loadText                                                               4        44.442        11.110         0.506%      8226  (        1.113 -       25.881) [24]
+query:  SELECT old_text,old_flags FROM `text` WHERE old_id = 'X' LIMIT N         4        42.406        10.602         0.482%     23400  (        0.640 -       25.314) [0]
+query:  SELECT user_ip FROM `user_newtalk` WHERE user_ip = 'X' LIMIT N           1        42.225        42.225         0.480%      1336  (       42.225 -       42.225) [0]
+Parser::braceSubstitution-loadtpl                                                2        41.730        20.865         0.475%     77553  (        8.862 -       32.867) [44]
+SkinTemplate::outputPage-stuff                                                   1        41.592        41.592         0.473%      6294  (       41.592 -       41.592) [8]
+SkinTemplate::setupUserCss                                                       1        41.015        41.015         0.467%      8524  (       41.015 -       41.015) [6]
+query: SELECT iw_url,iw_local,iw_trans FROM `interwiki` WHERE iw_prefix = '      2        39.930        19.965         0.454%     46024  (        0.949 -       38.982) [0]
+memcached::get                                                                  11        39.798         3.618         0.453%    733408  (        0.139 -       24.150) [0]
+Setup.php-extensions-wfWikiHowParserFunction_Setup                               1        37.317        37.317         0.425%    932886  (       37.317 -       37.317) [8]
+MagicWord::get                                                                 209        36.289         0.174         0.413%   1039271  (       -0.001 -       30.663) [5]
+StubObject::_unstub-wgContLang                                                   1        30.350        30.350         0.345%    769444  (       30.350 -       30.350) [1]
+LoadBalancer::getConnection                                                     92        30.153         0.328         0.343%    551858  (        0.030 -       26.609) [187]
+LinkCache::addLinkObj (Linker::makeLinkObj-immediate)                           15        29.789         1.986         0.339%    106628  (        1.032 -        8.981) [75]
+LoadBalancer::openConnection                                                    92        28.547         0.310         0.325%    706015  (        0.019 -       26.588) [5]
+query:  SELECT page_id FROM `page` WHERE page_namespace = 'X' LIMIT N           21        28.216         1.344         0.321%    214096  (        0.627 -        8.551) [0]
+query: SELECT * FROM `page_restrictions` WHERE pr_page = 'X'                     1        28.074        28.074         0.319%       592  (       28.074 -       28.074) [0]
+Parser::parse-OutputPage::parse                                                  3        27.692         9.231         0.315%     34397  (        5.156 -       15.884) [344]
+-overhead-internal                                                            2375        26.622         0.011         0.303%    795144  (        0.009 -        0.703) [0]
+ParserCache::get                                                                 1        24.801        24.801         0.282%     -3081  (       24.801 -       24.801) [3]
+Parser::argSubstitution                                                         10        23.955         2.395         0.273%    158413  (        0.106 -       22.216) [23]
+query:  SELECT page_namespace,page_title,page_latest,rev_id,rev_page,rev_te      1        19.258        19.258         0.219%     33840  (       19.258 -       19.258) [0]
+MessageCache::load-save                                                          1        19.070        19.070         0.217%     35768  (       19.070 -       19.070) [0]
+LinkBatch::executeInto                                                           2        17.925         8.963         0.204%     35506  (        1.629 -       16.296) [14]
+SkinTemplate::outputPage-init                                                    1        17.050        17.050         0.194%     44823  (       17.050 -       17.050) [10]
+LinkBatch::doQuery                                                               2        17.001         8.500         0.193%     30129  (        1.210 -       15.790) [12]
+Skin::initPage                                                                   1        16.958        16.958         0.193%     45938  (       16.958 -       16.958) [9]
+Preprocessor_DOM::preprocessToObj-makexml                                       42        16.539         0.394         0.188%    252536  (        0.084 -        4.042) [0]
+NamespaceManagers::hArticleFromTitle                                             1        15.704        15.704         0.179%      1568  (       15.704 -       15.704) [0]
+query: SELECT page_id, page_namespace, page_title FROM `page` WHERE (page_n      1        15.481        15.481         0.176%     18025  (       15.481 -       15.481) [2]
+Title::getUserPermissionsErrorsInternal                                         14        15.193         1.085         0.173%     35023  (        0.102 -       13.221) [20]
+query: SELECT page_title FROM `page` WHERE (page_len > N) AND page_is_redir      1        13.562        13.562         0.154%    215996  (       13.562 -       13.562) [1]
+Language::loadLocalisation                                                       1        13.444        13.444         0.153%    725676  (       13.444 -       13.444) [1]
+Title::getCascadeProtectionSources                                               1        12.997        12.997         0.148%     36111  (       12.997 -       12.997) [5]
+Sanitizer::removeHTMLtags                                                        4        12.718         3.179         0.145%      8209  (        0.010 -        6.031) [207]
+query: SELECT pr_page,page_namespace,page_title,pr_expiry,pr_type,pr_level       1        12.435        12.435         0.141%     33080  (       12.435 -       12.435) [0]
+Revision::getRevisionText                                                      348        11.913         0.034         0.136%    248800  (        0.010 -        0.183) [0]
+Parser::transformMsg                                                             6        11.827         1.971         0.135%    -17615  (        1.813 -        2.313) [96]
+Parser::preprocess                                                               6        11.807         1.968         0.134%    -12155  (        1.811 -        2.309) [90]
+SkinTemplate::outputPage-stuff4                                                  1        11.766        11.766         0.134%     21168  (       11.766 -       11.766) [96]
+StubObject::_unstub-wgMessageCache                                               1         9.976         9.976         0.113%    224353  (        9.976 -        9.976) [2]
+Linker::makeKnownLinkObj                                                        60         9.741         0.162         0.111%     34352  (        0.101 -        0.242) [0]
+Setup.php-memcached                                                              1         9.488         9.488         0.108%    187852  (        9.488 -        9.488) [1]
+StubObject::_unstub-wgLoadBalancer                                               1         8.742         8.742         0.099%    176236  (        8.742 -        8.742) [1]
+SkinTemplate::outputPage-stuff2                                                  1         8.160         8.160         0.093%      4053  (        8.160 -        8.160) [28]
+Setup.php-misc1                                                                  1         8.035         8.035         0.091%    142028  (        8.035 -        8.035) [1]
+-setup                                                                           1         7.452         7.452         0.085%         0  (        7.452 -        7.452) [0]
+wfGetSiteNotice                                                                  1         6.115         6.115         0.070%     16095  (        6.115 -        6.115) [57]
+wfGetCachedNotice                                                                2         6.047         3.023         0.069%     17621  (        0.167 -        5.880) [55]
+Parser::doTableStuff                                                             4         5.254         1.313         0.060%     19673  (        0.038 -        5.048) [39]
+LinkCache::addLinkObj (SkinTemplate::outputPage-execute)                         4         5.030         1.257         0.057%     16183  (        1.060 -        1.780) [20]
+Parser::replaceLinkHolders                                                       4         4.749         1.187         0.054%     53573  (        0.017 -        2.416) [23]
+Setup.php-exception                                                              1         4.585         4.585         0.052%     83072  (        4.585 -        4.585) [0]
+query:  SELECT page_len,page_is_redirect,page_namespace FROM `page` WHERE p      7         4.467         0.638         0.051%     69280  (        0.585 -        0.866) [0]
+Parser::replaceInternalLinks-title                                              11         3.871         0.352         0.044%     44053  (        0.033 -        2.091) [28]
+MessageCache::addMessages                                                      157         3.851         0.025         0.044%    231272  (       -0.000 -        0.158) [0]
+SkinTemplate::outputPage-stuff3                                                  1         3.443         3.443         0.039%    -11817  (        3.443 -        3.443) [25]
+Parser::doBlockLevels                                                            4         3.267         0.817         0.037%     11140  (        0.159 -        2.154) [53]
+Parser::replaceLinkHolders-check                                                 2         3.087         1.543         0.035%     64263  (        1.359 -        1.727) [10]
+ReplacementArray::replace-strtr                                                133         2.863         0.022         0.033%     26472  (       -0.001 -        0.822) [0]
+Parser::replaceExternalLinks                                                     5         2.816         0.563         0.032%      8550  (        0.077 -        1.521) [8]
+query:  SELECT page_namespace,page_title,page_latest,rev_id,rev_page,rev_te      3         2.788         0.929         0.032%     78072  (        0.913 -        0.953) [0]
+LinkCache::addLinkObj (Parser::braceSubstitution-loadtpl)                        2         2.503         1.252         0.028%      1767  (        1.064 -        1.439) [10]
+query:  SELECT page_namespace,page_title FROM `page` WHERE page_id = 'X' LI      4         2.422         0.606         0.028%     23032  (        0.588 -        0.622) [0]
+Parser::firstCallInit                                                            1         2.362         2.362         0.027%     75144  (        2.362 -        2.362) [32]
+Setup.php-extensions-wfRateArticle                                               1         2.253         2.253         0.026%     27329  (        2.253 -        2.253) [2]
+query: SELECT page_id, page_namespace, page_title, page_is_redirect FROM `p      2         1.697         0.848         0.019%     65384  (        0.810 -        0.887) [0]
+Parser::doBlockLevels-paragraph                                                 53         1.681         0.032         0.019%     17984  (        0.018 -        0.149) [0]
+Parser::replaceFreeExternalLinks                                                 8         1.680         0.210         0.019%     10648  (        0.056 -        0.569) [0]
+SkinTemplate::buildContentActionUrls                                             1         1.627         1.627         0.019%     -1912  (        1.627 -        1.627) [10]
+StripState::unstripGeneral                                                       8         1.489         0.186         0.017%      1710  (        0.004 -        0.722) [8]
+Parser::doMagicLinks                                                             4         1.292         0.323         0.015%      6656  (        0.032 -        0.824) [0]
+StripState::unstripNoWiki                                                       15         0.995         0.066         0.011%      4327  (        0.004 -        0.833) [15]
+LocalFile::loadFromCache                                                         1         0.863         0.863         0.010%      7236  (        0.863 -        0.863) [1]
+query: SELECT page_id, page_namespace, page_title FROM `page` WHERE (page_n      1         0.809         0.809         0.009%     19456  (        0.809 -        0.809) [0]
+Setup.php-extensions-wfSpecialRenameuser                                         1         0.798         0.798         0.009%     68107  (        0.798 -        0.798) [36]
+Parser::replaceLinkHolders-construct                                             2         0.771         0.385         0.009%     -4016  (        0.198 -        0.573) [5]
+Database::open                                                                   1         0.749         0.749         0.009%      2566  (        0.749 -        0.749) [3]
+Setup.php-extensions-ceSetup                                                     1         0.659         0.659         0.008%     33500  (        0.659 -        0.659) [48]
+Parser::replaceInternalLinks-misc                                               11         0.653         0.059         0.007%     18048  (        0.044 -        0.118) [0]
+StripState::unstripBoth                                                         54         0.649         0.012         0.007%   -100052  (       -0.004 -        0.259) [110]
+Parser::doAllQuotes                                                              4         0.630         0.158         0.007%      5864  (        0.059 -        0.414) [0]
+Setup.php-extensions-wfSetupParserFunctions                                      1         0.625         0.625         0.007%     20026  (        0.625 -        0.625) [9]
+query:  SELECT page_id,page_namespace,page_title,page_restrictions,page_cou      1         0.625         0.625         0.007%       209  (        0.625 -        0.625) [2]
+Parser::replaceLinkHolders-interwiki                                             1         0.526         0.526         0.006%      -411  (        0.526 -        0.526) [1]
+query: COMMIT                                                                    1         0.488         0.488         0.006%     32376  (        0.488 -        0.488) [0]
+Skin::getSkinNames-init                                                          1         0.484         0.484         0.006%      1488  (        0.484 -        0.484) [0]
+Setup.php-SetupSession                                                           1         0.467         0.467         0.005%      9856  (        0.467 -        0.467) [0]
+query: BEGIN                                                                     2         0.443         0.221         0.005%      2448  (        0.108 -        0.335) [0]
+Parser::doHeadings                                                               4         0.427         0.107         0.005%      5368  (        0.049 -        0.241) [0]
+LoadBalancer::getReaderIndex                                                    90         0.427         0.005         0.005%      3264  (        0.003 -        0.019) [0]
+SkinTemplate::buildContentActionUrls-edit                                        1         0.412         0.412         0.005%     -2449  (        0.412 -        0.412) [3]
+SkinTemplate::buildPersonalUrls                                                  1         0.405         0.405         0.005%      -427  (        0.405 -        0.405) [1]
+Language::fixUpSettings                                                          1         0.404         0.404         0.005%      5848  (        0.404 -        0.404) [0]
+Parser::replaceInternalLinks-setup                                               5         0.386         0.077         0.004%      3816  (        0.054 -        0.090) [0]
+StubObject::_unstub-wgLang                                                       1         0.376         0.376         0.004%     21960  (        0.376 -        0.376) [0]
+dbconnect-localhost                                                              1         0.364         0.364         0.004%      1960  (        0.364 -        0.364) [0]
+Parser::replaceInternalLinks-e1                                                 11         0.362         0.033         0.004%      6616  (        0.015 -        0.098) [0]
+query:  SELECT page_restrictions FROM `page` WHERE page_id = 'X' LIMIT N         1         0.360         0.360         0.004%       464  (        0.360 -        0.360) [0]
+SkinTemplate::buildContentActionUrls-live                                        1         0.348         0.348         0.004%       998  (        0.348 -        0.348) [3]
+StubObject::_unstub-wgOut                                                        1         0.341         0.341         0.004%      8232  (        0.341 -        0.341) [0]
+namespacePermissionsCheckNamespace                                              14         0.320         0.023         0.004%      5968  (        0.011 -        0.053) [0]
+Parser::makeLinkHolder                                                           6         0.306         0.051         0.003%      5760  (        0.030 -        0.111) [0]
+fnKalturaBeforePageDisplay                                                       1         0.298         0.298         0.003%      2400  (        0.298 -        0.298) [0]
+Setup.php-extensions-wfArticlestats                                              1         0.272         0.272         0.003%      5369  (        0.272 -        0.272) [2]
+Parser::replaceLinkHolders-replace                                               2         0.269         0.135         0.003%       744  (        0.085 -        0.185) [0]
+Cite::clearState                                                                11         0.222         0.020         0.003%      1328  (        0.017 -        0.032) [0]
+Setup.php-extensions-wfSitemap                                                   1         0.215         0.215         0.002%      1948  (        0.215 -        0.215) [1]
+Setup.php-extensions-wfNewarticleboost                                           1         0.194         0.194         0.002%      6332  (        0.194 -        0.194) [1]
+Setup.php-globals                                                                1         0.187         0.187         0.002%      5536  (        0.187 -        0.187) [0]
+Setup.php-extensions-wfBunchpatrol                                               1         0.183         0.183         0.002%     25308  (        0.183 -        0.183) [1]
+Setup.php-extensions-wfCategoryhelper                                            1         0.164         0.164         0.002%      4852  (        0.164 -        0.164) [1]
+MessageCache::load-fromcache                                                     1         0.164         0.164         0.002%       692  (        0.164 -        0.164) [1]
+Parser::initialiseVariables                                                      1         0.163         0.163         0.002%      4521  (        0.163 -        0.163) [2]
+Setup.php-extensions-wfDocentsettings                                            1         0.160         0.160         0.002%      7876  (        0.160 -        0.160) [1]
+Setup.php-extensions-wfYouTubeAuthSub                                            1         0.157         0.157         0.002%      6356  (        0.157 -        0.157) [1]
+query: SET sql_mode = 'X'                                                        1         0.156         0.156         0.002%       640  (        0.156 -        0.156) [0]
+wfIsBadImage                                                                     1         0.148         0.148         0.002%      1404  (        0.148 -        0.148) [1]
+Setup.php-extensions-wfPostComment                                               1         0.147         0.147         0.002%      5100  (        0.147 -        0.147) [1]
+User::load                                                                       1         0.143         0.143         0.002%      1340  (        0.143 -        0.143) [1]
+ParserOptions::initialiseFromUser                                                3         0.141         0.047         0.002%        80  (        0.043 -        0.054) [0]
+Setup.php-extensions-wfPatrolcount                                               1         0.140         0.140         0.002%      6812  (        0.140 -        0.140) [1]
+Setup.php-extensions-wfChangerealname                                            1         0.139         0.139         0.002%      4708  (        0.139 -        0.139) [1]
+Setup.php-extensions-wfOLPC                                                      1         0.139         0.139         0.002%     10644  (        0.139 -        0.139) [1]
+Setup.php-extensions-Array                                                       1         0.137         0.137         0.002%      4244  (        0.137 -        0.137) [1]
+Setup.php-extensions-wfMonitorpages                                              1         0.130         0.130         0.001%      3988  (        0.130 -        0.130) [1]
+Setup.php-extensions-wfFacebook                                                  1         0.129         0.129         0.001%      2620  (        0.129 -        0.129) [1]
+Setup.php-extensions-wfImportFreeImages                                          1         0.124         0.124         0.001%      6180  (        0.124 -        0.124) [1]
+User::loadDefaults                                                               1         0.121         0.121         0.001%      1032  (        0.121 -        0.121) [0]
+Setup.php-extensions-wfCreatePage                                                1         0.119         0.119         0.001%      2532  (        0.119 -        0.119) [1]
+Setup.php-extensions-wfNewuserlog                                                1         0.118         0.118         0.001%      3393  (        0.118 -        0.118) [7]
+SpecialPage::initList                                                            1         0.118         0.118         0.001%      2256  (        0.118 -        0.118) [0]
+Setup.php-extensions-wfRepublish                                                 1         0.117         0.117         0.001%      2620  (        0.117 -        0.117) [1]
+Setup.php-extensions-wfRequestTopic                                              1         0.115         0.115         0.001%      2820  (        0.115 -        0.115) [1]
+Setup.php-extensions-wfRelatedArticle                                            1         0.105         0.105         0.001%      2572  (        0.105 -        0.105) [1]
+Setup.php-extensions-wfSpamDiffTool                                              1         0.104         0.104         0.001%      4420  (        0.104 -        0.104) [1]
+Setup.php-extensions-wfInternalLinksPopup                                        1         0.100         0.100         0.001%      6652  (        0.100 -        0.100) [1]
+Setup.php-extensions-wfUploadPopup                                               1         0.098         0.098         0.001%      1548  (        0.098 -        0.098) [1]
+Parser::replaceInternalLinks-category                                            2         0.097         0.048         0.001%      2624  (        0.044 -        0.053) [0]
+Setup.php-extensions-wfToolbarHelper                                             1         0.096         0.096         0.001%      1988  (        0.096 -        0.096) [1]
+Setup.php-extensions-wfCheckmylinks                                              1         0.094         0.094         0.001%      2844  (        0.094 -        0.094) [1]
+Setup.php-extensions-wfMultipleUpload                                            1         0.093         0.093         0.001%      2692  (        0.093 -        0.093) [1]
+Setup.php-extensions-wfGeneratefeed                                              1         0.093         0.093         0.001%      1412  (        0.093 -        0.093) [1]
+Setup.php-extensions-wfGoogleAPIResults                                          1         0.089         0.089         0.001%      1716  (        0.089 -        0.089) [1]
+Setup.php-extensions-wfEmailLink                                                 1         0.087         0.087         0.001%      1596  (        0.087 -        0.087) [1]
+Setup.php-extensions-wfPageswithbrokenlinks                                      1         0.084         0.084         0.001%      2308  (        0.084 -        0.084) [1]
+Setup.php-extensions-wfLuceneSearch                                              1         0.084         0.084         0.001%      3116  (        0.084 -        0.084) [1]
+Setup.php-extensions-wfDailyStats                                                1         0.083         0.083         0.001%      1540  (        0.083 -        0.083) [1]
+Setup.php-extensions-wfGenerateJSFeed                                            1         0.082         0.082         0.001%      1260  (        0.082 -        0.082) [1]
+ExtParserFunctions::clearState                                                  11         0.080         0.007         0.001%      1904  (        0.006 -        0.009) [0]
+Parser::replaceLinkHoldersText                                                   1         0.078         0.078         0.001%         0  (        0.078 -        0.078) [0]
+Setup.php-extensions-wfRCBuddy                                                   1         0.078         0.078         0.001%      1836  (        0.078 -        0.078) [1]
+Setup.php-extensions-wfFormatEmailInit                                           1         0.075         0.075         0.001%      1116  (        0.075 -        0.075) [1]
+Setup.php-extensions-wfNewcontributors                                           1         0.067         0.067         0.001%      1940  (        0.067 -        0.067) [1]
+Setup.php-extensions-wfRevisionReel                                              1         0.066         0.066         0.001%      3028  (        0.066 -        0.066) [1]
+Setup.php-extensions-wfBlockTitles                                               1         0.063         0.063         0.001%      1324  (        0.063 -        0.063) [1]
+Setup.php-extensions-wfThankauthors                                              1         0.062         0.062         0.001%      1636  (        0.062 -        0.062) [1]
+Setup.php-extensions-wfTitlesearch                                               1         0.060         0.060         0.001%      1596  (        0.060 -        0.060) [1]
+MediaWiki::initializeSpecialCases                                                1         0.052         0.052         0.001%       624  (        0.052 -        0.052) [0]
+wfParserFunctionsLanguageGetMagic                                                1         0.048         0.048         0.001%      4968  (        0.048 -        0.048) [0]
+Setup.php-extensions-wfSpamBlacklist                                             1         0.036         0.036         0.000%      -459  (        0.036 -        0.036) [1]
+Setup.php-extensions-efKalturaSetup                                              1         0.036         0.036         0.000%      1512  (        0.036 -        0.036) [0]
+Setup.php-User                                                                   1         0.035         0.035         0.000%      1336  (        0.035 -        0.035) [0]
+Setup.php-extensions-wfRadlinks                                                  1         0.032         0.032         0.000%      1472  (        0.032 -        0.032) [0]
+Setup.php-extensions-wfCheckJS                                                   1         0.032         0.032         0.000%      1688  (        0.032 -        0.032) [0]
+Setup.php-extensions-Request ended normally

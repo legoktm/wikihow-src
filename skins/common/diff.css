@@ -1,0 +1,116 @@
+/*
+** Diff rendering
+*/
+table.diff {
+	border: none;
+	border-spacing: 4px;
+	width: 100%;
+	font-size: .8em;
+	/* Fixed layout is required to ensure that cells containing long URLs
+	   don't widen in Safari, Internet Explorer, or iCab */
+	table-layout: fixed;
+}
+table.diff td {
+	padding: 5px;
+	text-align: left;
+}
+table.diff, table.diff td.diff-otitle, table.diff td.diff-ntitle {
+	background-color: white;
+}
+#mw-diff-otitle1, 
+#mw-diff-ntitle1 {
+	text-align: center;
+}
+td.diff-marker {
+	text-align: right;
+}
+.rtl td.diff-marker {
+	text-align: left;
+}
+td.diff-lineno {
+	font-weight: bold;
+}
+td.diff-addedline {
+	background: #cfc;
+	font-size: smaller;
+}
+td.diff-deletedline {
+	background: #f4dcdc;
+	font-size: smaller;
+}
+td.diff-context {
+	background: #eee;
+	font-size: smaller;
+}
+.diffchange {
+	color: red;
+	font-weight: bold;
+	text-decoration: none;
+}
+table.diff col.diff-marker {
+	/* changed from percentages to pixels to fix table-layout:fixed  bug in IE9 with diff table */
+	width: 2%;
+}
+table.diff col.diff-content {
+	/* changed from percentages to pixels to fix table-layout:fixed  bug in IE9 with diff table */
+	width: 48%;
+
+}
+table.diff td.diff-multi{
+	text-align: center;
+}
+table.diff td div {
+	/* Force-wrap very long lines such as URLs or page-widening char strings.
+	   CSS 3 draft..., but Gecko doesn't support it yet:
+	   https://bugzilla.mozilla.org/show_bug.cgi?id=99457 */
+	word-wrap: break-word;
+	
+	/* As fallback, scrollbars will be added for very wide cells
+	   instead of text overflowing or widening */
+	overflow: auto;
+	max-width: 305px;	
+	/* The above rule breaks on very old versions of Mozilla due
+	   to a bug which collapses the table cells to a single line.
+	   
+	   In Mozilla 1.1 and below with JavaScript enabled, the rule
+	   will be overridden with this by diff.js; wide cell contents
+	   then spill horizontally without widening the rest of the
+	   table: */
+	/* overflow: visible; */
+}
+
+.rccomment { 
+	font-weight: bold; 
+	clear: both;
+	padding-top: 1em;
+}
+
+.rccomment_middle table{
+	width:100%;
+}
+
+.rccomment_middle td.avatar{
+	width:20px;
+}
+
+table.diff h4 { 
+	font-size:14px; 
+	background: none;
+	padding: 0;
+	margin: 0;
+}
+
+/* details at top */
+.diff_details { 
+	margin: 0 auto;
+}
+.diff_avatar { 
+	width: 60px;
+	float: left;
+	margin-right: 10px;
+}
+
+.diff-hr {
+	border:none;
+	margin-top: 10px;
+}

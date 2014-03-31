@@ -1,0 +1,15 @@
+.minor_section {
+	padding: 0px;
+	background-color: transparent;
+}
+
+.wh_block {
+	margin-right: 9px;
+	margin-left: 4px;
+}
+
+.cat-spinner {
+	margin: 15px auto;
+	background: url(/extensions/wikihow/stubs/images/hillary_spin.gif) no-repeat center center;
+	height: 30px;
+}

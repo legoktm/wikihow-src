@@ -1,0 +1,13 @@
+--- mediawiki-1.9.3/includes/SpecialLog.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialLog.php	2008-03-25 07:23:35.000000000 -0500
+@@ -227,6 +227,10 @@
+ 	 */
+ 	function show() {
+ 		global $wgOut;
++		//XXADDED FOR GOOGLE MINI
++		if ($this->reader->queryType() == 'delete') {
++			$wgOut->setRobotPolicy('noindex,follow');
++		}
+ 		$this->showHeader( $wgOut );
+ 		$this->showOptions( $wgOut );
+ 		$result = $this->getLogRows();

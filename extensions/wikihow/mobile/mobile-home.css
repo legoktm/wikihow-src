@@ -1,0 +1,30 @@
+#tagline{
+	background-color:#dee5d7;
+	border-left:1px solid #b5aa95;
+	border-bottom:1px solid #b5aa95;
+	border-right:1px solid #b5aa95;
+	font-family:Helvetica, Arial;
+	height:24px;
+	padding:7px 0 0 0;
+}
+
+#tagline blockquote{
+	background-image:url(/extensions/wikihow/mobile/images/quote_left.png);
+	background-position:top left;
+	background-repeat:no-repeat;
+	width:285px;
+	margin:0 auto;
+}
+
+#tagline p{
+	font-size:15px;
+	color:#637563;
+	text-align:center;
+	background-image:url(/extensions/wikihow/mobile/images/quote_right.png);
+	background-position:top right;
+	background-repeat:no-repeat;
+	font-family:Helvetica, Arial;
+	width:285px;
+}
+
+

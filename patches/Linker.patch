@@ -1,0 +1,44 @@
+--- mediawiki-1.9.3/includes/Linker.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/Linker.php	2007-08-30 10:18:37.000000000 -0500
+@@ -605,7 +605,11 @@
+ 		$magnifyalign = $wgContLang->isRTL() ? 'left' : 'right';
+ 		$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
+ 
++
++//		$class = "image " . ($align == 'right' ? "R" : "L");
++
+ 		$s = "<div class=\"thumb t{$align}\"><div class=\"thumbinner\" style=\"width:{$oboxwidth}px;\">";
++//		$s = "<p class=\"$class\" style=\"width:{$oboxwidth}px;\">\n\t";
+ 		if( $thumbUrl == '' ) {
+ 			// Couldn't generate thumbnail? Scale the image client-side.
+ 			$thumbUrl = $img->getViewURL();
+@@ -628,14 +632,12 @@
+ 			if ( $framed ) {
+ 				$zoomicon="";
+ 			} else {
+-				$zoomicon =  '<div class="magnify" style="float:'.$magnifyalign.'">'.
+-					'<a href="'.$u.'" class="internal" title="'.$more.'">'.
+-					'<img src="'.$wgStylePath.'/common/images/magnify-clip.png" ' .
+-					'width="15" height="11" alt="" /></a></div>';
++				$zoomicon =  "<img src='".$wgStylePath. "/common/images/magnify-clip.png' width='15' height='11' alt=''/></a>";
+ 			}
+ 		}
+ 		$s .= '  <div class="thumbcaption"'.$textalign.'>'.$zoomicon.$label."</div></div></div>";
+-		return str_replace("\n", ' ', $s);
++//		$s .= $zoomicon.$label."\n</p>";
++		return str_replace("\n", "", $s);
+ 	}
+ 
+ 	/**
+@@ -768,11 +770,9 @@
+ 		if( $talkable ) {
+ 			$items[] = $this->userTalkLink( $userId, $userText );
+ 		}
+-		if( $userId ) {
+ 			$contribsPage = SpecialPage::getTitleFor( 'Contributions', $userText );
+ 			$items[] = $this->makeKnownLinkObj( $contribsPage ,
+ 				wfMsgHtml( 'contribslink' ) );
+-		}
+ 		if( $blockable && $wgUser->isAllowed( 'block' ) ) {
+ 			$items[] = $this->blockLink( $userId, $userText );
+ 		}

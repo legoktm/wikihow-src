@@ -1,0 +1,43 @@
+table.ame_scores {
+	width: 640px;
+	font-variant: normal;
+	font-size: 0.8em;
+	font-style: normal;
+	border-spacing: 0px;
+}
+
+table.ame_scores th {
+	text-align: left;
+	border-bottom: 1px black solid;
+	padding: 5px;
+	line-height: 15px;
+}
+
+table.ame_scores tr {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+table.ame_scores tr.odd{
+	background: #EEEEEE;
+}
+
+table.ame_scores td {
+	padding: 5px;
+	line-height: 15px;
+}
+
+form.ame_ts {
+	margin-bottom: 15px;
+}
+
+form.ame_ts input[type=text] {
+	padding: 2px;
+	width: 15px;
+}
+
+#ame_csv {
+	width: 85px;
+	margin-bottom:15px;
+}
+

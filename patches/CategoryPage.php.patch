@@ -1,0 +1,374 @@
+--- mediawiki-1.9.3/includes/CategoryPage.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/CategoryPage.php	2008-04-11 14:44:36.000000000 -0500
+@@ -51,7 +51,10 @@
+ 		$children, $children_start_char,
+ 		$showGallery, $gallery,
+ 		$skin;
+-
++	
++	
++	//XXADDED
++	var $articles_fa, $article_info, $article_info_fa, $articles_start_char_fa;
+ 	function __construct( $title, $from = '', $until = '' ) {
+ 		global $wgCategoryPagingLimit;
+ 		$this->title = $title;
+@@ -97,6 +100,12 @@
+ 			$this->gallery = new ImageGallery();
+ 			$this->gallery->setParsing();
+ 		}
++		
++		//XXADDED
++		$this->articles_fa = array();
++		$this->article_info = array();
++		$this->article_info_fa = array();
++		$this->articles_start_char_fa = array();
+ 	}
+ 
+ 	function getSkin() {
+@@ -110,11 +119,19 @@
+ 	/**
+ 	 * Add a subcategory to the internal lists
+ 	 */
+-	function addSubcategory( $title, $sortkey, $pageLength ) {
++	function addSubcategory( $title, $sortkey, $pageLength, $subcats = null ) {
+ 		global $wgContLang;
+ 		// Subcategory; strip the 'Category' namespace from the link text.
+-		$this->children[] = $this->getSkin()->makeKnownLinkObj( 
+-			$title, $wgContLang->convertHtml( $title->getText() ) );
++		//XXCHANGED
++		if ($subcats == null) {
++			$this->children[] = $this->getSkin()->makeKnownLinkObj( 
++				$title, $wgContLang->convertHtml( $title->getText() ) );
++		} else {
++			$rx = array();
++			$rx[] = $this->getSkin()->makeKnownLinkObj($title, $wgContLang->convertHtml( $title->getText() ) );
++			$rx[] = $subcats;
++			$this->children[] = $rx;
++		}
+ 
+ 		$this->children_start_char[] = $this->getSubcategorySortChar( $title, $sortkey );
+ 	}
+@@ -157,12 +174,24 @@
+ 	/**
+ 	 * Add a miscellaneous page
+ 	 */
+-	function addPage( $title, $sortkey, $pageLength ) {
++	function addPage( $title, $sortkey, $pageLength, $info_entry=null ) {
+ 		global $wgContLang;
+ 		$this->articles[] = $this->getSkin()->makeSizeLinkObj( 
+ 			$pageLength, $title, $wgContLang->convert( $title->getPrefixedText() ) 
+ 		);
+ 		$this->articles_start_char[] = $wgContLang->convert( $wgContLang->firstChar( $sortkey ) );
++		if (is_array($info_entry)) 
++			$this->article_info[] = $info_entry;
++	}
++
++	function addFA( $title, $sortkey, $pageLength, $info_entry=null ) {
++		global $wgContLang;
++		$this->articles_fa[] = $this->getSkin()->makeSizeLinkObj( 
++			$pageLength, $title, $wgContLang->convert( $title->getPrefixedText() ) 
++		);
++		$this->articles_start_char_fa[] = $wgContLang->convert( $wgContLang->firstChar( $sortkey ) );
++		if (is_array($info_entry)) 
++			$this->article_info_fa[] = $info_entry;
+ 	}
+ 
+ 	function finaliseCategoryState() {
+@@ -177,15 +206,16 @@
+ 	function doCategoryQuery() {
+ 		$dbr =& wfGetDB( DB_SLAVE );
+ 		if( $this->from != '' ) {
+-			$pageCondition = 'cl_sortkey >= ' . $dbr->addQuotes( $this->from );
++			$pageCondition = 'cl1.cl_sortkey >= ' . $dbr->addQuotes( $this->from );
+ 			$this->flip = false;
+ 		} elseif( $this->until != '' ) {
+-			$pageCondition = 'cl_sortkey < ' . $dbr->addQuotes( $this->until );
++			$pageCondition = 'cl1.cl_sortkey < ' . $dbr->addQuotes( $this->until );
+ 			$this->flip = true;
+ 		} else {
+ 			$pageCondition = '1 = 1';
+ 			$this->flip = false;
+ 		}
++		/*
+ 		$res = $dbr->select(
+ 			array( 'page', 'categorylinks' ),
+ 			array( 'page_title', 'page_namespace', 'page_len', 'cl_sortkey' ),
+@@ -197,7 +227,29 @@
+ 			__METHOD__,
+ 			array( 'ORDER BY' => $this->flip ? 'cl_sortkey DESC' : 'cl_sortkey',
+ 			       'LIMIT'    => $this->limit + 1 ) );
+-
++		*/
++		//XXCHANGED
++		$templates = wfMsgForContent('templates_further_editing');
++		$t_arr = split("\n", $templates);
++		$templates = "'" . implode("','", $t_arr) . "'";
++		$sql = "SELECT page_title, page_namespace, page_len, cl1.cl_sortkey, page_counter, tl_title , cl2.cl_to as page_is_featured
++				FROM page, categorylinks cl1 LEFT OUTER JOIN skey on (page_title=skey_title AND page_namespace=skey_namespace)
++				LEFT OUTER JOIN templatelinks ON page_id = tl_from and tl_title IN ($templates)
++				LEFT OUTER JOIN categorylinks cl2 ON page_id = cl2.cl_from and cl2.cl_to = 'Featured-Articles'
++			WHERE
++			$pageCondition
++			AND cl1.cl_from = page_id 
++			AND cl1.cl_to = " . $dbr->addQuotes($this->title->getDBKey()) 
++			. " GROUP BY page_id " 
++			//" GROUP by rev_page " . 
++			//" ORDER BY cl_sortkey, page_is_featured DESC, " .  ($flip ? 'cl_sortkey DESC' : 'cl_sortkey') .
++			. " ORDER BY " .  ($this->flip ? 'cl1.cl_sortkey DESC' : 'cl1.cl_sortkey') .
++			" LIMIT " . ($this->limit + 1) 
++			;
++		$res = $dbr->query($sql);
++	
++#echo $sql; exit; 
++	
+ 		$count = 0;
+ 		$this->nextPage = null;
+ 		while( $x = $dbr->fetchObject ( $res ) ) {
+@@ -211,14 +263,38 @@
+ 			$title = Title::makeTitle( $x->page_namespace, $x->page_title );
+ 
+ 			if( $title->getNamespace() == NS_CATEGORY ) {
+-				$this->addSubcategory( $title, $x->cl_sortkey, $x->page_len );
++				//XXADDED 
++				// checkfor subcategries
++				$subcats = $this->getSubcategories($title);
++				if (sizeof($subcats) == 0) {
++					$this->addSubcategory( $title, $x->cl_sortkey, $x->page_len );
++				} else {
++					$this->addSubcategory($title, '', 0, $subcats);
++				}				
+ 			} elseif( $title->getNamespace() == NS_IMAGE ) {
+ 				$this->addImage( $title, $x->cl_sortkey, $x->page_len );
+ 			} else {
+-				$this->addPage( $title, $x->cl_sortkey, $x->page_len );
++				// Page in this category
++				$info_entry = array();
++				$info_entry['page_counter'] = $x->page_counter;
++				$info_entry['page_len'] = $x->page_len;
++				$info_entry['page_is_featured'] = $x->page_is_featured == "Featured-Articles" ? 1 : 0;
++				$info_entry['number_of_edits'] = $x->edits;
++				$info_entry['template'] = $x->tl_title;
++				if (!$x->page_is_featured) {
++					$this->addPage( $title, $x->cl_sortkey, $x->page_len, $info_entry );
++				} else {
++					$this->addFA( $title, $x->cl_sortkey, $x->page_len, $info_entry );
++				}
+ 			}
+ 		}
+ 		$dbr->freeResult( $res );
++		//XXCHANGED
++		// put the featured articles at the front
++		$this->articles = array_merge($this->articles_fa, $this->articles);
++		$this->articles_start_char = array_merge($this->articles_start_char_fa, $this->articles_start_char); /// this likely breaks start char of things
++		$this->article_info = array_merge($this->article_info_fa, $this->article_info);		
++		
+ 	}
+ 
+ 	function getCategoryTop() {
+@@ -233,13 +309,14 @@
+ 
+ 	function getSubcategorySection() {
+ 		# Don't show subcategories section if there are none.
++		global $wgTitle;
+ 		$r = '';
+ 		if( count( $this->children ) > 0 ) {
+ 			# Showing subcategories
+ 			$r .= "<div id=\"mw-subcategories\">\n";
+-			$r .= '<h2>' . wfMsg( 'subcategories' ) . "</h2>\n";
+-			$r .= wfMsgExt( 'subcategorycount', array( 'parse' ), count( $this->children) );
+-			$r .= $this->formatList( $this->children, $this->children_start_char );
++			$r .= '<h2>' . wfMsg( 'subcategories', $wgTitle->getText() ) . "</h2>\n";
++///			$r .= wfMsgExt( 'subcategorycount', array( 'parse' ), count( $this->children) );
++			$r .= $this->shortList( $this->children, $this->children_start_char );
+ 			$r .= "\n</div>";
+ 		}
+ 		return $r;
+@@ -250,7 +327,7 @@
+ 		$r = "<div id=\"mw-pages\">\n";
+ 		$r .= '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
+ 		$r .= wfMsgExt( 'categoryarticlecount', array( 'parse' ), count( $this->articles) );
+-		$r .= $this->formatList( $this->articles, $this->articles_start_char );
++		$r .= $this->columnList( $this->articles, $this->articles_start_char, $this->article_info );
+ 		$r .= "\n</div>";
+ 		return $r;
+ 	}
+@@ -286,9 +363,9 @@
+ 	 * @return string
+ 	 * @private
+ 	 */
+-	function formatList( $articles, $articles_start_char, $cutoff = 6 ) {
+-		if ( count ( $articles ) > $cutoff ) {
+-			return $this->columnList( $articles, $articles_start_char );
++	function formatList( $articles, $articles_start_char, $cutoff = 6, $article_info = null ) {
++		if ( count ( $articles ) > $cutoff) {
++			return $this->columnList( $articles, $articles_start_char, article_info );
+ 		} elseif ( count($articles) > 0) {
+ 			// for short lists of articles in categories.
+ 			return $this->shortList( $articles, $articles_start_char );
+@@ -305,21 +382,30 @@
+ 	 * @return string
+ 	 * @private
+ 	 */
+-	function columnList( $articles, $articles_start_char ) {
++	function columnList( $articles, $articles_start_char, $article_info ) {
+ 		// divide list into three equal chunks
+ 		$chunk = (int) (count ( $articles ) / 3);
+-
++		
+ 		// get and display header
+ 		$r = '<table width="100%"><tr valign="top">';
+ 
+ 		$prev_start_char = 'none';
+ 
+ 		// loop through the chunks
++		//XXADDED
++		$featured = 0;
++		$articles_with_templates = array();
++		$articles_with_templates_info = array();
++		$templates = wfMsgForContent('templates_further_editing');
++		$templates = split("\n", $templates);
++		$templates = array_flip($templates); // make the array associateive.
++		
++		// loop through the chunks
+ 		for($startChunk = 0, $endChunk = $chunk, $chunkIndex = 0;
+ 			$chunkIndex < 3;
+ 			$chunkIndex++, $startChunk = $endChunk, $endChunk += $chunk + 1)
+ 		{
+-			$r .= "<td>\n";
++//			$r .= "<td>\n";
+ 			$atColumnTop = true;
+ 
+ 			// output all articles in category
+@@ -340,19 +426,51 @@
+ 					$cont_msg = "";
+ 					if ( $articles_start_char[$index] == $prev_start_char )
+ 						$cont_msg = wfMsgHtml('listingcontinuesabbrev');
+-					$r .= "<h3>" . htmlspecialchars( $articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
++					//$r .= "<h3>" . htmlspecialchars( $articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
+ 					$prev_start_char = $articles_start_char[$index];
+ 				}
+ 
+-				$r .= "<li>{$articles[$index]}</li>";
++///XXXXXXX			
++				if (is_array($article_info) && $article_info[$index]['page_is_featured'] && $featured == 0) {
++					$r .= "<div id='category_featured_entries'><img src='/skins/common/images/star.png' style='margin-right:5px;'><b>" . wfMsg('featured_articles_category') . "</b>";				
++					$featured = 1;
++				} else if (is_array($article_info) && !$article_info[$index]['page_is_featured'] && $featured == 1) {
++					$r .= "</div>";
++				}
++				if (is_array($article_info) && isset($article_info[$index])) {
++					$template = $article_info[$index]['template'];
++					$page_len = $article_info[$index]['page_len']; 
++					// save articles with certain templates to put at the end 
++					//TODO: internationalize the shit out of this
++					if (isset($templates[$template]) || $page_len < 750) {
++						if(strpos($articles[$index], ":") === false) {
++							$articles_with_templates[] = $articles[$index];
++							$articles_with_templates_info[] = $article_info[$index];
++							continue;
++						}
++					}
++				}
++			
++///XXXXXXX				
++		//		$r .= "<li>{$articles[$index]}</li>";
++				$r .= "<div id='category_entry'>{$articles[$index]}</div>";
+ 			}
+ 			if( !$atColumnTop ) {
+ 				$r .= "</ul>\n";
+ 			}
+-			$r .= "</td>\n";
++			//$r .= "</td>\n";
+ 
+ 
+ 		}
++		//XXADDED
++		if (sizeof($articles_with_templates) > 0) {
++			$r .= "<div style='margin-top: 10px;'><b>" . wfMsg('articles_that_require_attention') . "</b>";
++			$index = 0;
++			for ($index = 0; $index < sizeof($articles_with_templates); $index++) {
++				$r .= "<div id='category_entry'>{$articles_with_templates[$index]} </div>";
++			}			
++			$r .= "</div>";
++		}
+ 		$r .= '</tr></table>';
+ 		return $r;
+ 	}
+@@ -365,21 +483,44 @@
+ 	 * @private
+ 	 */
+ 	function shortList( $articles, $articles_start_char ) {
+-		$r = '<h3>' . htmlspecialchars( $articles_start_char[0] ) . "</h3>\n";
+-		$r .= '<ul><li>'.$articles[0].'</li>';
+-		for ($index = 1; $index < count($articles); $index++ )
++		//XXCHANGED -- the whole function pretty much
++		//$r = '<h3>' . htmlspecialchars( $articles_start_char[0] ) . "</h3>\n";
++		global $wgUser;
++		$r .= "<div id=subcategories_list>";
++		$r .= '<ul>';
++		$sk = $wgUser->getSkin();
++		for ($index = 0; $index < count($articles); $index++ )
+ 		{
+ 			if ($articles_start_char[$index] != $articles_start_char[$index - 1])
+ 			{
+-				$r .= "</ul><h3>" . htmlspecialchars( $articles_start_char[$index] ) . "</h3>\n<ul>";
++				//XXCHANGED
++				//$r .= "</ul><h3>" . htmlspecialchars( $articles_start_char[$index] ) . "</h3>\n<ul>";
++			}
++			//XXCHANGED
++			if (is_array($articles[$index])) {
++				$r .= "<li>{$articles[$index][0]}</li>";
++				$links = array();
++				foreach ($articles[$index][1] as $t) {
++					$links[] = $sk->makeLinkObj($t, $t->getText() ); 
++				}	
++				//$r .= $this->shortList($articles[$index][1], array());
++				$r .= "<div id=subcategories_list2><ul><li>" . implode(" <b>&bull;</b> ",  $links) . "</li></ul></div>";
++			} else if ($articles[$index] instanceof Title) {
++				$t = $articles[$index];
++				$link = $sk->makeLinkObj($t, $t->getText() );
++				$r .= "<li>{$link}</li>";
++			} else {
++				if (is_string($articles[$index]))
++					$r .= "<li>{$articles[$index]}</li>";
++				else {
++					print_r($articles[$index]);
++				}
+ 			}
+-
+-			$r .= "<li>{$articles[$index]}</li>";
+ 		}
+ 		$r .= '</ul>';
++		$r .= '</div>';
+ 		return $r;
+ 	}
+-
+ 	/**
+ 	 * @param Title  $title
+ 	 * @param string $first
+@@ -407,6 +548,25 @@
+ 
+ 		return "($prevLink) ($nextLink)";
+ 	}
++	
++	//XXADDED
++	function getSubcategories($title) {
++		$dbr = wfGetDB(DB_SLAVE);
++		$res = $dbr->select (
++			 	array ('categorylinks', 'page'),
++				array('page_title', 'page_namespace'),
++				array ('page_id=cl_from',
++					'cl_to' => $title->getDBKey(),
++					'page_namespace=' . NS_CATEGORY
++					)
++				);
++		$results = array();
++		while ($row = $dbr->fetchObject($res)) {
++			$results[] = Title::makeTitle( $row->page_namespace, $row->page_title );
++		}
++		$dbr->freeResult($res);
++		return $results;
++	}
+ }
+ 
+ 

@@ -1,0 +1,12 @@
+--- mediawiki-1.9.3/includes/StubObject.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/StubObject.php	2007-06-14 08:31:06.000000000 -0500
+@@ -89,7 +89,8 @@
+ 
+ 	function _newObject() {
+ 		global $wgContLanguageCode, $wgRequest, $wgUser, $wgContLang;
+-		$code = $wgRequest->getVal('uselang', $wgUser->getOption('language') );
++//XXCHANGED
++		$code = $wgContLanuageCode; //$wgRequest->getVal('uselang', $wgUser->getOption('language') );
+ 
+ 		// if variant is explicitely selected, use it instead the one from wgUser
+ 		// see bug #7605

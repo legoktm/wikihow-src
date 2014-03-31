@@ -1,0 +1,20 @@
+
+.editModalBody div#article, #winpop_inner div#article{
+	background:none;
+}
+
+#winpop_content{
+	width:auto;
+}
+
+#winpop_outer.winpop_special{
+	width:750px;
+}
+
+#winpop_outer.winpop_special #winpop_content{
+	background-image:url(/skins/WikiHow/images/article_bg_v2_750.png);
+}
+
+.editModalBody #editform{
+	width:600px;
+}

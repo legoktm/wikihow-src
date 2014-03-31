@@ -1,0 +1,18 @@
+--- mediawiki-1.9.3/includes/JobQueue.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/JobQueue.php	2008-02-12 15:29:02.000000000 -0600
+@@ -45,9 +45,12 @@
+ 
+ 		// Try to delete it from the master
+ 		$dbw =& wfGetDB( DB_MASTER );
+-		$dbw->delete( 'job', array( 'job_id' => $row->job_id ), __METHOD__ );
+-		$affected = $dbw->affectedRows();
+-		$dbw->immediateCommit();
++		try {
++			$dbw->delete( 'job', array( 'job_id' => $row->job_id ), __METHOD__ );
++			$affected = $dbw->affectedRows();
++			$dbw->immediateCommit();
++		} catch (Exception $ee) {
++		}
+ 
+ 		if ( !$affected ) {
+ 			// Failed, someone else beat us to it

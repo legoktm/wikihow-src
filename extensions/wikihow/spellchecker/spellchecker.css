@@ -1,0 +1,149 @@
+.misspell{
+	color: #fff;
+	background-color: #ff0000;
+}
+
+#spch-content{
+	height:450px;
+	overflow-y: scroll;
+	background-color:#ffffff;
+	border:2px solid #999999;
+}
+
+#spch-edit{
+	display:none;
+}
+
+#spch-title{
+    background-color: #F5F5F5;
+    margin-top: 15px;
+}
+
+#spch-head {
+}
+
+#spch-head h1 {
+	padding:0;
+	margin:0;
+}
+
+#spch-options{
+	font-size:1em;
+	float:right;
+}
+
+#spch-options a {
+	float:right;
+}
+
+#spch-instructions{
+	float: left;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+#spch-id{display:none;}
+
+#spch-preview{
+	overflow-x: hidden;
+	display: none;
+}
+
+#spch-summary input {
+	height: 17px;
+	font-size: 12px;
+}
+
+#article #spch-help{
+    margin-top: 5px;
+	padding-bottom:0px;
+}
+
+#spch-buttons{
+	margin-top:10px;
+}
+
+#spch-container{
+}
+
+.spch-word{
+	float: left;
+    margin-top: 3px;
+    width: 200px
+}
+
+.spch-message{
+	line-height:26px;
+	clear:both;
+}
+
+.spch-add{
+	float: right;
+	margin-top:10px;
+}
+
+#spch-add-words{
+	f
+}
+
+.ui-dialog{
+	position:fixed;
+}
+
+#spch-error{
+	display: none;
+}
+
+.spch-waiting{
+	margin:0 auto;
+	width:32px;
+}
+
+#spch-welcome{
+    font-size: 16px;
+    padding: 10px 20px;
+	background-color: #F9F7F1;
+	display: none;
+}
+
+#spch-welcome img{
+    float: left;
+    line-height: 20px;
+    margin-right: 10px;
+    margin-top: 9px;
+}
+
+#whitelistTable {
+	
+}
+
+#whitelistTable thead td {
+	background: none repeat scroll 0 0 #CCCCCC
+}
+
+#whitelistTable td {
+	padding:5px 10px;
+	border-top: 1px solid #CCCCCC;
+	text-align:right;
+}
+
+#whitelistTable td.word{
+	text-align: left;
+}
+
+#whitelistTable td.wide{
+	width:150px;
+}
+
+#whitelistTable tr.sample td {
+	background-color: #eeeeee;
+	font-style: italic;
+}
+
+#spch-words h3 {
+	margin:36px 36px 24px 0;
+}
+
+.spch-word-list {
+	margin-top:10px;
+}

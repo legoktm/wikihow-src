@@ -1,0 +1,14 @@
+--- mediawiki-1.9.3/includes/SpecialUndelete.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialUndelete.php	2007-06-06 11:52:10.000000000 -0500
+@@ -501,6 +501,11 @@
+ 		$wgOut->addHTML( "<ul>\n" );
+ 		while( $row = $result->fetchObject() ) {
+ 			$title = Title::makeTitleSafe( $row->ar_namespace, $row->ar_title );
++if (!$title) {
++		$wgOut->addHTML("<li>Warning: got invalid title for {$row->ar_namespace}, {$row->ar_title}</li>\n");
++		continue;
++}
++ 
+ 			$link = $sk->makeKnownLinkObj( $undelete, htmlspecialchars( $title->getPrefixedText() ), 'target=' . $title->getPrefixedUrl() );
+ 			$revs = wfMsgHtml( 'undeleterevisions', $wgLang->formatNum( $row->count ) );
+ 			$wgOut->addHtml( "<li>{$link} ({$revs})</li>\n" );

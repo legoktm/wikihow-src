@@ -1,0 +1,327 @@
+***************
+*** 1,168 ****
+  <?php
+  /**
+-  * Html form for user login.
+-  *
+-  * This program is free software; you can redistribute it and/or modify
+-  * it under the terms of the GNU General Public License as published by
+-  * the Free Software Foundation; either version 2 of the License, or
+-  * (at your option) any later version.
+-  *
+-  * This program is distributed in the hope that it will be useful,
+-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+-  * GNU General Public License for more details.
+-  *
+-  * You should have received a copy of the GNU General Public License along
+-  * with this program; if not, write to the Free Software Foundation, Inc.,
+-  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+-  * http://www.gnu.org/copyleft/gpl.html
+-  *
+-  * @file
+-  * @ingroup Templates
+   */
+  
+- /**
+-  * @defgroup Templates Templates
+-  */
+  
+  /**
+   * HTML template for Special:Userlogin form
+-  * @ingroup Templates
+   */
+  class UserloginTemplate extends QuickTemplate {
+  	function execute() {
+- 		if( $this->data['message'] ) {
+- ?>
+- 	<div class="<?php $this->text('messagetype') ?>box">
+- 		<?php if ( $this->data['messagetype'] == 'error' ) { ?>
+- 			<strong><?php $this->msg( 'loginerror' )?></strong><br />
+- 		<?php } ?>
+- 		<?php $this->html('message') ?>
+- 	</div>
+- 	<div class="visualClear"></div>
+- <?php } ?>
+  
+- <div id="loginstart"><?php $this->msgWiki( 'loginstart' ); ?></div>
+- <div id="userloginForm">
+  <form name="userlogin" method="post" action="<?php $this->text('action') ?>">
+- 	<h2><?php $this->msg('login') ?></h2>
+- 	<p id="userloginlink"><?php $this->html('link') ?></p>
+- 	<?php $this->html('header'); /* pre-table point for form plugins... */ ?>
+  	<div id="userloginprompt"><?php  $this->msgWiki('loginprompt') ?></div>
+- 	<?php if( $this->haveData( 'languages' ) ) { ?><div id="languagelinks"><p><?php $this->html( 'languages' ); ?></p></div><?php } ?>
+  	<table>
+  		<tr>
+- 			<td class="mw-label"><label for='wpName1'><?php $this->msg('yourname') ?></label></td>
+  			<td class="mw-input">
+- 				<?php
+- 			echo Html::input( 'wpName', $this->data['name'], 'text', array(
+- 				'class' => 'loginText',
+- 				'id' => 'wpName1',
+- 				'tabindex' => '1',
+- 				'size' => '20',
+- 				'required'
+- 				# Can't do + array( 'autofocus' ) because + for arrays in PHP
+- 				# only works right for associative arrays!  Thanks, PHP.
+- 			) + ( $this->data['name'] ? array() : array( 'autofocus' => '' ) ) ); ?>
+- 
+  			</td>
+  		</tr>
+  		<tr>
+  			<td class="mw-label"><label for='wpPassword1'><?php $this->msg('yourpassword') ?></label></td>
+  			<td class="mw-input">
+- 				<?php
+- 			echo Html::input( 'wpPassword', null, 'password', array(
+- 				'class' => 'loginPassword',
+- 				'id' => 'wpPassword1',
+- 				'tabindex' => '2',
+- 				'size' => '20'
+- 			) + ( $this->data['name'] ? array( 'autofocus' ) : array() ) ); ?>
+- 
+  			</td>
+  		</tr>
+- 	<?php if( isset( $this->data['usedomain'] ) && $this->data['usedomain'] ) {
+  		$doms = "";
+  		foreach( $this->data['domainnames'] as $dom ) {
+  			$doms .= "<option>" . htmlspecialchars( $dom ) . "</option>";
+  		}
+  	?>
+- 		<tr id="mw-user-domain-section">
+  			<td class="mw-label"><?php $this->msg( 'yourdomainname' ) ?></td>
+  			<td class="mw-input">
+- 				<select name="wpDomain" value="<?php $this->text( 'domain' ) ?>"
+- 					tabindex="3">
+  					<?php echo $doms ?>
+  				</select>
+  			</td>
+  		</tr>
+- 	<?php }
+- 
+- 	if( $this->haveData( 'extrafields' ) ) {
+- 		echo $this->data['extrafields'];
+- 	}
+- 
+- 	if( $this->data['canremember'] ) { ?>
+  		<tr>
+- 			<td></td>
+- 			<td class="mw-input">
+- 				<?php
+- 				global $wgCookieExpiration;
+- 				$expirationDays = ceil( $wgCookieExpiration / ( 3600 * 24 ) );
+- 				echo Xml::checkLabel(
+- 					wfMessage( 'remembermypassword' )->numParams( $expirationDays )->text(),
+- 					'wpRemember',
+- 					'wpRemember',
+- 					$this->data['remember'],
+- 					array( 'tabindex' => '8' )
+- 				)
+- 				?>
+  			</td>
+  		</tr>
+- <?php } ?>
+- <?php if( $this->data['cansecurelogin'] ) { ?>
+  		<tr>
+- 			<td></td>
+- 			<td class="mw-input">
+- 			<?php
+- 			echo Xml::checkLabel(
+- 				wfMessage( 'securelogin-stick-https' )->text(),
+- 				'wpStickHTTPS',
+- 				'wpStickHTTPS',
+- 				$this->data['stickHTTPS'],
+- 				array( 'tabindex' => '9' )
+- 			);
+- 		?>
+  			</td>
+  		</tr>
+- <?php } ?>
+  		<tr>
+- 			<td></td>
+- 			<td class="mw-submit">
+- 				<?php
+- 		echo Html::input( 'wpLoginAttempt', wfMessage( 'login' )->text(), 'submit', array(
+- 			'id' => 'wpLoginAttempt',
+- 			'tabindex' => '9'
+- 		) );
+- 		if ( $this->data['useemail'] && $this->data['canreset'] ) {
+- 			if( $this->data['resetlink'] === true ) {
+- 				echo '&#160;';
+- 				echo Linker::link(
+- 					SpecialPage::getTitleFor( 'PasswordReset' ),
+- 					wfMessage( 'userlogin-resetlink' )
+- 				);
+- 			} elseif( $this->data['resetlink'] === null ) {
+- 				echo '&#160;';
+- 				echo Html::input(
+- 					'wpMailmypassword',
+- 					wfMessage( 'mailmypassword' )->text(),
+- 					'submit', array(
+- 						'id' => 'wpMailmypassword',
+- 						'tabindex' => '10'
+- 					)
+- 				);
+- 			}
+- 		} ?>
+- 
+  			</td>
+  		</tr>
+  	</table>
+--- 1,119 ----
+  <?php
+  /**
++  * @addtogroup Templates
+   */
++ if( !defined( 'MEDIAWIKI' ) ) die( -1 );
+  
++ /** */
++ require_once( 'includes/SkinTemplate.php' );
+  
+  /**
+   * HTML template for Special:Userlogin form
++  * @addtogroup Templates
+   */
+  class UserloginTemplate extends QuickTemplate {
++ 
++ 	function __construct() {
++ 		global $wgHooks;
++ 		parent::__construct();
++ 		$wgHooks['BeforeTabsLine'][] = array('UserloginTemplate::topContent',$this);
++ 	}
++ 
++ 	/** 
++ 	*	Added by Gershon Bialer with upgrade to add header
++ 	*/
++ 	static function topContent($template) {                                                       
++ 		echo '<p class="wh_block"><span class="login_top_link">';
++ 		$template->html('link');
++ 		echo  '</span><span class="login_headline">' . wfMessage('login')->plain() . '</span></p>';
++ 		return true;
++ 	}
++ 
+  	function execute() {
++ 	?>
++ <div id="userloginForm" class="userloginForm">
+  
++ 	<table border="0" width="100%"><tr><td rowspan="2">
+  <form name="userlogin" method="post" action="<?php $this->text('action') ?>">
+  	<div id="userloginprompt"><?php  $this->msgWiki('loginprompt') ?></div>
+  	<table>
+  		<tr>
++ 			<td class="mw-label" style="width:50px"><label for='wpName1'><?php $this->msg('username_or_email') ?></label></td>
+  			<td class="mw-input">
++ 				<div style="position:relative">
++ 					<input type='text' class='loginText input_med' name="wpName" id="wpName1"
++ 					value="<?php $this->text('name') ?>" size='20' />
++ 					<?php if ( in_array('username',$this->data['errorlist'])): ?>
++ 						<div class="mw-error-bottom mw-error" id="wpName1_error">
++ 							<div class="mw-error-top">
++ 								<?php $this->html('message') ?>
++ 							</div>
++ 						</div>
++ 					<?php endif; ?>
++ 					<input type="hidden" id="wpName1_showhide" />
++ 				</div>
+  			</td>
+  		</tr>
+  		<tr>
+  			<td class="mw-label"><label for='wpPassword1'><?php $this->msg('yourpassword') ?></label></td>
+  			<td class="mw-input">
++ 				<div style="position:relative;">
++ 					<input type='password' class='loginPassword input_med' name="wpPassword" id="wpPassword1"
++ 						value="" size='20' />
++ 					<?php if ( in_array('password', $this->data['errorlist'] )): ?>
++ 						<div class="mw-error-bottom mw-error" id="wpPassword1_error">
++ 							<div class="mw-error-top">
++ 								<?php $this->html('message') ?>
++ 							</div>
++ 						</div>
++ 					<?php endif; ?>
++ 					<input type="hidden" id="wpPassword1_showhide" />
++ 				</div>
+  			</td>
+  		</tr>
++ 	<?php if( $this->data['usedomain'] ) {
+  		$doms = "";
+  		foreach( $this->data['domainnames'] as $dom ) {
+  			$doms .= "<option>" . htmlspecialchars( $dom ) . "</option>";
+  		}
+  	?>
++ 		<tr>
+  			<td class="mw-label"><?php $this->msg( 'yourdomainname' ) ?></td>
+  			<td class="mw-input">
++ 				<select name="wpDomain" value="<?php $this->text( 'domain' ) ?>">
+  					<?php echo $doms ?>
+  				</select>
+  			</td>
+  		</tr>
++ 	<?php } ?>
+  		<tr>
++ 			<td class="mw-input"></td>
++ 			<td>
++ 			<? if( $this->data['useemail'] && $this->data['canreset']) { ?>
++ 				<a href="/Special:LoginReminder" id="forgot_pwd"><?php global $wgLanguageCode; if($wgLanguageCode == "en") { ?>Forgot password? <?php } else { ?><?= wfMsg('forgot_pwd')?><?php } ?></a>
++ 			<? } ?>
+  			</td>
+  		</tr>
+  		<tr>
++ 			<td style="vertical-align: bottom;" class="mw-label"><?php if($this->data['header'] != ""): ?>
++ 				<label style="display:block; padding-bottom: 35px">Security</label>
++ 				<?php endif; ?>
+  			</td>
++ 			<td><?php $this->html('header'); /* pre-table point for form plugins... */ ?></td>
+  		</tr>
+  		<tr>
++ 			<td class="mw-submit"></td>
++ 			<td style="padding-top:5px">
++ 				<table cellpadding="0" cellspacing="0">
++ 					<tr>
++ 						<td>
++ 							<input type='submit' class="button primary submit_button" name="wpLoginattempt" id="wpLoginattempt" value="<?php $this->msg('login') ?>" />
++ 						</td>
++ 						<td>
++ 							<input type='checkbox' name="wpRemember" value="1" id="wpRemember" checked="checked" /> <label for="wpRemember"><?php $this->msg('remembermypassword') ?></label>
++ 						</td>
++ 					</tr>
++ 				</table>
+  			</td>
+  		</tr>
+  	</table>
+***************
+*** 168,177 ****
+  	</table>
+  <?php if( $this->haveData( 'uselang' ) ) { ?><input type="hidden" name="uselang" value="<?php $this->text( 'uselang' ); ?>" /><?php } ?>
+  <?php if( $this->haveData( 'token' ) ) { ?><input type="hidden" name="wpLoginToken" value="<?php $this->text( 'token' ); ?>" /><?php } ?>
+  </form>
+  </div>
+- <div id="loginend"><?php $this->html( 'loginend' ); ?></div>
+  <?php
+  
+  	}
+  }
+--- 119,142 ----
+  	</table>
+  <?php if( $this->haveData( 'uselang' ) ) { ?><input type="hidden" name="uselang" value="<?php $this->text( 'uselang' ); ?>" /><?php } ?>
+  <?php if( $this->haveData( 'token' ) ) { ?><input type="hidden" name="wpLoginToken" value="<?php $this->text( 'token' ); ?>" /><?php } ?>
++ 
+  </form>
++ 
++ </td>
++ <td valign="top">
++ 	<div id="userlogin_alt_logins">
++ 		<div class="headline">Log in via</div>
++ 		<?=UserLoginBox::getSocialLogin()?>
++ 	</div>
++ </td>
++ </tr>
++ </table>
++ 
+  </div>
++ <div id="loginend"><?php $this->msgWiki( 'loginend' ); ?></div>
+  <?php
+  
+  	}
+  }
++ 
++ ?>

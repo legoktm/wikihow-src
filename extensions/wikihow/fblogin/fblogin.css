@@ -1,0 +1,141 @@
+#fbc {
+	border: 1px solid #C1C1C1;
+	font: 11px "lucida grande",tahoma,verdana,arial,sans-serif;
+	color: gray;
+}
+
+.fbc_hidden {
+	display: none;
+	visibility: hidden;
+}
+
+#fbc_header {
+	background-color: #F2F2F2;
+	border-bottom: 1px solid #CCC;
+	padding: 10px;
+}
+
+#fbc_error {
+	color: #A40000;
+	padding-left: 10px;
+}
+
+#fbc_footer {
+	border-top: 1px solid #CCC;
+	padding: 10px;
+	font-size: 9px;
+}
+
+.fbc_link {
+	color: #3B5998;
+}
+
+#fbc_x {
+	float: right;
+	margin-right: 5px;
+	margin-top: 10px;
+	padding: 2px;
+	font: 7px "lucida grande",tahoma,verdana,arial,sans-serif;
+	cursor: pointer;
+}
+
+#fbc_x:hover {
+	background: #5B74A8;
+	color: white;
+}
+
+#fbc_icon {
+	margin-right: 1px;
+	vertical-align: middle;
+}
+
+.fbc_header_text {
+	display:inline-block;
+	zoom: 1;
+	*display: inline;
+	padding-top: 0px;
+	vertical-align: middle;
+}
+
+#fbc_header_prefill {
+	visibility: hidden;
+	display: none;
+}
+
+#fbc table {
+	margin-top: 15px;
+	margin-bottom: 10px;	
+	width: 100%;
+}
+
+#fbc td {
+	padding-bottom: 5px;
+}
+#fbc input[type='text'], #fbc_faux_username {
+	border: 1px solid #BDC7D8;
+	padding: 3px;
+	width: 232px;
+}
+
+#fbc_user_text {
+	display: inline-block;
+	zoom: 1;
+	*display:inline;
+	vertical-align: middle;
+	margin-left: 5px;
+}
+
+#fbc_user_text_username {
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+#fbc_user_text_info {
+	font-size: 9px;
+}
+
+.fbc_readonly {
+	color: #999;
+	background-color: #F0F0F0;
+}
+
+.fbc_label {
+	text-align: right;
+	padding-right: 10px;
+	font-weight: bold;
+	color: #666;
+}
+
+.fbc_user_avatar {
+	width: 32px;
+	height: 32px;	
+	border: 0px;
+	vertical-align: middle;
+}
+.fbc_avatar {
+	width: 24px;
+	height: 24px;	
+	border: 0px;
+	vertical-align: middle;
+}
+
+.fbc_submit {
+	color: white;
+	font-size: 13px;
+	font-weight: bold;
+	background-color: #5B74A8;
+	background-position: 0 -4px;
+	#border-color: #29447E #29447E #1A356E;
+	#border: 1px solid;
+	outline: none;
+	padding: 3px 5px 3px 5px;
+	white-space: nowrap;
+	display: inline-block;
+}
+
+#fb_linked_img {
+	display: inline-block;
+	height: 42px;
+	width: 42px;
+	background-image: url(/skins/WikiHow/images/follow-sprite.png?4);
+}

@@ -1,0 +1,249 @@
+/* fix the harsh top line defined in new.css.  note: we need to use identical selector to new.css here to make this work. */
+#article DIV#article_tabs_line { border-top: 1px solid #DDDBD3 }
+
+#tweetit_container {
+	margin:0 0 0 -25px;
+}
+
+#screenName {display:none}
+#profileImage {display:none}
+#new_tweets {
+	font-weight:bold;
+	display:none;
+	background-color: #EEF6E3;
+	padding:10px;
+	width:643px;
+	border:1px solid #ADB1A7;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	text-align: center;
+	margin: 0 0 28px 15px;
+	cursor: pointer;
+}
+#new_tweets:hover {
+	background-color: #F6FFE4;
+}
+
+ul#tweets_ticker {
+	width:693px;
+	float:left; 
+	margin: -15px 10px -64px 0;
+	padding:0;
+	background-image: url(/extensions/wikihow/TwitterReplier/images/bg_reply_left_rail.gif);
+	background-position:right center;
+	background-repeat: repeat-y;
+}
+
+#tweets_ticker li {
+	width:671px;
+	margin: 0;
+	padding: 13px 0px 16px 19px;
+	border-bottom:1px solid #EDF1E7; 
+	list-style: none;
+	cursor: pointer;
+}
+
+#tweets_ticker li.last {border-bottom:none}
+#tweets_ticker li.new_bottom {border-bottom:1px dashed #ADB1A7}
+/*#tweets_ticker li span .avatar {*/
+span .avatar {
+	float:left;
+	padding:5px;
+	margin: 1px 13px 5px 0;
+	display:block;
+}
+
+span .tweet {
+	width:595px;
+	display:block;
+	float:left;
+}
+/* #tweets_ticker li span .time { */
+span .time {
+	color: #B1B1B1;
+	font-size:10px;
+}
+.success_tweet {
+	width:595px;
+	display:block;
+}
+
+#authorizationContainer {
+	display:none;
+}
+
+#authorizationContainer hr {
+	margin: 0 -12px 0 -12px;
+}
+#authorizationContainer .images {
+	text-align: center;
+	margin:30px 0px 34px 0px;
+}
+
+#authorizationContainer .images img {
+	margin-right:14px;
+}
+#authorizeMe:focus {
+	outline: none;
+}
+#authorizationContainer .button {
+	text-align:right;
+	margin: 15px 15px -1px 0;
+}
+
+#dialog-box hr {
+	height: 1px;
+	margin: 15px 2px 15px 2px;
+	color: #BBBBBB;
+	background-color: #BBBBBB;
+	border: 0;
+}
+#dialog-box * a.button:focus {
+	outline: none;
+}
+#dialog-box * a.button {
+	margin-left: 300px;
+}
+
+#reply_container {
+	position: absolute;
+	margin: -108px 0 -63px 690px;
+	padding: 0 0 0 10px;
+	background-color: white;
+	width: 284px;
+	background-image: url( /extensions/wikihow/TwitterReplier/images/bg_reply_left_rail.gif);
+	background-position: left center;
+	background-repeat: repeat-y;
+	-moz-border-radius: 0px 10px 10px 0px;
+	border-radius: 0px 10px 10px 0px;
+}
+
+
+#instructions {
+	padding: 179px 0 0 0;
+}
+
+#instructions img {
+	vertical-align: middle;
+}
+#instructions p {
+	color: #0075a1;
+	font-weight:bold;
+	font-size: 18px;
+	background-image: url("/extensions/wikihow/TwitterReplier/images/icon_left_arrow.gif");
+    background-repeat: no-repeat;
+	padding-left:95px;
+}
+
+#close {
+	padding: 14px 15px 16px 0;
+	font-weight:bold;
+	color: #0075a1;
+	height:7px;
+	text-align:right;
+	font-size:13px;
+	-moz-border-radius: 0 10px 0 0;
+	border-radius: 0px 10px 0px 0px;
+	margin:0 0 17px -9px;
+}
+
+#reply_content {
+	background-color:white;
+	width:284px;
+	-moz-border-radius: 0px 10px 10px 0px;
+	border-radius: 0px 10px 10px 0px;
+	margin-left: 0;
+}
+#reply_spinner {
+	display: none;
+	padding: 0 0 12px 4px;
+}
+#reply:disabled {
+	opacity: 0.5;
+}
+
+#trSearchForm input {
+	border:1px solid #D9D3C7;
+	width:222px;
+	height:27px;
+	padding: 0 33px 0 9px;
+	margin-bottom:17px;
+	background-image:url(/extensions/wikihow/TwitterReplier/images/icon_magnifying_glass.gif);
+	background-position:96% 50%;
+	background-repeat:no-repeat
+}
+.default_search_input {
+	color: #BBBBBB;
+}
+.no_wh_articles {
+	color: #333333;
+	font-style: italic;
+}
+.suggest_article_header {
+	display:none;
+}
+#suggestedTitles {
+	width:267px;
+	border:1px solid #CDD1C7;
+	border-collapse: collapse;
+	font-size:13px;
+}
+
+#suggestedTitles a {color:#4D8BA9;}
+
+#suggestedTitles thead {display:none}
+
+#suggestedTitles .even {
+	background-color:#F8F7F3;
+}
+
+#suggestedTitles .odd {
+	background-color:white;
+}
+
+#suggestedTitles td {
+	padding:8px 3px 8px 7px;
+}
+
+#reply_tweet {
+	width:237px;
+	height:53px;
+	font-family:arial;
+	font-size:11px;
+	padding:9px;
+	resize: none;
+}
+
+#char_limit {
+	display: inline;
+	padding-left: 5px;
+	position: relative;
+	top: -15px;
+}
+.over_limit {color:red}
+.hover{ background-color: #efeeeb }
+.dark_grey{color:#333}
+.grey{color:#858585}
+.light_grey{color:#a3a3a3}
+.steps {font-size:18px}
+.locked{background-color:#efeeeb}
+.bold{font-weight:bold}
+
+.reply_as {
+	font-size: 10px;
+	padding: 3px 0 0 10px;
+}
+
+.bottom {
+	position: absolute;
+	bottom: 0;
+}
+
+.top {
+	position: relative;
+}
+
+.scroll {
+	position:fixed;
+	top:10px;
+}

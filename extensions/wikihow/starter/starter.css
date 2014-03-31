@@ -1,0 +1,195 @@
+#article_tabs_line { display: none; }
+
+#starter_upper {
+	height: 82px;
+	line-height: 82px;
+	margin-top: -50px;
+	padding-left: 20px;
+}
+
+#starter_head {
+	background-color: #F9F9F9;
+	padding: 20px;
+	border-top: 1px solid #DFDACD;
+	border-bottom: 1px solid #DFDACD;
+	margin-top: 10px;
+	font-size: .9em;
+	position:relative;
+}
+
+#starter_head h1 {
+	font-size: 1.6em;
+	padding: 0;
+}
+
+#starter_options {
+	height:25px;
+	margin-top:10px;
+}
+#starter_options #starter_edit_button {
+	margin-right: 1.3em;
+	float: left;
+	font-size: .95em;
+}
+#starter_options #starter_skip {
+	float:left; 
+	padding: 0 14px 0 0;
+	font-weight: bold;
+	line-height: 26px;	
+}
+#starter_options #editfinder_skip_arrow {
+	background: url(../editfinder/editfinder_yes.png) no-repeat scroll -165px 0 transparent;
+	width: 9px;
+	height: 10px;
+	float: right;
+	margin: 8px 0 0 4px;
+}
+
+.starter_button_yes {
+	background:url(../editfinder/editfinder_yes.png) no-repeat scroll left top transparent;
+	height:26px;
+	line-height:25px;
+	width:153px;
+	padding-left: 10px;
+	font-size: .9em;
+}
+.starter_button_yes:hover { background-position: 0 -28px; }
+.starter_button_yes:active { background-position: 0 -57px; }
+
+#starter_snaggle { 
+	height: 18px;
+	background: url(./snaggle.png) 0 0 no-repeat;
+	margin: -1px 0 20px 40px;
+	position:relative;
+	z-index: 2;
+}
+
+#starter_guts {
+	padding: 0 25px 25px 25px;
+	min-height: 300px;
+}
+
+#starter_preview h2 {
+	background: none;
+}
+
+.starter_editbox {
+	width: 600px;
+	margin: 0 auto;
+	border: 1px solid #CDCDCD;
+	padding: 25px 0;
+}
+
+#starter_sentence {
+	font-weight: bold;
+	font-size: 1.3em;
+}
+
+#starter_grats {
+	font-size: 1.2em;
+	text-align: center;
+}
+
+.starter_logo{
+	position:absolute;
+	top:10px;
+	left:100px;
+	background:url('/skins/WikiHow/images/kiwi_100x80.png') no-repeat;
+	width:100px;
+	height:100px;
+}
+
+#starter_head img{
+	float:left;
+}
+
+#starter_grats h3 {
+	font-size: 2em;
+	padding-bottom: 5px;
+}
+
+#starter_grats_options {
+	font-size: .95em;
+	text-align: center;
+	width: 550px;
+	margin: 25px auto;
+}
+#starter_grats_options p {
+	line-height: 35px;
+	padding: 0 0 10px 0;
+	font-size: 17px;
+}
+
+h2 .editsectionbutton {
+	display: none;
+}
+
+.template_top {
+	display: none;
+}
+
+#article_tabs_line {
+	display: none;
+}
+
+div#article { padding-bottom: 0; }
+
+#drafts-list-box { display: none; }
+#wpDiff { display: none; }
+#othereditlink { display: none; }
+
+
+a.clickfail {
+	color: #888;
+	cursor: default;
+	background-position: 0 -87px;
+}
+a.clickfail:hover { 
+	text-decoration: none;
+	background-position: 0 -87px; 
+}
+
+/* edit page tweaks */
+#editpage-copywarn, 
+.editButtons  a , 
+#wpPreview, 
+#wpSummaryLabel, 
+#wpSummary, 
+.editHelp,
+#mw-anon-edit-warning,
+#wpMinoredit,
+#wpWatchthis,
+.editOptions label {
+	display: none;
+}
+
+.editButtons {
+	padding: 0;
+	margin-top: -10px;
+}
+
+#wpTextbox1 { height: 150px; }
+
+.spell{
+	color: #ff0000;
+}
+
+#starter_message{
+    font-size: 22px;
+    line-height: 44px;
+    position: absolute;
+    right: 30px;
+    top: 25px;
+}
+
+#grats_signup{
+	float: left;
+    margin-left: 100px;	
+	font-size:12px;
+}
+
+#grats_nothanks{
+	float: left;
+    line-height: 25px;
+    margin-left: 20px;
+}

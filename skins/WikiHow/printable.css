@@ -1,0 +1,68 @@
+#user_action,
+#search_site,
+#breadcrumb,
+#originators,
+#article_tabs,
+#ImportantLinks,
+#aside,
+#lower_ads,
+#Actions_table,
+#st_wrap,
+#article_info_header,
+#article_info,
+#footer,
+#last_question,
+DIV.SecL, 
+DIV.SecR,
+#accurate,
+#last_question { display: none !important; }
+
+img.module_cap,
+.edit_article_button,
+.editsectionbutton,
+.article_top,
+.article_bottom,
+.rounders .corner
+{ display:none !important; }
+
+#breadcrumb {         
+	clear: both;
+	padding-top: 10px;    
+}
+
+h2 { background-color: #FFF; }
+
+h2 span, h3 span {
+	text-decoration:underline;
+}
+
+#sidebar {
+	display:none;
+}
+
+#bubbles {
+	display:none;
+}
+
+#share_icons, #end_options, #embed_this {display:none;}
+
+#article_tools_header {display:none;}
+
+div#article_shell {
+	width: 100%;
+	margin:0;
+}
+
+div#article,
+#article h2,
+#steps h3
+{ background:none !important; }
+
+body {
+	background-color:#ffffff;
+	font-size: 1.2em;
+}
+
+div#last_question {
+	background:none;
+}

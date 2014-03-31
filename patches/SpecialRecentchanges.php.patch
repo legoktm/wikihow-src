@@ -1,0 +1,166 @@
+--- mediawiki-1.9.3/includes/SpecialRecentchanges.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialRecentchanges.php	2008-03-26 16:14:25.000000000 -0500
+@@ -38,6 +38,11 @@
+ 	/* text */ 'namespace' => null,
+ 	/* bool */ 'invert' => false,
+ 	/* bool */ 'categories_any' => false,
++	//XXADDED
++	/* bool */ 'reverse' => false,
++	/* bool */ 'featured' => false,
++	/* bool */ 'categories_any' => false,
++	
+ 	);
+ 
+ 	extract($defaults);
+@@ -65,6 +70,10 @@
+ 
+ 		$namespace = $wgRequest->getIntOrNull( 'namespace' );
+ 		$invert = $wgRequest->getBool( 'invert', $defaults['invert'] );
++		//XXADDED
++		$reverse = $wgRequest->getBool( 'reverse', $defaults['reverse'] );
++		$featured = $wgRequest->getBool( 'featured', $defaults['featured'] );
++
+ 		$hidebots = $wgRequest->getBool( 'hidebots', $defaults['hidebots'] );
+ 		$hideanons = $wgRequest->getBool( 'hideanons', $defaults['hideanons'] );
+ 		$hideliu = $wgRequest->getBool( 'hideliu', $defaults['hideliu'] );
+@@ -84,6 +93,7 @@
+ 				if ( 'hidepatrolled' == $bit ) $hidepatrolled = 1;
+ 				if ( 'hideanons' == $bit ) $hideanons = 1;
+ 				if ( 'hidemyself' == $bit ) $hidemyself = 1;
++				
+ 
+ 				if ( is_numeric( $bit ) ) {
+ 					$limit = $bit;
+@@ -119,7 +129,7 @@
+ 	}
+ 
+ 	# 10 seconds server-side caching max
+-	$wgOut->setSquidMaxage( 10 );
++	$wgOut->setSquidMaxage( 0 );
+ 
+ 	# Get last modified date, for client caching
+ 	# Don't use this if we are using the patrol feature, patrol changes don't update the timestamp
+@@ -153,17 +163,24 @@
+ 
+ 	# Namespace filtering
+ 	$hidem .= is_null( $namespace ) ?  '' : ' AND rc_namespace' . ($invert ? '!=' : '=') . $namespace;
++	if ($namespace != KALTURA_NAMESPACE_ID) $hidem .= " AND rc_namespace != " . KALTURA_NAMESPACE_ID;
+ 
++	//XXADDED
++	$order = $reverse ? " ASC" : "DESC";
++	$ft = $featured ? " AND page_is_featured = 1 " : "";
++	
+ 	// This is the big thing!
+ 
+ 	$uid = $wgUser->getID();
+ 
++	//XXCHANGED
+ 	// Perform query
+ 	$forceclause = $dbr->useIndexClause("rc_timestamp");
+ 	$sql2 = "SELECT * FROM $recentchanges $forceclause".
+ 	  ($uid ? "LEFT OUTER JOIN $watchlist ON wl_user={$uid} AND wl_title=rc_title AND wl_namespace=rc_namespace " : "") .
+-	  "WHERE rc_timestamp >= '{$cutoff}' {$hidem} " .
+-	  "ORDER BY rc_timestamp DESC";
++		" LEFT OUTER JOIN page ON page_title=rc_title AND page_namespace=rc_namespace " .
++	  "WHERE rc_timestamp >= '{$cutoff}' {$hidem} {$ft} " .
++	  "ORDER BY rc_timestamp {$order} ";
+ 	$sql2 = $dbr->limitResult($sql2, $limit, 0);
+ 	$res = $dbr->query( $sql2, $fname );
+ 
+@@ -217,7 +234,30 @@
+ 
+ 			// Add end of the texts
+ 			$wgOut->addHTML( '<div class="rcoptions">' . rcOptionsPanel( $defaults, $nondefaults ) . "\n" );
+-			$wgOut->addHTML( rcNamespaceForm( $namespace, $invert, $nondefaults, $any ) . '</div>'."\n");
++			//XXCHANGED
++			$wgOut->addHTML( rcNamespaceForm( $namespace, $invert, $reverse, $featured, $nondefaults, $any ) . '</div>'."\n");
++
++			//XXADDED
++			global $wgLanguageCode;
++            if ($wgUser->getID() > 0 && $wgLanguageCode=='en') {
++                $sk = $wgUser->getSkin();
++				
++                $url = $wgRequest->getRequestURL();
++                if ($wgRequest->getVal('refresh', null) != null) {
++                    $url = str_replace("&refresh=1", "", $url);
++                    $url = str_replace("?refresh=1", "", $url);
++                    $wgOut->addHTML("<a href='$url' class='refresh_options'>" . wfMsg('rc_turn_refresh_off') . "</a>");
++                } else {
++                    if (strpos($url, "?") !== false)
++                        $url .= "&refresh=1";
++                    else
++                        $url .= "?refresh=1";  
++                    $wgOut->addHTML("<a href='$url' class='refresh_options'>" . wfMsg('rc_turn_refresh_on') . "</a>");
++                }
++					 $wgOut->addHTML("&nbsp;<a class='refresh_options' href='#' onclick=\"open('/index.php?title=Special:RCBuddy&hidepatrolled=1&limit=200&featured=1', '', 'scrollbars=no,status=no,width=570,height=200,resizable=yes,titlebar=no');\">RC Buddy</a>");
++            }	
++
++			
+ 		}
+ 
+ 		// And now for the content
+@@ -233,6 +273,7 @@
+ 		}
+ 
+ 		$s = $list->beginRecentChangesList();
++		$s .= "<div id='recentchanges'>\n";
+ 		$counter = 1;
+ 		foreach( $rows as $obj ){
+ 			if( $limit == 0) {
+@@ -260,11 +301,16 @@
+ 				} else {
+ 					$rc->numberofWatchingusers = 0;
+ 				}
++				$rc->show_namespace= $namespace;
++				$rc->invert = $invert;
++				$rc->reverse = $reverse;
++				$rc->featured = $featured;				
+ 				$s .= $list->recentChangesLine( $rc, !empty( $obj->wl_user ) );
+ 				--$limit;
+ 			}
+ 		}
+ 		$s .= $list->endRecentChangesList();
++		$s .= "</div>\n";
+ 		$wgOut->addHTML( $s );
+ 	}
+ }
+@@ -457,11 +503,12 @@
+ 	  ( $doall ? ( ' | ' . rcDaysLink( $limit, 0, $page, $more ) ) : '' );
+ 	
+ 	$linkParts = array( 'minorLink' => 'minor', 'botLink' => 'bots', 'liuLink' => 'liu', 'patrLink' => 'patr', 'myselfLink' => 'mine' );
++	$links = array();
+ 	foreach( $linkParts as $linkVar => $linkMsg ) {
+ 		if( $$linkVar != '' )
+ 			$links[] = wfMsgHtml( 'rcshowhide' . $linkMsg, $$linkVar );
+ 	}
+-	
++
+ 	$shm = implode( ' | ', $links );
+ 	$note = wfMsg( 'rclinks', $cl, $dl, $shm );
+ 	return $note;
+@@ -566,13 +613,15 @@
+  *
+  * @return string
+  */
+-function rcNamespaceForm( $namespace, $invert, $nondefaults, $categories_any ) {
++function rcNamespaceForm( $namespace, $invert, $reverse, $featured, $nondefaults, $categories_any ) {
+ 	global $wgScript, $wgAllowCategorizedRecentChanges, $wgRequest;
+ 	$t = SpecialPage::getTitleFor( 'Recentchanges' );
+ 
+ 	$namespaceselect = HTMLnamespaceselector($namespace, '');
+ 	$submitbutton = '<input type="submit" value="' . wfMsgHtml( 'allpagessubmit' ) . "\" />\n";
+ 	$invertbox = "<input type='checkbox' name='invert' value='1' id='nsinvert'" . ( $invert ? ' checked="checked"' : '' ) . ' />';
++	$reversebox = "<input type='checkbox' name='reverse' value='1' id='nsreverse'" . ( $reverse ? ' checked="checked"' : '' ) . ' />';
++	$featuredbox = "<input type='checkbox' name='featured' value='1' id='nsfeatured'" . ( $featured ? ' checked="checked"' : '' ) . ' />';
+ 	
+ 	if ( $wgAllowCategorizedRecentChanges ) {
+ 		$categories = trim ( $wgRequest->getVal ( 'categories' , "" ) ) ;
+@@ -599,7 +648,7 @@
+ 	$out .= "
+ <div id='nsselect' class='recentchanges'>
+ 	<label for='namespace'>" . wfMsgHtml('namespace') . "</label>
+-	{$namespaceselect}{$submitbutton}{$invertbox} <label for='nsinvert'>" . wfMsgHtml('invert') . "</label>{$catbox}\n</div>";
++	{$namespaceselect}{$submitbutton}{$invertbox} <label for='nsinvert'>" . wfMsgHtml('invert') . "</label>{$reversebox}<label for='nsreverse'>" . wfMsgHtml('reverseorder') . "</label>{$featuredbox}<label for='nsfeatured'>" . wfMsgHtml('showonlyfeatured') . "</label>{$catbox}\n</div>";
+ 	$out .= '</form></div>';
+ 	return $out;
+ }

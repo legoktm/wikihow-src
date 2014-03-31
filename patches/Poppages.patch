@@ -1,0 +1,17 @@
+--- mediawiki-1.9.3/includes/SpecialPopularpages.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki19/includes/SpecialPopularpages.php	2008-01-09 14:26:58.000000000 -0600
+@@ -50,9 +50,13 @@
+  */
+ function wfSpecialPopularpages() {
+     list( $limit, $offset ) = wfCheckLimits();
+-
++	global $wgOut;
++	$wgOut->setRobotPolicy("index,follow");
+     $ppp = new PopularPagesPage();
+ 
++	if ($limit != 50 || $offset != 0) {
++		$wgOut->setPageTitle(wfMsg('popularpages_range', $offset+1, $offset+$limit));
++	}
+     return $ppp->doQuery( $offset, $limit );
+ }
+ 

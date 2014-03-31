@@ -1,0 +1,1075 @@
+/*Zero out everything for a clean slate*/
+* { margin: 0; padding: 0; }
+
+/*No default borders for images.  Who does that?*/
+IMG { border: 0; }
+
+A { 
+    color: #01769F; 
+    text-decoration: none;
+}
+A:hover { text-decoration: underline; }
+
+BODY {
+    background: url(/skins/WikiHow/images/background.jpg) #F9F7F1 repeat-x;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: .75em; /*13pt*/
+    color: #414141;
+}
+	
+H1.firstHeading A {
+	text-decoration: none;
+    color: #4A3C31;
+}
+
+/** HEADER - START **************************************/
+DIV#header {
+        width: 978px;
+        margin: 15px auto 0 auto;
+        z-index: 1;
+	    position: relative;
+	    color: #514239;
+    }
+    
+    #header DIV#logo {
+            float: left;
+            margin: 28px 0 0 0;
+        }
+        
+        #logo P {
+            margin: 1px 0 0 4px;
+            font-size: 1.05em;
+        }
+		#logo a {
+	    	color: #514239;
+		}
+        
+    #bubbles {
+        width: 737px;
+        position: absolute;
+        right: 0;
+    }
+    
+    #bubbles #bonus_bubble { margin-left: 15px; }
+        
+        #bonus_bubble IMG { float: left; }
+        
+        #bonus_bubble P {
+            display: block;
+            height: 31px;
+            line-height: 32px;
+            background: url(/skins/WikiHow/images/bonus_bubble_bg.gif) repeat-x;
+            text-align: center;
+            float: left;
+            padding: 0 10px;
+        }
+    
+    #bubbles #head_bubble {
+            background: url(/skins/WikiHow/images/header_bubble.png) no-repeat left top;
+            height: 73px;
+            padding-left: 5px;
+            margin-top: 31px;
+        }
+
+        #head_bubble A {
+            display: block;
+            float: left;
+            width: 102px;
+            height: 73px;
+            margin-left: 2px;
+            text-align: center;
+            line-height: 51px;
+            font-size: 1.2em;
+            background: url(/skins/WikiHow/images/bubble_nav.png) no-repeat left top;
+        }
+        
+        #head_bubble A { color: #514239; }
+        #head_bubble A:hover { text-decoration: none; }
+        
+        #head_bubble A#nav_home { width: 101px; }
+        
+        #head_bubble A.on { 
+            background-position: 0 -146px; 
+            color: #FFF;
+        }
+        
+        #head_bubble #bubble_search {
+            width: 305px;
+            float: left;
+            padding: 11px 0 0 10px;
+        }
+        
+        #head_bubble .search_box { float: left; }
+        #head_bubble .search_button { float: left; }
+
+    #header #login {
+        float: right;
+        margin: 3px 14px 0 0;
+    }
+    
+/** HEADER - END **************************************/
+	    
+    
+DIV#main {
+    width: 978px;
+    margin: 0 auto;
+    clear: left;
+}
+
+DIV#message_box {
+        background: url(/skins/WikiHow/images/message_box.png) no-repeat left 13px;
+        width: 918px;
+        height: 59px;
+        padding-left: 60px;
+        line-height: 69px;
+        font-size: 1.15em;
+        overflow: hidden;
+        z-index: 2;
+        position: relative;
+        /*display: none;*/            
+    }
+    #message_box A { font-weight: bold; }
+    
+
+/** ARTICLE - START **************************************/ 
+DIV#article_shell{
+    width: 679px;
+    margin: 12px 305px -1px 0;
+    float: left;
+}
+
+DIV#article {
+        background: url(/skins/WikiHow/images/article_bg.png) repeat-y;
+        padding: 2px 1px 30px 5px;
+        margin-top: -3px;
+    }
+    
+   
+	#article DIV.article_inner { padding: 0 27px 20px 23px; }
+ 
+    #article P {
+        padding-bottom: 2em;
+        line-height: 1.2em;
+    }
+ 
+    #article UL#breadcrumb LI {
+        display: inline;
+        font-size: .9em;
+        color: #7A6F68;
+    }
+    #article UL#breadcrumb LI A { color: #7A6F68; }
+    #article UL#breadcrumb LI B A { color: #514239; }
+    
+    #article H1 {
+        font-size: 2.4em;
+        font-weight: normal;
+        padding: 8px 0 4px 0;
+        color: #4A3C31;
+    }
+    
+    #article P#originators {
+        font-size: .9em;
+        margin: 0;
+        color: #514239;
+    }
+    
+    #article P#originators SPAN { 
+        color: #01769F; 
+        padding-left: 3px; 
+    }
+    
+	    
+    #article DIV#article_tabs {
+            height: 31px;
+            text-align: center;
+            line-height: 31px;
+            margin: 10px 0 0 20px;
+        }
+        
+        #article_tabs A {
+            width: 89px;
+            height: 31px;
+            background-image: url(/skins/WikiHow/images/article_tab.png);
+            float: left;
+            margin-right: 6px;
+            padding: 0;
+            font-weight: bold;
+            font-size: .95em;
+            color: #7A6F68; 
+        }            
+        #article_tabs A:hover { 
+            text-decoration: none;
+            color: #514239;
+            background-position: 0 -31px;
+        }
+                    
+        #article_tabs A.on { 
+            color: #514239;
+            background-position: 0 -62px;
+        }	 
+        
+        #article_tabs .tab_pencil {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: -20px;
+            margin-left: 17px;
+        }
+        
+        #article_tabs UL#AdminOptions {
+            border: 1px solid #A59983;
+            border-top: none;
+            width: 87px;
+            position: absolute;
+            display: none;
+            margin-top: 30px;
+            list-style: none;
+        }
+        #AdminOptions LI A { 
+            background-image: none;
+            background-color: #F2ECDE;
+            border-top: 1px solid #A59983;
+            width: 79px;
+            color: #4A3C31;
+            text-align: left;
+            padding-left: 8px;
+        }
+        #AdminOptions LI A:hover { color: #4A3C31; }
+            
+        
+        
+    #article DIV#article_tabs_line {
+        border-top: 1px solid #A59983;
+        padding-bottom: 1em;
+        margin-top: -1px;
+    }
+    
+    
+    
+    #article .main_image {
+         float: left;
+         margin: 0 10px 10px 0;
+    }
+    
+    #article H2 {
+        color: #4A3C31;
+        font-size: 1.5em;
+        background: url(/skins/WikiHow/images/section_head_bg.png) top left no-repeat;
+        /*margin: 0 0 10px -43px;*/
+        margin: 0 0 10px -20px;
+        padding-top: 0;
+        padding-left: 40px;
+        line-height: 42px;
+        height: 53px;
+        width: 647px;
+        clear: both;
+    }
+	    
+    /* thumbnails */
+/* thumbnails */
+	#article DIV.thumb {
+        width: auto;
+        font-size: .85em;
+        margin-bottom: .5em;
+    }
+
+        .thumb A.magnify { float: right; }
+
+        DIV.tright {
+            clear: right;
+            float: right;
+            padding-left: 1em;
+        }
+        DIV.tleft {
+            float: left;
+            clear: left;
+            padding-right: 1em;
+        }
+
+        
+
+
+  #steps OL#steps_list {
+            list-style-position: inside;
+            color: #4A3C31;
+        }
+      	#steps OL#steps_list LI.steps_li { 
+            background: url(/skins/WikiHow/images/step_bullet.gif) no-repeat 20px top;
+            font-size: 1.45em;
+			border-bottom: 1px dashed #BFBFBF;
+            margin: 15px 0 40px 0;
+            padding: .25em 27px 0 1.65em;
+            color: #FFF;
+        }
+      
+		#steps OL#steps_list LI.steps_li DIV.listbody { 
+            font-size: 14px;
+            padding-left: 50px;
+            position: relative;
+            top: -2.1em;
+            color: #333;
+        }
+		#steps OL#steps_list LI.steps_li B { color: #4A3C31; }
+		#steps OL#steps_list LI.steps_li P { margin: 0; }
+
+   
+    #steps DIV#no_last_line {
+        border-top: 1px solid #FFF;
+        margin-top: -41px;
+    }      
+
+	#article DIV#related_articles LI, #article DIV#suggested_titles LI { padding: 0 0 .1em 0; }   
+
+	#article DIV#related_videos UL { padding: 0; } 
+        #article DIV#related_videos LI {
+                float: left;
+                padding: 10px 5px 20px 4px;
+                font-size: .8em;
+                width: 94px;
+                text-align: center;
+                margin: 0 auto;
+                list-style: none;
+            } 
+        #article DIV#related_videos LI A { margin: 0 auto 3px auto; } 
+        
+    
+    #article DIV#article_info {
+        color: #414141;
+        padding-bottom: 2.5em;
+    }
+    
+    #article DIV#share_icons DIV {
+            float: left;
+            margin: 3px 3px 20px 0;
+            color: #018EAB;
+        }
+        #share_icons A {
+            background: url(/skins/WikiHow/images/share_icons.png) no-repeat left top;
+            width: 15px;
+            height: 18px;
+            display: block;
+            float: left;
+            margin-left: 7px;
+        }            
+        #share_icons #share_stumbleupon { background-position: -15px 0; }
+        #share_icons #share_facebook { background-position: -30px 0; }
+        #share_icons #share_blogger { background-position: -45px 0; width: 17px; }
+        #share_icons #share_digg { background-position: -61px 0; width: 18px; }
+        #share_icons #share_google { background-position: -78px 0; width: 17px; }
+        #share_icons #share_delicious { background-position: right 0; width: 14px; }	    
+    	   
+		#article UL#end_options { padding: 0; } 
+        #article UL#end_options LI {
+                display: inline;
+                padding: 0 0 0 15px;
+                margin-right: 21px;
+            }
+ 
+        UL#end_options LI#endop_discuss { background: url(/skins/WikiHow/images/endop_discuss.gif) center left no-repeat; }
+        UL#end_options LI#endop_print { background: url(/skins/WikiHow/images/endop_print.gif) center left no-repeat; }
+        UL#end_options LI#endop_embed { background: url(/skins/WikiHow/images/endop_embed.gif) center left no-repeat; }
+        UL#end_options LI#endop_email { background: url(/skins/WikiHow/images/endop_email.gif) center left no-repeat; }
+        UL#end_options LI#endop_watch { background: url(/skins/WikiHow/images/endop_watch.gif) center left no-repeat; padding-left: 18px; }
+        UL#end_options LI#endop_edit { background: url(/skins/WikiHow/images/endop_edit.gif) center left no-repeat; }
+        UL#end_options LI#endop_fanmail { background: url(/skins/WikiHow/images/endop_fanmail.gif) center left no-repeat; }
+    
+    #article DIV#embed_this {
+            color: #C8C8C8;
+            margin-top: 20px;
+        }
+        
+        #article DIV#embed_this SPAN {
+            font-size: 1.2em;
+            margin-right: .2em;
+        }
+    
+
+DIV#last_question {
+        clear: both; 
+        background: url(/skins/WikiHow/images/article_bottom_bg.png) repeat-y;
+        text-align: center;
+        color: #7A6F68;
+        font-size: 1.15em;
+        font-weight: bold;
+    }
+    #last_question P#article_line {
+            border-top: 3px solid #D4CFC2;
+            margin-left: 4px;
+            padding-bottom: 30px;
+    }
+    
+    #last_question P { padding-bottom: 12px; }
+    #last_question P B { color: #414141; }
+
+
+P#feature_star {
+    color: #617561;
+    font-weight: bold;
+    float: right;
+    margin: 16px 8px 0 0;
+}
+P#feature_star IMG { padding: 0 3px; margin-bottom: -1px; }
+
+DIV.google_article_ad {
+        text-align: right;
+        width: 525px;
+        margin: 15px auto;
+        font-size: 1.1em;
+    }
+    .google_article_ad TABLE {
+        width: 100%;
+        text-align: left;
+    }
+    	        
+    
+/** ARTICLE - END **************************************/ 	
+
+    
+
+/** SIDEBAR - START **************************************/    
+DIV#sidebar {
+        width: 293px;
+        float: left;
+        margin-left: -300px;
+        /*margin-top: -40px;*/
+        margin-top: 12px;
+        color: #7F7F7F;
+    }
+    
+    #sidebar DIV#top_links {
+        background: url(/skins/WikiHow/images/sidebar_whitebox.png) no-repeat left top;
+        width: 252px;
+        height: 60px;
+        font-size: 1.1em;
+        line-height: 35px;
+        text-align: right;
+        padding-top: 14px;
+        padding-left: 18px;
+        padding-right: 24px;
+    }
+    
+    #sidebar DIV.sidebox {
+            background: url(/skins/WikiHow/images/sidebar_bg.png) repeat-y;
+            margin: -3px 0 0 0;
+            padding: 6px 18px;
+        }	   
+    
+    #sidebar H3 {
+        font-size: 1.1em;
+        color: #443D37;
+        padding-bottom: 3px;
+        border-bottom: 3px solid #BDB7A7;
+    }
+    
+    #sidebar UL {
+            margin: 10px auto 0 auto;
+            font-size: .95em;
+            list-style: url(/skins/WikiHow/images/bullet_tan.gif);
+        }
+	    
+        #sidebar UL LI {
+            padding-top: 5px;
+            margin: 0 25px;
+        }
+        
+    DIV#side_nav H3 { margin-top: 15px; }
+        #side_nav H3#navigation_list_title { margin-top: 0; }
+        
+        #side_nav UL LI {
+            list-style: none;
+            border: none;
+            margin-left: 10px;
+            padding-left: 0;
+            color: #018EAB;
+        }
+        #sidebar #side_nav UL LI A { color: #018EAB; }
+        
+        #side_nav H3 A {
+	        float: right;
+	        font-size: .75em;
+        }    
+        
+    
+    DIV#side_related_articles UL { font-size: 1em; }
+        
+    DIV#side_related_videos TABLE {
+            margin: 10px auto 0 auto;
+        }	        
+        #side_related_videos TD { 
+            padding: 5px; 
+            text-align: center;
+            width: 50%;
+        }	        
+        #side_related_videos .rounders2 { margin: 0 auto 4px auto; }  
+        
+        #side_related_videos #side_related_videos_more {
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        #side_related_videos #side_related_videos_arrow {
+            margin: 0 0 -3px 3px;
+        }
+    
+    
+    DIV#side_ads_by_google P {
+        margin: 10px 20px;
+    }
+    DIV#side_ads_by_google P.bottom_link {
+        margin: 0 0 -18px 10px;
+        position: relative;
+    }
+    	    
+    DIV#side_featured_articles TABLE { 
+            margin-top: 4px;
+        }
+	    
+     #side_featured_articles TD {
+            border-bottom: 1px solid #D6D5CE;
+            padding: 2px;
+            font-size: .9em;
+        } 
+    	   
+	#completionFrame {
+		display:none;
+	}
+ 
+    DIV#side_featured_articles LI IMG {
+        float: left;
+        padding-right: 8px;
+    }
+       
+	DIV#side_recent_changes DIV#rcwidget_divid DIV { 
+            padding: 5px 5px;
+            font-size: 0.98em;
+        }
+
+	span.rc_widget_time {
+		font-style: italic;
+	}
+	div.rc_widget_line {
+		height: 65px;
+	}
+        
+        #side_recent_changes P.bottom_link {
+            font-size: 1.2em;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0 -18px 0;
+            position: relative;
+            border-top: 2px solid #BDB7A7;
+            padding-top: 10px;
+        }
+        
+        #side_recent_changes #play_pause_button {
+            position: absolute;
+            background: url(/skins/WikiHow/images/play_pause.png) no-repeat left top;
+            width: 26px; 
+            height: 26px;
+            margin: -5px 0 0 20px;
+        }
+        #side_recent_changes #play_pause_button.play { background-position: 0 -78px; }
+
+    #meet_member H3 { margin-bottom: 10px; }
+    #meet_member IMG { float: left; }
+    #meet_member A { font-weight: bold; }
+    
+    #meet_member P {
+        width: 200px;
+        margin-left: 60px;
+        color: #414141;
+    }	        
+     
+    UL#social_box { margin: 0px; } 
+        
+    UL#social_box LI {
+            list-style: none;
+            line-height: 24px;
+            padding-left: 43px;
+            margin: 0 0 5px 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        #social_box LI#social_fb { background: url(/skins/WikiHow/images/facebooks.jpg) no-repeat 12px bottom; }
+        #social_box LI#social_tw { background: url(/skins/WikiHow/images/twitbird.gif) no-repeat left bottom; }
+    
+    
+/** SIDEBAR - END **************************************/
+    
+    
+/** FOOTER - START **************************************/	    
+DIV#footer_shell {
+    background-color: #E7E4DC;
+    margin-top: 50px;
+}
+
+DIV#footer {
+        width: 987px;
+        margin: 0 auto;
+        color: #514239;
+        padding: 30px 0 20px 0;
+    }
+    
+    #footer A { color: #617561; }
+  	#footer UL { list-style: none; }  
+    #footer P#footer_tag {
+        font-size: .9em;
+        margin-left: 2px;
+    }
+    
+    #footer DIV#footer_side {
+        width: 240px;
+        float: left;
+        padding-left: 10px;
+    }
+    
+    #footer_side UL { 
+            width: 193px;
+            margin: 15px 0;
+        }
+        
+        #footer_side LI {
+            font-size: .9em;
+            border-top: 1px solid #C9C4BB;
+            padding: 6px;            
+        }
+        #footer_side LI.top { border-top: none; }
+    
+    
+    #footer DIV#footer_main {
+            font-size: 1em;
+            width: 760px;
+            margin-left: 250px;
+            clear: right;
+        }
+    
+        #footer_main H3 {
+            border-bottom: 1px solid #C9C4BB;
+            margin-top: 25px;
+            padding-bottom: 4px;
+        }
+        
+        #footer_search { height: 30px; }
+        
+        #footer_main .search_box {
+            width: 350px;
+            font-size: 1.2em;
+            border-color: #F2F0EC;
+            margin-left: 0;
+            float: left;
+        }
+        
+        #footer_main UL {
+                font-size: .9em;
+                margin: 10px 0;                    
+            }
+        
+            #footer_main UL LI {
+                padding: 4px 0;
+                float: left;
+                width: 190px;
+            }
+        
+        
+    
+    #footer DIV#sub_footer {
+            font-size: .7em;
+            border-top: 1px solid #C9C4BB;
+            padding: 15px 0 10px 0;
+            clear: left;
+        }
+        
+        #sub_footer P {
+            float: left;
+            width: 235px;
+            padding-right: 15px;
+        }
+        
+        #sub_footer IMG {
+            float: left;
+            padding-right: 8px;
+        }
+        
+/** FOOTER - END **************************************/            
+
+
+/** BUTTONS - START ***********************************/
+A.button { 
+    display: block;
+    font-weight: bold;
+    text-align: center;
+    color: #FFF;
+    letter-spacing: .01em;
+    overflow: hidden;
+}
+A.button:hover { text-decoration: none; }
+    
+A.button136 {
+    width: 136px;
+    height: 38px;
+    background: url(/skins/WikiHow/images/button_136.png) top left no-repeat;
+}
+
+A.button52 {
+    width: 52px;
+    height: 26px;
+    background: url(/skins/WikiHow/images/button_52.png) top left no-repeat;
+    line-height: 25px;  
+}
+
+.search_button {
+    width: 61px;
+    height: 29px;
+    background: url(/skins/WikiHow/images/button_search.png) top left no-repeat;
+    color: #FFF;
+    border: none;
+    font-size: .8em;
+    font-weight: bold;
+    padding: 0 3px 2px 0; 
+    cursor: pointer;
+    float: left;
+}
+
+A.button_square {
+    width: 30px;
+    height: 29px;
+    background: url(/skins/WikiHow/images/button_square.png) top left no-repeat;
+    line-height: 27px;
+}
+
+/* edit button on the step headers */
+#article H2 A.button52 { 
+    margin: 8px 13px 0 0; 
+    font-size: .65em; 
+    float: right;
+}
+    
+#article A.edit_article_button {
+    font-size: 1em;
+    background: url(/skins/WikiHow/images/button_edit.png) top left no-repeat; 
+    width: 66px;
+    height: 26px;
+    line-height: 25px;
+    padding-left: 6px;
+    float: right;
+    margin-right: -22px;
+}
+
+
+A.white_button {
+    background: url(/skins/WikiHow/images/button_general_52.png) top left no-repeat;
+    width: 52px;
+    height: 26px;
+    line-height: 27px;
+    font-size: .85em;
+    color: #01769F;
+    margin: 0 10px;
+}	
+
+A.white_button_100 {
+    background: url(/skins/WikiHow/images/button_general_100.png) top left no-repeat;
+    width: 100px;
+    height: 26px;
+    line-height: 27px;
+    font-size: .85em;
+    color: #01769F;
+    margin: 0 10px;
+}     
+
+A.white_button_150 {
+    background: url(/skins/WikiHow/images/button_general_150.png) top left no-repeat;
+    width: 150px;
+    height: 26px;
+    line-height: 27px;
+    font-size: .85em;
+    color: #01769F;
+    margin: 0 10px;
+}    
+    
+
+A#arrow_left, A#arrow_right {
+    background: url(/skins/WikiHow/images/arrows.png) top left no-repeat;
+    width: 26px;
+    height: 26px;
+}    
+A#arrow_right { background-position: -26px 0; }
+
+
+/** BUTTONS - END *************************************/
+
+
+                
+    	    
+.search_box {
+    width: 200px;
+    height: 17px;
+    font-size: 1em;
+    border: 4px solid #E6EAE2;
+    background: url(/skins/WikiHow/images/sherlock.gif) #FFF center left no-repeat;
+    padding: 2px 2px 2px 20px;
+    margin-left: 5px;
+}
+
+
+.clearall {
+    clear: both;
+    height: 0;
+    line-height: 0;
+    font-size: px /*for IE*/
+}
+
+
+/** ROUNDED CORNERS [IMAGE] - START **********************************/
+.rounders { 
+    position: relative;
+    margin-bottom: .8em;
+ }
+
+.corner {
+    position: absolute; 
+    width: 10px; 
+    height: 10px;
+    background-image: url(/skins/WikiHow/images/corners.gif);
+ }
+
+.top_left {top:0; left:0; background-position:-10px -10px;}
+.top_right {top:0; right:0; background-position:-20px -10px;}
+.bottom_left {bottom:0; left:0; background-position:-10px -20px;}
+.bottom_right {bottom:0; right:0; background-position:-20px -20px;}
+/** ROUNDED CORNERS [IMAGE] - END *************************************/
+    
+.rounded_corners {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.tan { background-color: #E2DDD1; }
+    
+
+.rounders2 {
+    background-color:#C4CDE0;
+    display:block;
+    overflow:hidden;
+    position:relative;
+}
+.rounders2_sprite { position: absolute; }
+    
+.rounders2_xl, .rounders2_xl .rounders2_img {
+    width: 120px;
+    height: 80px;
+}
+.rounders2_lg, .rounders2_lg .rounders2_img {
+    width: 102px;
+    height: 68px;
+}
+.rounders2_ml, .rounders2_ml .rounders2_img {
+    width: 88px;
+    height: 68px;
+}
+.rounders2_md, .rounders2_md .rounders2_img {
+    width: 66px;
+    height: 51px;
+}
+.rounders2_sm, .rounders2_sm .rounders2_img {
+    width: 42px;
+    height: 28px;
+}    
+
+/*x-axis*/
+.rounders2_xl .rounders2_sprite { left:0; }
+.rounders2_lg .rounders2_sprite { left:-120px; }
+.rounders2_ml .rounders2_sprite { left:-222px; }
+.rounders2_md .rounders2_sprite { left:-310px; }
+.rounders2_sm .rounders2_sprite { left:-376px; }
+/*y-axis*/
+.rounders2_white .rounders2_sprite { top:0; }
+.rounders2_tan .rounders2_sprite { top:-80px; }
+
+/*CUSTOM STUFF8*/
+  
+   	#article UL, #article OL { padding: 0 1em 1em 1em; }   
+    #article UL { list-style: outside disc none; }   
+    #article LI { padding: 2em 0 0 0; } 
+	/* thumbnails */
+div.thumb {
+	margin-bottom: .5em;
+	border-style: solid;
+	border-color: white;
+	width: auto;
+}
+div.thumbinner, div.gallerybox {
+	border: 1px solid #ccc;
+	padding: 3px !important;
+	background-color: #f9f9f9;
+	font-size: 94%;
+	text-align: center;
+	overflow: hidden;
+}
+div.gallerybox { margin-right: 10px; }
+div.gallerybox div.thumb { border-color: #f9f9f9; }
+html .thumbimage {
+	border: 1px solid #ccc;
+}
+html .thumbcaption {
+	border: none;
+	text-align: left;
+	line-height: 1.4em;
+	padding: 3px !important;
+	font-size: 123%;
+}
+div.magnify {
+	float: right;
+	border: none !important;
+	background: none !important;
+}
+div.magnify a, div.magnify img {
+	display: block;
+	border: none !important;
+	background: none !important;
+}
+DIV#main P.L, DIV#main .floatleft { float: left; margin: 0 1.5em 1em 0; }
+DIV#main P.R, DIV#main .floatright { float: right; margin: 0 0 1em 1.5em; }
+DIV#main .floatright A:hover { background-color: transparent; }
+DIV#main .floatleft A:hover { background-color: transparent; }
+DIV.thumbinner A.internal:hover { background-color: transparent; }
+div.tright {
+	clear: right;
+	float: right;
+	border-width: .5em 0 .8em 1.4em;
+}
+div.tleft {
+	float: left;
+	clear: left;
+	margin-right: .5em;
+	border-width: .5em 1.4em .8em 0;
+}
+table.related_vids_display td {
+	vertical-align: top;
+}
+DIV.de {
+    border: 1px solid #CED1FF;
+    margin: 15px 0;
+}
+DIV.de P { padding: 5px; }
+DIV.de_header { background-color: #EEE; }
+DIV.de_reply {
+   font-size: .8em;
+   background-color: #EEE;
+   padding: 2px;
+   text-align: center;
+   clear: both;
+}
+p.de_date {
+        font-size: smaller;
+}
+p.de_date {
+    float: right;
+}
+p.de_user {
+        font-weight: bold;
+}
+p.de_comment {
+}
+.de_comment OL { list-style-position: inside; }
+#discussion_entry {
+        border: 1px solid #CED1FF;
+        padding: 5px;
+        margin-bottom:5px
+}
+
+.not-patrolled {
+    background-color: #ffa;
+}   
+div.patrollink {
+    font-size: 75%;
+    text-align: right;
+}   
+span.newpage, span.minor, span.searchmatch, span.bot {
+    font-weight: bold;
+}
+span.unpatrolled {
+    font-weight: bold;
+    color: red;
+}
+UL.special {
+list-style: default;
+}
+DIV#main DIV#article SPAN.subheader {
+        color: #555;
+        font-weight: normal;
+        letter-spacing: normal;
+        margin-left: 5px;
+    }
+        
+    #article H2 SPAN.subheader { font-size: 65%; }
+    #article H3 SPAN.subheader { font-size: 70%; }
+
+    .show {}
+    .hide{display:none;}
+DIV#main DIV#editpage DIV#optional_sections LI {
+    display: inline;
+    list-style: none;
+    margin-right:5px;
+}
+input.guided-button { 
+    font-weight: bold;
+    font-size: 1.2em;
+}
+/*  
+** Diff rendering
+*/
+table.diff, td.diff-otitle, td.diff-ntitle {
+    background-color: white;
+    vertical-align: top;
+}
+td.diff-addedline {
+    background: #cfc;
+    font-size: smaller;
+}
+td.diff-deletedline {
+    background: #ffa;
+    font-size: smaller;
+}       
+td.diff-context {
+    background: #eee;
+    font-size: smaller;
+}
+span.diffchange {
+    color: red;
+    font-weight: bold;
+}
+#featurestar {
+  float: right;
+  margin-top: -42px;
+  margin-right: -13px;
+}
+DIV#main DIV#article DIV#Related SELECT#related_select { width: 80%; }
+    #relatedwikihows DIV#related_buttons {
+        float: right;
+        width: 18%;
+    }
+    #relatedwikihows DIV#related_buttons INPUT { margin-bottom: 3px; }
+   
+    #related_select {
+        width: 500px;
+        margin-bottom:5px;
+    }
+
+A.new { color: #B30000; }
+    .go_button {
+        width: 30px;
+        height: 29px;
+        background: url(/skins/WikiHow/images/button_square.png) top left no-repeat;
+        color: #FFF;
+        letter-spacing: .01em;
+        border: none;
+        font-size: .9em;
+        font-weight: bold;
+        padding-bottom: 2px;
+        margin-left: 6px;
+        float: right;
+        cursor: pointer;
+    }
+

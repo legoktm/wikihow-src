@@ -1,0 +1,381 @@
+--- mediawiki-1.9.3/includes/Article.php	2007-02-20 20:20:31.000000000 -0600
++++ wiki/includes/Article.php	2008-03-26 16:16:56.000000000 -0500
+@@ -13,6 +13,9 @@
+  *
+  * @package MediaWiki
+  */
++ 
++ require_once('PatrolHelper.php');
++ 
+ class Article {
+ 	/**@{{
+ 	 * @private
+@@ -150,7 +153,19 @@
+ 			if ( $this->mTitle->getNamespace() == NS_MEDIAWIKI ) {
+ 				$ret = wfMsgWeirdKey ( $this->mTitle->getText() ) ;
+ 			} else {
+-				$ret = wfMsg( $wgUser->isLoggedIn() ? 'noarticletext' : 'noarticletextanon' );
++				$wgOut->setStatusCode(404);
++				if ($this->mTitle->getNamespace() == NS_USER_TALK)
++					$ret = wfMsg( 'noarticletext_user_talk', $this->mTitle->getText(), $this->mTitle->getFullURL() . "?action=edit"   );         
++				else if (Namespace::isTalk($this->mTitle->getNamespace()))  
++					$ret = wfMsg( 'noarticletext_talk', $this->mTitle->getText(), $this->mTitle->getFullURL() . "?action=edit"   );                
++				else if ($this->mTitle->getNamespace() == NS_USER)  
++					$ret = wfMsg( 'noarticletext_user', $this->mTitle->getText(), $this->mTitle->getFullURL() . "?action=edit"   );                
++				else if ($this->mTitle->getNamespace() == NS_USER_KUDOS)  
++					$ret = wfMsg( 'noarticletext_user_kudos', $this->mTitle->getText(), $this->mTitle->getFullURL() . "?action=edit"   );                
++				else if ($this->mTitle->getNamespace() == NS_MAIN)                         
++					$ret = wfMsg( 'noarticletext', $this->mTitle->getText(), $this->mTitle->getFullURL() . "?action=easy"  );                     
++				else 
++					$ret = wfMsg( 'noarticletext_standard', $this->mTitle->getText(), $this->mTitle->getFullURL() . "?action=edit" );
+ 			}
+ 
+ 			return "<div class='noarticletext'>$ret</div>";
+@@ -512,10 +527,9 @@
+ 	 * This isn't necessary for all uses, so it's only done if needed.
+ 	 * @private
+ 	 */
+-	function loadLastEdit() {
+-		if ( -1 != $this->mUser )
++	function loadLastEdit($force = false) {
++		if ( !$force && -1 != $this->mUser )
+ 			return;
+-
+ 		# New or non-existent articles have no user information
+ 		$id = $this->getID();
+ 		if ( 0 == $id ) return;
+@@ -531,10 +545,12 @@
+ 		}
+ 	}
+ 
+-	function getTimestamp() {
++	function getTimestamp($force = false) {
+ 		// Check if the field has been filled by ParserCache::get()
+-		if ( !$this->mTimestamp ) {
+-			$this->loadLastEdit();
++                //XXCHANGED - why? because it's fucking buggy
++                // Check if the field has been filled by ParserCache::get()
++		if ( !$this->mTimestamp || $force) {
++			$this->loadLastEdit($force);
+ 		}
+ 		return wfTimestamp(TS_MW, $this->mTimestamp);
+ 	}
+@@ -569,7 +585,7 @@
+ 	 * @param $limit Integer: default 0.
+ 	 * @param $offset Integer: default 0.
+ 	 */
+-	function getContributors($limit = 0, $offset = 0) {
++	function getContributors($limit = 0, $offset = 0, $ignore_minor = false) {
+ 		# XXX: this is expensive; cache this info somewhere.
+ 
+ 		$contribs = array();
+@@ -579,12 +595,14 @@
+ 		$user = $this->getUser();
+ 		$pageId = $this->getId();
+ 
+-		$sql = "SELECT rev_user, rev_user_text, user_real_name, MAX(rev_timestamp) as timestamp
++		$im = '';
++		if ($ignore_minor)
++			$im = " AND rev_minor_edit = 0 ";
++		$sql = "SELECT rev_user, rev_user_text, user_real_name, MIN(rev_timestamp) as timestamp
+ 			FROM $revTable LEFT JOIN $userTable ON rev_user = user_id
+-			WHERE rev_page = $pageId
+-			AND rev_user != $user
++			WHERE rev_page = $pageId {$im}
+ 			GROUP BY rev_user, rev_user_text, user_real_name
+-			ORDER BY timestamp DESC";
++			ORDER BY timestamp";
+ 
+ 		if ($limit > 0) { $sql .= ' LIMIT '.$limit; }
+ 		$sql .= ' '. $this->getSelectOptions();
+@@ -825,12 +843,23 @@
+ 		# If we have been passed an &rcid= parameter, we want to give the user a
+ 		# chance to mark this new article as patrolled.
+ 		if ( $wgUseRCPatrol && !is_null( $rcid ) && $rcid != 0 && $wgUser->isAllowed( 'patrol' ) ) {
++			//XXADDED
++			$show_namespace = $wgRequest->getVal('show_namespace');
++			$invert = $wgRequest->getVal('invert');
++			$reverse = $wgRequest->getVal('reverse');
++			$featured = $wgRequest->getVal('featured');
++			$fromrc = $wgRequest->getVal('fromrc', null) == null ? "" : "&fromrc=1";
++		
++//TODO: finish this stuff	
+ 			$wgOut->addHTML(
+ 				"<div class='patrollink'>" .
+ 					wfMsg ( 'markaspatrolledlink',
+-					$sk->makeKnownLinkObj( $this->mTitle, wfMsg('markaspatrolledtext'), "action=markpatrolled&rcid=$rcid" )
+-			 		) .
+-				'</div>'
++					$sk->makeKnownLinkObj( $this->mTitle, wfMsg('markaspatrolledtext'), "action=markpatrolled&rcid=$rcid&show_namespace=$show_namespace&invert=$invert&featured=$featured&reverse=$reverse$fromrc", '', '', "accesskey='p'" )
++			 		) . 
++					"[" . $sk->makeKnownLinkObj( $this->mTitle, wfMsg('skip'), "action=markpatrolled&rcid=$rcid&show_namespace=$show_namespace&invert=$invert&featured=$featured&reverse=$reverse&skip=1$fromrc" ) . 
++						']' . wfSpamDiffLink ($this->mTitle) 
++					//"<br>Tag: [<a href=''>stub</a>] [<a href=''>NFD</a>] [<a href=''>Accuracy</a>] [<a href=''>Format</a>]</div>"
++					. "</div>"
+ 			 );
+ 		}
+ 
+@@ -1342,8 +1371,9 @@
+ 							$revisionId );
+ 							
+ 						# Mark as patrolled if the user can do so
+-						if( $wgUser->isAllowed( 'autopatrol' ) ) {
++						if( $wgUser->isAllowed( 'autopatrol' ) && $wgUser->getOption('autopatrol') ) {
+ 							RecentChange::markPatrolled( $rcid );
++							PatrolLog::record( $rcid, true );
+ 						}
+ 					}
+ 					$wgUser->incEditCount();
+@@ -1405,6 +1435,7 @@
+ 				# Mark as patrolled if the user can
+ 				if( $wgUser->isAllowed( 'autopatrol' ) ) {
+ 					RecentChange::markPatrolled( $rcid );
++					PatrolLog::record( $rcid, true );
+ 				}
+ 			}
+ 			$wgUser->incEditCount();
+@@ -1457,7 +1488,39 @@
+ 		}
+ 		$wgOut->redirect( $this->mTitle->getFullURL( $query ) . $sectionAnchor );
+ 	}
+-		
++	
++
++	function skipPatrolled() {
++		global $wgRequest; 
++		global $wgCookieExpiration, $wgCookiePath, $wgCookieDomain, $wgCookieSecure, $wgCookiePrefix;
++
++		$hi = $wgRequest->getVal( 'rchi', null );
++		$lo = $wgRequest->getVal( 'rclow', null);
++		$rcid = $wgRequest->getVal( 'rcid' );
++
++		$dbr = wfGetDB(DB_SLAVE);
++		$pageid = $dbr->selectField('recentchanges', 'rc_cur_id', array('rc_id=' . $rcid));
++		if ($pageid && $pageid != '')
++			$featured = $dbr->selectField('page', 'page_is_featured', array("page_id={$pageid}") );
++		if ($featured) {
++			// get all of the rcids to ignore
++			$ids = array();
++			if ($hi != null) {
++				$res = $dbr->select('recentchanges', 'rc_id', array("rc_id>={$lo}", "rc_id<=$hi", "rc_cur_id=$pageid"));
++				while ($row = $dbr->fetchObject($res)) {
++					$ids[] = $row->rc_id;
++				}
++				$dbr->freeResult($res);
++			} else {
++				$ids[] = $rcid;
++			}
++			$cookiename = "WsSkip_" . wfTimestamp();
++			$cookie = implode($ids, ",");
++	        $_SESSION[$cookiename] = $this->mToken;
++			$exp = time() + 5*60*60;
++           	setcookie( $wgCookiePrefix.$cookiename, $cookie, $exp, $wgCookiePath, $wgCookieDomain, $wgCookieSecure );
++		}
++	}
+ 	/**
+ 	 * Mark this particular edit as patrolled
+ 	 */
+@@ -1493,7 +1556,7 @@
+ 		# If it's left up to us, check that the user is allowed to patrol this edit
+ 		# If the user has the "autopatrol" right, then we'll assume there are no
+ 		# other conditions stopping them doing so
+-		if( !$wgUser->isAllowed( 'autopatrol' ) ) {
++		if( !$wgUser->isAllowed( 'autopatrol' ) && $wgRequest->getVal('skip') != 1) {
+ 			$rc = RecentChange::newFromId( $rcid );
+ 			# Graceful error handling, as we've done before here...
+ 			# (If the recent change doesn't exist, then it doesn't matter whether
+@@ -1509,8 +1572,68 @@
+ 		}
+ 		
+ 		# Mark the edit as patrolled
+-		RecentChange::markPatrolled( $rcid );
+-		wfRunHooks( 'MarkPatrolledComplete', array( &$rcid, &$wgUser, false ) );
++		//XXADDED - check if skip has been passed to us
++		if ($wgRequest->getInt('skip', null) != 1) {
++			// find his and lows
++			$rcids = array();
++			$rcids[] = $rcid;
++			if ($wgRequest->getVal('rchi', null) && $wgRequest->getVal('rclow', null)) {
++				$hilos = wfGetRCPatrols($rcid, $wgRequest->getVal('rchi'), $wgRequest->getVal('rclow'), $this->mTitle->getArticleID());
++				$rcids = array_merge($rcids, $hilos);
++			}
++			$rcids = array_unique($rcids);
++			foreach ($rcids as $id) {
++				RecentChange::markPatrolled( $id );
++				PatrolLog::record( $id, false );
++			}
++			wfRunHooks( 'MarkPatrolledComplete', array( &$rcid, &$wgUser, false ) );
++		} else {
++			Article::skipPatrolled();
++		}
++
++//XXADDED ---
++		$show_namespace = $wgRequest->getVal('show_namespace');
++		$invert = $wgRequest->getVal('invert');
++		$reverse = $wgRequest->getVal('reverse');
++		$featured = $wgRequest->getVal('featured');
++		$fromrc = $wgRequest->getVal('fromrc', null) == null ? "" : "&fromrc=1";
++
++//TODO: shorten this to a selectRow call
++		$sql = "SELECT rc_id, rc_cur_id, rc_moved_to_ns, 
++			rc_moved_to_title, rc_new, rc_namespace, rc_title, rc_last_oldid, rc_this_oldid FROM recentchanges " . 
++			($featured ? " LEFT OUTER JOIN page on page_title = rc_title and page_namespace = rc_namespace " : "") .
++			" WHERE rc_id " . ($reverse == 1 ? " > " : " < ")  . " $rcid and rc_patrolled = 0  " . 
++			($featured ? " AND page_is_featured = 1 " : "") 
++			. " AND rc_user_text != '" . $wgUser->getName() . "' "
++		;
++		if ($show_namespace != null && $show_namespace != '') 
++			$sql .= " AND rc_namespace " . ($invert ? '!=' : '=') . $show_namespace ;
++		else  
++			// avoid the delete logs, etc
++			$sql .= " AND rc_namespace != " . KALTURA_NAMESPACE_ID;
++		$sql .= " ORDER by rc_id " . ($reverse == 1 ? " ASC " : " DESC ") . "  LIMIT 1";
++		$dbw =& wfGetDB( DB_MASTER );
++		$res = $dbw->query($sql);
++		if ( $row = $dbw->fetchObject( $res ) ) {
++			$xx = Title::makeTitle($row->rc_namespace, $row->rc_title);
++			if ($row->rc_moved_to_title != "")
++				$xx = Title::makeTitle($row->rc_moved_to_ns, $row->rc_moved_to_title);
++			$url = "";
++			if ($row->rc_new == 1) {
++				$url = $xx->getFullURL() . "?redirect=no&rcid=" . $row->rc_id;
++			} else {
++				$url = $xx->getFullURL() . "?title=" . $xx->getPrefixedURL() . "&curid=" . $row->rc_cur_id
++						. "&diff={$row->rc_this_oldid}&oldid=" . $row->rc_last_oldid . "&rcid=" . $row->rc_id;
++			}
++			if ($show_namespace != null) 
++				$url .= "&show_namespace=$show_namespace&invert=$invert";
++			$url .= "&reverse=$reverse&featured=$featured$fromrc";
++			$dbw->freeResult($res);
++		
++			$wgOut->redirect($url);
++			return;
++		}
++// -- XXADDED
+ 		
+ 		# Inform the user
+ 		$wgOut->setPageTitle( wfMsg( 'markedaspatrolled' ) );
+@@ -1725,7 +1848,9 @@
+ 		$confirm = $wgRequest->wasPosted() &&
+ 			$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) );
+ 		$reason = $wgRequest->getText( 'wpReason' );
+-
++		//XXADDED
++		$confirm_deleteRequest = $confirm && $wgRequest->getBool('wpConfirmDeleteRequest');
++		
+ 		# This code desperately needs to be totally rewritten
+ 
+ 		# Check permissions
+@@ -1755,6 +1880,13 @@
+ 			return;
+ 		}
+ 
++		//XXADDED
++		if ($confirm_deleteRequest) {
++			$req = Title::newFromText($this->mTitle->getText(), NS_ARTICLE_REQUEST);
++			$reqA = new Article($req);
++			$reqA->doDelete($reason, true);
++		} 
++
+ 		if( $confirm ) {
+ 			$this->doDelete( $reason );
+ 			if( $wgRequest->getCheck( 'wpWatch' ) ) {
+@@ -1903,6 +2035,21 @@
+ 		$token = htmlspecialchars( $wgUser->editToken() );
+ 		$watch = Xml::checkLabel( wfMsg( 'watchthis' ), 'wpWatch', 'wpWatch', $wgUser->getBoolOption( 'watchdeletion' ) || $this->mTitle->userIsWatching(), array( 'tabindex' => '2' ) );
+ 
++		// XXADDED: does this page have a Request?
++		//XXTOD: internationalize the message
++		$r_confirm = "";
++		$r = Title::newFromText($this->mTitle->getText(), NS_ARTICLE_REQUEST);
++		if ($r->getArticleID() > 0)
++				$r_confirm = "          <tr>
++				<td align='right'>
++						<input type='checkbox' name='wpConfirmDeleteRequest' value='1' id='wpConfirmDeleteRequest' />
++				</td>
++				<td>
++						<label for='wpConfirm'>Delete the corresponding Request for this article.</label>
++				</td>
++		</tr>
++		";
++				
+ 		$wgOut->addHTML( "
+ <form id='deleteconfirm' method='post' action=\"{$formaction}\">
+ 	<table border='0'>
+@@ -1918,6 +2065,7 @@
+ 			<td>&nbsp;</td>
+ 			<td>$watch</td>
+ 		</tr>
++		{$r_confirm}
+ 		<tr>
+ 			<td>&nbsp;</td>
+ 			<td>
+@@ -2062,6 +2210,13 @@
+ 				$wgOut->blockedPage();
+ 				return;
+ 			}
++			//XXADDED
++			if ( ! $this->mTitle->userCanEdit() ) {
++				wfDebug( "$fname: user can't edit\n" );
++				$wgOut->readOnlyPage( $this->getContent(), true );
++				wfProfileOut( $fname );
++				return;
++			}			
+ 		} else {
+ 			$wgOut->permissionRequired( 'rollback' );
+ 			return;
+@@ -2093,7 +2248,8 @@
+ 			return;
+ 		}
+ 
+-		$from = str_replace( '_', ' ', $wgRequest->getVal( 'from' ) );
++		//XXCHANGED: _ to -
++		$from = str_replace( '-', ' ', $wgRequest->getVal( 'from' ) );
+ 		if( $from != $current->getUserText() ) {
+ 			$wgOut->setPageTitle( wfMsg('rollbackfailed') );
+ 			$wgOut->addWikiText( wfMsg( 'alreadyrolled',
+@@ -2174,9 +2330,12 @@
+ 		if ( 0 != $this->getID() ) {
+ 			global $wgDisableCounters;
+ 			if( !$wgDisableCounters ) {
++				//XXCHANGED
++			/*
+ 				Article::incViewCount( $this->getID() );
+ 				$u = new SiteStatsUpdate( 1, 0, 0 );
+ 				array_push( $wgDeferredUpdateList, $u );
++			*/
+ 			}
+ 		}
+ 
+@@ -2263,6 +2422,22 @@
+ 			}
+ 		}
+ 
++		//XXADDED
++		if ($this->mTitle->getNamespace() == NS_USER_KUDOS && $shortTitle != $wgUser->getName()) {
++			if (wfRunHooks('ArticleEditUpdateNewTalk', array(&$this)) ) {
++				$other = User::newFromName( $shortTitle );
++				if( is_null( $other ) && User::isIP( $shortTitle ) ) {
++						// An anonymous user
++						$other = new User();
++						$other->setName( $shortTitle );
++				}
++				if( $other ) {
++						$other->setNewkudos( true );
++				}
++			}
++		}
++				
++
+ 		if ( $this->mTitle->getNamespace() == NS_MEDIAWIKI ) {
+ 			$wgMessageCache->replace( $shortTitle, $text );
+ 		}
+@@ -2477,7 +2652,7 @@
+ 		$acchitsTable = $dbw->tableName( 'acchits' );
+ 
+ 		if( $wgHitcounterUpdateFreq <= 1 ) {
+-			$dbw->query( "UPDATE $pageTable SET page_counter = page_counter + 1 WHERE page_id = $id" );
++			$dbw->query( "UPDATE LOW_PRIORITY $pageTable SET page_counter = page_counter + 1 WHERE page_id = $id" );
+ 			return;
+ 		}
+ 

@@ -1,0 +1,19 @@
+#useful_links {
+	background: #FFF;
+	border: 1px solid #DDD;
+	margin-top: 15px;
+}
+
+#useful_links H3 {
+	padding: 3px 3px 5px 5px;
+	margin: 0;
+	cursor: hand;
+	cursor: pointer;
+	font-size: 1.2em;
+	color: #069;
+	text-decoration: underline;
+	background: url(http://www.wikihow.com/skins/WikiHow/UsefulLinks_expand.gif) 97% center no-repeat;
+}
+
+#useful_links LI { margin-left: 5px; }
+
