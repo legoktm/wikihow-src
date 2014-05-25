@@ -447,6 +447,7 @@ li {
 }
 
 #final_section {
+	display: none;
 	color: #444;
 	background-color: #ECF1E2;
 	margin: 0 -15px -20px;

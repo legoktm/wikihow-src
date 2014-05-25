@@ -44,6 +44,11 @@ class RCPatrol extends SpecialPage {
 			return;
 		}
 
+		if ($wgRequest->getVal('a') == 'rollback') {
+			self::doRollback();
+			return;
+		}
+
 		self::setActiveWidget();
 		// INTL: Leaderboard is across the user database so we'll just enable for English at the moment
 		if ($wgLanguageCode == 'en') {
@@ -67,15 +72,15 @@ class RCPatrol extends SpecialPage {
 			$titleText = RCTestStub::getTitleText($result, $rcTest);
 			$wgOut->addHTML("<div id='articletitle' style='display:none;'>$titleText</div>");
 			$wgOut->addHTML("<div id='rc_header' class='tool_header'>");
-
+			$wgOut->addHTML('<a href="#" id="rcpatrol_keys">Get Shortcuts</a>');
 			// if this was a redirect, the title may have changed so update our context
 			$oldTitle = $this->getContext()->getTitle();
 			$this->getContext()->setTitle($result['title']);
 			$d = RCTestStub::getDifferenceEngine($this->getContext(), $result, $rcTest);
 			$d->loadRevisionData();
 			$this->getContext()->setTitle($oldTitle);
-
 			$wgOut->addHTML(RCPatrol::getButtons($result, $d->mNewRev, $rcTest));
+			$wgOut->addHTML('<div id="rcpatrol_info" style="display:none;">'. wfMessage('rcpatrol_keys')->text() . '</div>');
 			$wgOut->addHTML("</div>"); //end too_header
 			$d->showDiffPage();
 			$wgOut->addHTML($testHtml);
@@ -151,6 +156,82 @@ class RCPatrol extends SpecialPage {
 		return $link;
 	}
 
+	private static function doRollback() {
+		global $wgRequest, $wgOut, $wgContLang;
+		
+		$wgOut->setArticleBodyOnly(true);
+		$response = "";
+
+		$aid = intVal($wgRequest->getVal('aid'));
+		$oldid = intVal($wgRequest->getVal('old'));
+		$from = $wgRequest->getVal('from');
+		$from = preg_replace( '/[_-]/', ' ', $from );
+
+		$t = Title::newFromId($aid);
+		if ($t && $t->exists()) {
+			$r = Revision::newFromId($oldid);
+			if ($r) {
+
+				if ( $from == '' ) { // no public user name
+					$summary = wfMessage( 'rcp-revertpage-nouser' );
+				} else {
+					$summary = wfMessage( 'rcp-revertpage' );
+				}
+
+				// Allow the custom summary to use the same args as the default message
+				$args = array( $r->getUserText(), $from, $oldid);
+				if ( $summary instanceof Message ) {
+					$summary = $summary->params( $args )->inContentLanguage()->text();
+				} else {
+					$summary = wfMsgReplaceArgs( $summary, $args );
+				}
+
+				// Trim spaces on user supplied text
+				$summary = trim( $summary );
+
+				// Truncate for whole multibyte characters.
+				$summary = $wgContLang->truncate( $summary, 255 );
+
+
+
+				$a = new Article($t);	
+				$newRev = Revision::newFromTitle( $t );
+				$old = Linker::revUserTools( Revision::newFromId( $oldid ) );
+				$new = Linker::revUserTools( $newRev );
+ 				$revision = 'r' . htmlspecialchars($wgContLang->formatNum( $oldid, true ));
+            	$revlink = Linker::link( $t, $revision, array(), array('oldid' => $oldid, 'diff' => 'prev') );
+				$response = WfMessage( 'rcp-rollback-success' )->rawParams( $new, $old, $revlink );
+				$status = $a->doEditContent($r->getContent(), $summary);
+
+				if ( !$status->isOK() ) {
+					$response = $status->getErrorsArray();
+				}
+
+				// raise error, when the edit is an edit without a new version
+				if ( empty( $status->value['revision'] ) ) {
+					$resultDetails = array( 'current' => $current );
+			 		$query = array( 'oldid' => $oldid, 'diff' => 'prev');
+
+					$response = WfMessage( 'rcp-alreadyrolled')->params(array(
+							htmlspecialchars( $t->getPrefixedText() ),
+							htmlspecialchars( $from  ),
+							htmlspecialchars( $newRev->getUserText() )
+					))->inContentLanguage()->parse();
+				}
+			}
+		}
+
+
+		$wgOut->addHtml($response);
+	}
+
+
+	private static function generateRollbackUrl($rev, $oldid = 0, &$rcTest) {
+		global $wgServer;
+		$t = $rev->getTitle();
+		return  $wgServer . "/index.php?title=Special:RCPatrol&aid={$t->getArticleId()}&a=rollback&old={$oldid}&from=" . urlencode( $rev->getUserText() );
+	}
+
 	private static function generateRollback($rev, $oldid = 0, &$rcTest) {
 		global $wgUser, $wgRequest, $wgTitle, $wgServer;
 		
@@ -167,7 +248,7 @@ class RCPatrol extends SpecialPage {
 				return '';
 			}
 		}
-		
+
 		$extraRollback = $wgRequest->getBool( 'bot' ) ? '&bot=1' : '';
 		$extraRollback .= '&token=' . urlencode(
 		$wgUser->editToken( array( $title->getPrefixedText(), $rev->getUserText() ) ) );
@@ -207,6 +288,9 @@ class RCPatrol extends SpecialPage {
 
 		$class = "class='button secondary' style='float: right;'";
 
+		// Short circuit old rollback url and try the new one
+		$url =  self::generateRollbackUrl($rev, $oldid, &$rcTest);
+		
 		$s = HtmlSnips::makeUrlTags('js', array('rollback.js'), 'extensions/wikihow', false);
 		// useful in debugging:
 		//$s = '<script src="/extensions/wikihow/rollback.js"></script>';
@@ -719,8 +803,10 @@ class RCPatrolGuts extends UnlistedSpecialPage {
 			$d->loadRevisionData();
 			$this->getContext()->setTitle($oldTitle);
 			$wgOut->addHTML("<div id='rc_header' class='tool_header'>");
+			$wgOut->addHTML('<a href="#" id="rcpatrol_keys">Get Shortcuts</a>');
 			$wgOut->addHTML(RCPatrol::getButtons($result, $d->mNewRev));
 			$wgOut->addHTML("</div>");
+			$wgOut->addHTML('<div id="rcpatrol_info" style="display:none;">'. wfMessage('rcpatrol_keys')->text() . '</div>');
 			$d->showDiffPage();
 			$wgOut->disable();
 			$response['html'] = $wgOut->getHTML();
@@ -768,8 +854,10 @@ class RCPatrolGuts extends UnlistedSpecialPage {
 			$d = RCTestStub::getDifferenceEngine($this->getContext(), $result, $rcTest);
 			$d->loadRevisionData();
 			$wgOut->addHTML("<div id='rc_header' class='tool_header'>");
+			$wgOut->addHTML('<a href="#" id="rcpatrol_keys">Get Shortcuts</a>');
 			$wgOut->addHTML(RCPatrol::getButtons($result, $d->mNewRev, $rcTest));
 			$wgOut->addHTML("</div>");
+			$wgOut->addHTML('<div id="rcpatrol_info" style="display:none;">'. wfMessage('rcpatrol_keys')->text() . '</div>');
 			$d->showDiffPage();
 			$wgOut->addHtml($testHtml);
 

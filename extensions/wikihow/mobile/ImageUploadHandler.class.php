@@ -3,17 +3,12 @@
 if (!defined('MEDIAWIKI')) die();
 
 class ImageUploadHandler extends UnlistedSpecialPage {
-	private $maxFilesize;
 
 	public function __construct() {
-		global $wgMaxUploadSize;
-
 		parent::__construct('ImageUploadHandler');
-		$this->maxFilesize = $wgMaxUploadSize;	
 	}
 
 	public function execute() {
-
 		if ($this->getUser()->isBlocked()) {
 			throw new PermissionsError( 'imageuploadhandler' );
 		}
@@ -71,151 +66,98 @@ class ImageUploadHandler extends UnlistedSpecialPage {
 		$dbw->commit();
 	}
 
-	protected function insertImage($name, $mwname, &$result = array()) {
+	protected function uploadImage() {
 		global $wgImageMagickConvertCommand, $wgServer;
 
 		$request = $this->getRequest();
-
-		if ($result['error']) {
-			return $result;
-		}
-
-		$fromPage = $request->getVal('viapage');
-
-		if (!empty($mwname) && !empty($name)) {
-			// TODO we might not even need to check the filename for extension
-			// it is very likely that the LocalFile class will handle this for us
-			$name = trim(urldecode($name));
-
-			$dateTime = new DateTime();
-			$mwDate = wfTimestamp(TS_MW); // Mediawiki timestamp: 'YmdHis'
-
-			list($first, $ext) = self::splitFilenameExt($name);
-			$ext = strtolower($ext);
-			$validExts = array('GIF', 'JPG', 'JPEG', 'PNG');
-
-			if (!in_array(strtoupper($ext), $validExts)) {
-				$result['error'] = 'Error: Invalid file extension ' . strtoupper($ext) . '. Valid extensions are:';
-				foreach($validExts as $validExt) {
-					$result['error'] .= ' ' . strtoupper($validExt);
-				}
-				$result['error'] .= '.';
-				return $result;
-			}
-
-			// TODO refactor this section into it's own method for getting a unique file name
-			$titleExists = false;
-			$saveName = 'User Completed Image ' . $fromPage . ' ' . $dateTime->format('Y.m.d H.i.s') . ' ' . $suffixNum . '.' . $ext;
-			$title = Title::makeTitleSafe(NS_IMAGE, $saveName);
-			$titleExists = $title->exists();
-			$result['debug'][] = "title exists $titleExists";
-
-			// todo no need to get this file again we just created it above
-			// or not even use a temp image at all...
-			$temp_file = new LocalFile(Title::newFromText($mwname, NS_IMAGE), RepoGroup::singleton()->getLocalRepo());
-			if (!$temp_file || !$temp_file->exists()) {
-				$result['error'] = 'tmp file does not exist..';
-				return $result;
-			}
-
-			// todo - do this part after the single file upload
-			// Image orientation is a bit wonky on some mobile devices; use ImageMagick's auto-orient to try fixing it.
-			$tempFilePath = $temp_file->getPath();
-			$cmd = $wgImageMagickConvertCommand . ' ' . $tempFilePath . ' -auto-orient ' . $tempFilePath;
-			exec($cmd);
-
-			// Use a CC license
-			$comment = '{{Self}}';
-
-			// todo implement this
-			//$title = $this->getFileSaveName();
-			$file = new LocalFile($title, RepoGroup::singleton()->getLocalRepo());
-			// then get the file path from this file
-			// $filePath = $file->getPath();
-			// then use it in the uplaod
-
-			$file->upload($tempFilePath, $comment, $comment);
-			if (!$file || !$file->exists()) {
-				$result['debug'][] = $file;
-				$result['error'] = 'uploaded file does not exist.';
-				return $result;
-			}
-			// todo no need to delete the temp file if we don'e have one
-			$temp_file->delete('');
-
-			$fileTitle = $file->getTitle();
-			$fileURL = $file->getUrl();
-
-			$thumbURL = '';
-			$thumb = $file->getThumbnail(200, -1, true, true);
-			if (!$thumb) {
-				$result['error'] = 'file thumbnail does not exist';
-				$file->delete('');
-				return $result;
-			}
-			$thumbURL = $thumb->getUrl();
-
-			// TODO what does this section do?
-			$result['titleText'] = $fileTitle->getText();
-			$result['titleDBkey'] = substr($fileTitle->getDBkey(), 21); // Only keep important info
-			$result['titlePreText'] = '/' . $fileTitle->getPrefixedText();
-			$result['titleArtID'] = $fileTitle->getArticleID();
-			$result['timestamp'] = $mwDate;
-			$result['fromPage'] = $request->getVal('viapage');
-			$result['thumbURL'] = $thumbURL;
-			$result['fileURL'] = $wgServer . $fileURL;
-		}
-
-		return $result;
-	}
-
-	protected function uploadImage() {
-		global $wgGroupPermissions;
-
-		$request = $this->getRequest();
-
 		$result = array();
 
-		// sanity check on the page to link to
 		$fromPage = $request->getVal('viapage');
+
+		// sanity check on the page to link to
 		$title = Title::newFromText($fromPage, NS_MAIN);
 		if (!$title->exists()) {
 			$result['error'] = "Error: No article $fromPage found to link image.";
 			return $result;
 		}
 
-		// create the temporary image..not sure if this is needed though.
-		// todo probably don't need this temp file at all
-		$tempname = Easyimageupload::createTempFileName($fromPage);
-		$tempUser = Easyimageupload::getTempFileUser();
-		$file = new LocalFile(Title::newFromText($tempname, NS_IMAGE), RepoGroup::singleton()->getLocalRepo());
-		$name = $request->getFileName('wpUploadImage', '', '');
+		// try to get a unique file name by appending a suffix and the current time to the save name here
+		$dateTime = new DateTime();
 
-		$file->upload($request->getFileTempName('wpUploadImage'), '', '');
-		$filesize = $file->getSize();
-		if (!$filesize) {
-			$result['error'] = 'Error: We didn\'t get a file. Please try again.';
-			return $result;
-		} else if ($file->getMediaType() != 'BITMAP') {
-			$result['error'] = 'Error: Only images are accepted.';
-			return $result;
-		} elseif ($filesize > $this->maxFilesize) {
-			$result['error'] = 'Error: Your file is too big (' . ImageUploadHandler::formatBytes($filesize) . '). Max file size is ' . ImageUploadHandler::formatBytes($this->maxFilesize) . '.';
+		$webUpload = $request->getUpload('wpUploadImage');
+		$info = new SplFileInfo($webUpload->getName());
+		$ext = $info->getExtension();
+		$info = new SplFileInfo($request->getVal("name"));
+		for ($i = 0; $i < 100; $i++) {
+			$saveName = "User Completed Image {$fromPage} {$dateTime->format('Y.m.d H.i.s')}.$i.{$ext}";
+			$title = Title::newFromText($saveName, NS_IMAGE);
+			if (!$title->getArticleID()) {
+				break;
+			}
+		}
+
+		// if the title still exists, show an error
+		if ($title->getArticleID()) {
+			$result['error'] = 'file with this name already exists';
 			return $result;
 		}
 
-		$result['debug'][] = $file;
-		$prevPermissions = $wgGroupPermissions['*']['upload'];
-		$wgGroupPermissions['*']['upload'] = true;
-		
-		$this->insertImage($name, $tempname, &$result);
-
-		$wgGroupPermissions['*']['upload'] = $prevPermissions;
-
-		if (!$result['error']) {
-			// Successfully uploaded; add to DB
-			$this->addToDB(&$result);
+		$upload = new UploadFromFile();
+		$upload->initialize($saveName, $webUpload);
+		$verification = $upload->verifyUpload();
+		if ( $verification['status'] !== UploadBase::OK ) {
+			$result['error'] = "verification error: " .$verification['status'];
+			return $result;
 		}
+
+		$warnings = $upload->checkWarnings();
+		if ( $warnings) {
+			$result['warnings'] = $warnings;
+
+			// todo this should be toggled on off for testings perhaps
+			// since it might get kind of annoying
+			if ($warnings['duplicate']) {
+				$result['debug'][] = $warnings['duplicate-archive'];
+				$result['error'] = "this file was already uploaded";
+				return $result;
+			}
+		}
+
+		$comment = '{{Self}}';
+		$status = $upload->performUpload( $comment, '', true, $this->getUser() );
+		if ( !$status->isGood() ) {
+			$error = $status->getErrorsArray();
+			$result['error'] = 'perform upload error: '. $error;
+			return $result;
+		}
+
+		$upload->cleanupTempFile();
+
+		// todo - do this part after the single file upload
+		// Image orientation is a bit wonky on some mobile devices; use ImageMagick's auto-orient to try fixing it.
+		//$tempFilePath = $temp_file->getPath();
+		//$cmd = $wgImageMagickConvertCommand . ' ' . $tempFilePath . ' -auto-orient ' . $tempFilePath;
+		//exec($cmd);
+
+		$file = $upload->getLocalFile();
+		$thumb = $file->getThumbnail(200, -1, true, true);
+		if (!$thumb) {
+			$result['error'] = 'file thumbnail does not exist';
+			$file->delete('');
+			return $result;
+		}
+
+		$fileTitle = $file->getTitle();
+		$result['titleText'] = $fileTitle->getText();
+		$result['titleDBkey'] = substr($fileTitle->getDBkey(), 21); // Only keep important info
+		$result['titlePreText'] = '/' . $fileTitle->getPrefixedText();
+		$result['titleArtID'] = $fileTitle->getArticleID();
+		$result['timestamp'] = wfTimestamp(TS_MW);
+		$result['fromPage'] = $request->getVal('viapage');
+		$result['thumbURL'] = $thumb->getUrl();
+		$result['fileURL'] = $wgServer . $file->getUrl();
+
+		$this->addToDB($result);
 
 		return $result;
 	}

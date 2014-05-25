@@ -148,28 +148,6 @@
 
 .navigation{ margin: 1em 0; }
 
-/**** Diff rendering ****/
-table.diff, td.diff-otitle, td.diff-ntitle {
-    background-color: white;
-    vertical-align: top;
-}
-td.diff-addedline {
-    background: #cfc;
-    font-size: smaller;
-}
-td.diff-deletedline {
-    background: #ffa;
-    font-size: smaller;
-}
-td.diff-context {
-    background: #eee;
-    font-size: smaller;
-}
-span.diffchange {
-    color: red;
-    font-weight: bold;
-}
-
 /*** THUMBS STYLES ***/
 
 .thumbbutton{

@@ -197,6 +197,8 @@ class UserMailer {
 
 		wfDebug( __METHOD__ . ': sending mail to ' . implode( ', ', $to ) . "\n" );
 
+		$ret = wfRunHooks( 'FilterOutBouncingEmails', array( &$to ) );
+
 		# Make sure we have at least one address
 		$has_address = false;
 		foreach ( $to as $u ) {

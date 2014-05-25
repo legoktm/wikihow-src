@@ -1,8 +1,9 @@
 
 function Slider() {
 	this.m_link = '/Special:StarterTool';
-	// Show the slider 3% of the time for the edit article tour CTA
-	this.test_on = Math.random() <= .03;
+	// Show the slider 5% of the time for the edit article tour CTA
+	//this.test_on = Math.random() <= .05;
+	this.test_on = true;
 }
 
 Slider.prototype.init = function () {

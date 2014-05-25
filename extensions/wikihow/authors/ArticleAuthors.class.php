@@ -52,7 +52,7 @@ class ArticleAuthors {
 		foreach ($res as $row) {
 			if ($row->rev_user == 0) {
 				$authors['anonymous'] = 1;
-			} elseif (!isset($authors[$row->user_text]))  {
+			} elseif (!isset($authors[$row->rev_user_text]))  {
 				$authors[$row->rev_user_text] = 1;
 			}
 		}
@@ -150,6 +150,7 @@ class ArticleAuthors {
 		$count = 0;
 		$gplus_first = false;
 		$links = array();
+		$links_gp = array();
 		foreach ($authors as $u => $p) {
 			if ($u == 'anonymous') {
 				$links[] = $link ? "<a href='/wikiHow:Anonymous'>" . wfMessage('anonymous')->text() . "</a>" : wfMessage('anonymous')->text();
@@ -162,7 +163,6 @@ class ArticleAuthors {
 				$name=preg_replace("/ +$/","", $name);
 				//check if G+ user
 				if ($user->getOption('show_google_authorship')) {
-					//$links_gp[] = $link ? "<a rel='author' href='{$user->getUserPage()->getLocalURL()}'>{$name}</a>" : $name;
 					$links_gp[] = "<a rel='author' href='{$user->getUserPage()->getLocalURL()}'>{$name}</a>";
 					if ($count == 0) $gplus_first = true;
 				}

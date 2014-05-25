@@ -41,7 +41,6 @@ class RisingStar {
 			if (preg_match('/^==(.*?),(.*?)$/', $line, $matches)) {
 
 				$dt = $matches[1];
-				$pattern = "/$wgServer/";
 				$title = preg_replace("/http:\/\/www\.wikihow\.com\//" ,"",$matches[2]);
 				$title = preg_replace("/http:\/\/.*?\.com\//" ,"",$matches[2]);
 

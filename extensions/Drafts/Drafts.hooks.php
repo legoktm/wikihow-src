@@ -86,8 +86,9 @@ class DraftHooks {
 		}
 		
 		//XXCHANGED
-		$adv = $editpage->mGuided == true ? "" : "&advanced=true";
-		$wgRequest->setVal("guidededitor", $editpage->mGuided);
+		$isGuidedEditor = isset($editpage->mGuided) && $editpage->mGuided;
+		$adv = $isGuidedEditor ? "" : "&advanced=true";
+		$wgRequest->setVal("guidededitor", $isGuidedEditor);
 
 		// Check permissions
 		$request = $context->getRequest();

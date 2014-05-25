@@ -8,10 +8,12 @@ var pue_preview;
 var pue_diff;
 // set to true to write debug response data to the console
 var debug = false;
+var hasMethodChanges = false;
+var hasQuickEditChanges = false;
 
 $( document ).on( "click", "#method_delete", function(e) {
 	e.preventDefault();
-	if (!jQuery(this).hasClass('clickfail')) {
+	if (confirmMethodDiscard() && !jQuery(this).hasClass('clickfail')) {
 		clearTool();
 		$.post(toolURL, {
 			deleteMethod: true,
@@ -26,6 +28,7 @@ $( document ).on( "click", "#method_delete", function(e) {
 			},
 			'json'
 		);
+		window.oTrackUserAction();
 	}
 });
 
@@ -51,12 +54,13 @@ $( document ).on( "click", "#method_keep", function(e) {
 			},
 			'json'
 		);
+		window.oTrackUserAction();
 	}
 });
 
 $( document ).on( "click", "#method_skip", function(e) {
 	e.preventDefault();
-	if (!jQuery(this).hasClass('clickfail')) {
+	if (confirmMethodDiscard() && !jQuery(this).hasClass('clickfail')) {
 		clearTool();
 		$.post(toolURL, {
 			skipMethod: true,
@@ -78,14 +82,85 @@ $(document).ready(function(){
 	getNextMethod();
     showBalloonAltMethod();
 	window.setTimeout(updateStandingsTable, 100);
+
+	var mod = Mousetrap.defaultModifierKeys;
+	Mousetrap.bind(mod + 'd', function() {$('#method_delete').click();});
+	Mousetrap.bind(mod + 's', function() {$('#method_skip').click();});
+	Mousetrap.bind(mod + 'e', function() {$('#qe_button').click();});
+	Mousetrap.bind(mod + 'p', function() {$('#method_keep').click();});
+
+	$("#method_keys").click(function(e){
+		e.preventDefault();
+		$("#method_info").dialog({
+			width: 500,
+			minHeight: 300,
+			modal: true,
+			title: 'Method Editor Keys',
+			closeText: 'Close',
+			position: 'center',
+		});
+	});
 });
+
+// Detect changes to method title/contents and prevent user from navigating away
+// Ref: Lighthouse bug #464
+function blockNavigationOnChange(ids) {
+    $(ids).map(function() {
+        var elem = $(this);
+        
+        // Save current value of element
+        elem.data('oldVal', elem.val());
+
+        // Look for changes in the value
+        elem.bind('keyup paste', function(event) {
+            if (!(hasMethodChanges && hasQuickEditChanges) && elem.data('oldVal') != elem.val()) {
+                if (!hasMethodChanges && !hasQuickEditChanges) {
+                    window.onbeforeunload = function() {
+                        return "If you leave this page, all changes will be lost.";
+                    }
+                }
+                if (ids === '#wpTextbox1') {
+                    hasQuickEditChanges = true;
+                } else {
+                    hasMethodChanges = true;
+                }
+            } else {
+                if (ids === '#wpTextbox1') {
+                    hasQuickEditChanges = false;
+                } else {
+                    hasMethodChanges = false;
+                }
+                if (!hasMethodChanges && !hasQuickEditChanges) {
+                    window.onbeforeunload = null;
+                }
+            }
+        });
+    });
+}
+
+function confirmMethodDiscard() {
+    if (hasMethodChanges) {
+        return confirm("This will discard your method changes. Continue anyway?");
+    } else {
+        return true;
+    }
+}
+
+function confirmQuickEditDiscard() {
+    if (hasQuickEditChanges) {
+        return confirm("This will discard your quick edit changes. Continue anyway?");
+    } else {
+        return true;
+    }
+}
 
 // asks the backend for a new article
 //to edit and loads it in the page
 function getNextMethod() {
 	$.get(toolURL,
 		{getNext: true,
-		ts: new Date().getTime()
+			ts: new Date().getTime(),
+			aid: getURLParam("aid", window.location.search)
 		},
 		function (result) {
 			loadResult(result);
@@ -101,6 +176,7 @@ function loadResult(result) {
 	$("#method_waiting").hide();
 	if (result['error']) {
 		$("#method").hide();
+		$("#method_error").html(result['error_msg']);
 		$("#method_error").show();
 		$("#method_count").hide();
 	}
@@ -114,6 +190,7 @@ function loadResult(result) {
 		articleId = result['articleId'];
 		$("#method_header a").removeClass("clickfail");
 		setCount(result['methodCount']);
+        blockNavigationOnChange('#method_steps');
 	}
 }
 
@@ -128,6 +205,15 @@ function clearTool() {
 	$("#method_article").html("");
 	$("h1.firstHeading").text("Method Editor");
 	$("#method_header a").addClass("clickfail");
+    clearChanges();
+}
+
+function clearChanges(onlyQuickEdit) {
+    hasMethodChanges = onlyQuickEdit ? hasMethodChanges : false;
+    hasQuickEditChanges = false;
+    if (!hasMethodChanges) {
+        window.onbeforeunload = null;
+    }
 }
 
 function showBalloonAltMethod() {
@@ -185,11 +271,18 @@ function loadQuickEdit(url) {
 }
 
 function methodEditorClose() {
+    // Warn user if they've made changes.
+    if (!confirmQuickEditDiscard()) {
+        return;
+    }
+
 	$("#method_header").show();
 	$("#method_editor").hide();
 	$('html,body').animate({
 		  scrollTop: $("#article").offset().top
 	  }, 500);
+
+    clearChanges(true);
 }
 /************
  *
@@ -235,6 +328,7 @@ function editHandler(data) {
 	setupQuickEditButtons();
 	$("#editform").attr('onsubmit', 'return submitQuickEdit();');
 	$("#editform #wpTextbox1").focus();
+    blockNavigationOnChange('#wpTextbox1');
 }
 
 function setupQuickEditButtons() {
@@ -292,7 +386,10 @@ function submitQuickEdit() {
 		success: processSubmit
 	});
 
-	window.onbeforeunload = null;
+    hasQuickEditChanges = false;
+	if (!hasMethodChanges) {
+        window.onbeforeunload = null;
+    }
 
 	return false; // block sending the form
 }
@@ -342,3 +439,24 @@ function processSubmit(data) {
 		);
 	}
 }
+
+function getURLParam(param, queryString) {
+	if(queryString == "")
+		return false;
+
+	var parArr = queryString.split("?")[1].split("&"),
+		returnBool = true;
+
+	for(var i = 0; i < parArr.length; i++){
+		parr = parArr[i].split("=");
+		if(parr[0] == param){
+			return parr[1];
+			returnBool = true;
+		}else{
+			returnBool = false;
+		}
+	}
+
+	if(!returnBool) return false;
+}
+

@@ -40,7 +40,8 @@ class SpecialRenameuser extends SpecialPage {
 
 		$request = $this->getRequest();
 		$showBlockLog = $request->getBool( 'submit-showBlockLog' );
-		$oldnamePar = trim( str_replace( '_', ' ', $request->getText( 'oldusername', $par ) ) );
+//		$oldnamePar = trim( str_replace( '_', ' ', $request->getText( 'oldusername', $par ) ) );
+		$oldnamePar = trim( $request->getText( 'oldusername', $par ) );
 		$oldusername = Title::makeTitle( NS_USER, $oldnamePar );
 		// Force uppercase of newusername, otherwise wikis with wgCapitalLinks=false can create lc usernames
 		$newusername = Title::makeTitleSafe( NS_USER, $wgContLang->ucfirst( $request->getText( 'newusername' ) ) );
@@ -227,7 +228,9 @@ class SpecialRenameuser extends SpecialPage {
 
 		// Check for the existence of lowercase oldusername in database.
 		// Until r19631 it was possible to rename a user to a name with first character as lowercase
-		if ( $oldusername->getText() !== $wgContLang->ucfirst( $oldusername->getText() ) ) {
+		//XXCHANGEDXX - the was having an issue with underscores [sc]
+		//if ( $oldusername->getText() !== $wgContLang->ucfirst( $oldusername->getText() ) ) {
+		if (strcmp($oldusername->getText(), $wgContLang->ucfirst( $oldusername->getText() ) ) != 0) {
 			// oldusername was entered as lowercase -> check for existence in table 'user'
 			$dbr = wfGetDB( DB_SLAVE );
 			$uid = $dbr->selectField( 'user', 'user_id',

@@ -20,13 +20,13 @@ class QuickNoteEdit extends UnlistedSpecialPage {
 		$tmpls = preg_split('/\n/', $tmpl);
 		foreach ($tmpls as $item) {
 			if ( preg_match('/^qnButton1=/', $item) ) {
-				list($key,$value) = split("=",$item);
+				list($key,$value) = explode('=', $item);
 				array_push($tb1_ary, $value ) ;
 			} else if ( preg_match('/^qnButton2=/', $item) ) {
-				list($key,$value) = split("=",$item);
+				list($key,$value) = explode('=', $item);
 				array_push($tb2_ary, $value ) ;
 			} else if ( preg_match('/^qnButton3=/', $item) ) {
-				list($key,$value) = split("=",$item);
+				list($key,$value) = explode('=', $item);
 				array_push($tb3_ary, $value ) ;
 			}
 		}

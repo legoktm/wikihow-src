@@ -420,7 +420,9 @@ class WikihowArticleEditor {
 
 	private static function getSectionCount($text) {
 		$matches = array();
-		preg_match_all( '/^(=+).+?=+|^<h([1-6]).*?>.*?<\/h[1-6].*?>(?!\S)/mi',$text, $matches);
+		# Reuben note: I separate the ? character from the > characters below because 
+		# there are some syntax highlighters that interpret that as END OF PHP
+		preg_match_all( '/^(=+).+?=+|^<h([1-6]).*?' . '>.*?<\/h[1-6].*?' . '>(?!\S)/mi', $text, $matches);
 		return count($matches[0]) + 1;
 	}
 
@@ -455,8 +457,9 @@ class WikihowArticleEditor {
 	function getSection($title) {
 		$title = strtolower($title);
 	 	if ($this->hasSection($title)) {
-			$ret = $this->section_array[strtolower(wfMessage($title)->text())];
-			$ret = empty($ret) ?  $this->section_array[$title] : $ret;
+			$sectionName = strtolower(wfMessage($title)->text());
+			$ret = isset($this->section_array[$sectionName]) ? $this->section_array[$sectionName] : null;
+			$ret = empty($ret) ? $this->section_array[$title] : $ret;
 			return $ret;
 	 	} else {
 	 		return "";
@@ -673,6 +676,10 @@ class WikihowArticleEditor {
 
 		$article = new Article($wgTitle);
 
+		$relHTML = '';
+		$relBtn = '';
+		$editLink = '';
+		$edithelp = '';
 		if (self::articleIsWikiHow($article)
 			|| ($wgTitle->getArticleID() == 0
 				&& $wgTitle->getNamespace() == NS_MAIN) )
@@ -709,7 +716,7 @@ class WikihowArticleEditor {
 		}
 		// Take out switch to guided editing and editing help on edit page for logged out users on international
 		if ($wgLanguageCode == "en" || $wgTitle->userCan('edit')) {
-			$editlinks = $relHTML.'<div class="editpage_links">'.$editLink.' '.$relBtn.' '.$edithelp.'</div>';
+			$editlinks = $relHTML . '<div class="editpage_links">' . $editLink . ' ' . $relBtn . ' ' . $edithelp . '</div>';
 		}
 		else {
 			$editlinks = '';	
@@ -754,7 +761,8 @@ class WikihowArticleEditor {
 	}
 
 	static function getImageSection($image) {
-		return self::$imageArray[ucfirst($image)];
+		$imgName = ucfirst($image);
+		return isset(self::$imageArray[$imgName]) ? self::$imageArray[$imgName] : '';
 
 	}
 
@@ -984,6 +992,13 @@ class WikihowArticleHTML {
 						}
 						pq("span.mw-headline", $h3Tags[$i])->html($methodTitle);
 
+						//add our custom anchors
+						$anchor_name = pq("span.mw-headline", $h3Tags[$i])->attr('id').'_sub';
+						try {
+							pq($h3Tags[$i])->before('<a name="'.$anchor_name.'" class="anchor"></a>');
+						} catch (Exception $e) {
+						}
+
 						//want to change the url for the edit link to
 						//edit the whole steps section, not just the
 						//alternate method
@@ -1018,7 +1033,7 @@ class WikihowArticleHTML {
 					//now we should have all the alt methods,
 					//let's create the links to them under the headline
 					$charCount = 0;
-					$maxCount = 80000; //temporairily turning off hidden headers
+					$maxCount = 80000; //temporarily turning off hidden headers
 					$hiddenCount = 0;
 					$anchorList = "";
 					for($i = 0; $i < count($altMethodAnchors); $i++) {
@@ -1033,7 +1048,7 @@ class WikihowArticleHTML {
 						}
 						if($methodName == "")
 							continue;
-						$anchorList .= "<a href='#{$altMethodAnchors[$i]}' class='{$class}'>{$methodName}</a>";
+						$anchorList .= "<a href='#{$altMethodAnchors[$i]}_sub' class='{$class}'>{$methodName}</a>";
 					}
 
 					$hiddentext = "";
@@ -1041,7 +1056,32 @@ class WikihowArticleHTML {
 						$hiddenText = "<a href='#' id='method_toc_unhide'>{$hiddenCount} more method" . ($hiddenCount > 1?"s":"") . "</a>";
 						$hiddenText .= "<a href='#' id='method_toc_hide' class='hidden'>show less methods</a>";
 					}
-					pq(".firstHeading")->after("<p id='method_toc'>{$anchorList}{$hiddenText}</p>");
+					else {
+						$hiddenText = '';
+					}
+					
+					//add our little list header
+					if ($hasParts) {//ucwords
+						$anchorList = 	'<span>'.ucwords(Misc::numToWord(count($altMethodAnchors),10)).
+										' '. wfMessage('part_3')->text().':</span>'.$anchorList;
+					}
+					else {
+						$anchorList = 	'<span>'.ucwords(Misc::numToWord(count($altMethodAnchors),10)).
+										' '. wfMessage('method_3')->text().':</span>'.$anchorList;
+					}
+					
+					//chance to reformat the alt method_toc before output
+					//using for running tests
+					$bAfter = false;
+					wfRunHooks('BeforeOutputAltMethodTOC', array($wgTitle, &$anchorList, &$bAfter));
+					
+					$bAfter = true;
+					if ($bAfter) {
+						pq("#originators")->after("<p id='method_toc' style='margin-top:-10px'>{$anchorList}{$hiddenText}</p>");
+					}
+					else {
+						pq(".firstHeading")->after("<p id='method_toc'>{$anchorList}{$hiddenText}</p>");
+					}
 
 				}
 				else {
@@ -1245,12 +1285,32 @@ class WikihowArticleHTML {
 
 			$tipsClass = mb_strtolower(wfMessage("tips")->text()); //grabs the tips section by name, but internationalized
 			pq(".{$tipsClass} .section_text")->children()->filter("ul:last")->after(wikihowAds::getAdUnitPlaceholder('2a'));
+			
+			//add in the Taboola ads
+			if($wgLanguageCode == "en") {
+				$sourcesClass = mb_strtolower(wfMessage("sources")->text()); //grabs the sources and citations section by name, but internationalized
+				$sourcesClass = str_replace(' ','',$sourcesClass);
+				if (pq(".section.{$sourcesClass}")->length) {
+					//put above Sources & Citations if it exists
+					pq(".section.{$sourcesClass}")->before(wikihowAds::getAdUnitTaboola());
+				}
+				else {	
+					// put above Article Info
+					pq("#bodycontents")->after(wikihowAds::getAdUnitTaboola());
+				}
+			}
 		}
-
 		$markPatrolledLink = self::getMarkPatrolledLink();
 		if ($markPatrolledLink) {
 			pq('#bodycontents')->append( $markPatrolledLink );
 		}
+		
+		// //TEST - no intro
+		// global $wgRequest;
+		// $article_ids = explode("\n",ConfigStorage::dbGetConfig('wikihow-nointro-test'));
+		// if ($wgTitle && $wgTitle->getNamespace() == NS_MAIN && $wgRequest->getVal('action') == '' && in_array($wgTitle->getArticleID(),$article_ids)) {
+			// pq('#intro p:last')->remove();
+		// }
 
 		return $doc->htmlOuter();
 	}
@@ -1262,7 +1322,6 @@ class WikihowArticleHTML {
 			0, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		$incaption = false;
 		$apply_b = false;
-		$the_big_step = $next;
 		$closed_b = false;
 		$p = '';
 		while ($x = array_shift($htmlparts)) {
@@ -1316,7 +1375,8 @@ class WikihowArticleHTML {
 		global $wgUser, $wgTitle;
 
 		$processHTML = true;
-		wfRunHooks('PreWikihowProcessHTML', array($title, &$processHTML));
+		// $wgTitle isn't used in the hook below
+		wfRunHooks('PreWikihowProcessHTML', array($wgTitle, &$processHTML));
 		if (!$processHTML) {
 			return $body;
 		}
@@ -1333,6 +1393,9 @@ class WikihowArticleHTML {
 		//gotta clear too because we're floating it now
 		pq(".mw-htmlform-submit")->addClass("primary button buttonright");
 		pq(".mw-htmlform-submit")->after("<div class='clearall'></div>");
+		
+		//USER PREFERENCES//////////////////////
+		pq("#mw-prefsection-echo")->append(pq("#mw-prefsection-echo-emailsettingsind"));
 		
 		//DISCUSSION/USER TALK//////////////////////
 
@@ -1355,7 +1418,6 @@ class WikihowArticleHTML {
 			$pc_form = '<a name="postcomment"></a><a name="post"></a>';
 			pq(".de:last")->prepend($pc_form);
 		}
-
 		
 		//HISTORY//////////////////////
 		//move top nav down a smidge

@@ -31,6 +31,7 @@ if ($wgLanguageCode == 'en') {
 	require_once("$IP/extensions/wikihow/tipsandwarnings/TipsPatrol.php");
 	require_once("$IP/extensions/wikihow/nab/Newarticleboost.php");
 	require_once("$IP/extensions/wikihow/docviewer/DocViewer.php");
+	require_once("$IP/extensions/wikihow/articlecreator/ArticleCreator.php");
 	require_once("$IP/extensions/wikihow/imagefeedback/ImageFeedback.php");
 	require_once("$IP/extensions/wikihow/altmethodadder/AltMethodAdder.php");
 	require_once("$IP/extensions/wikihow/altmethodadder/MethodGuardian.php");
@@ -44,12 +45,16 @@ if ($wgLanguageCode == 'en') {
 	require_once("$IP/extensions/wikihow/EditPageWrapper.php");
 	require_once("$IP/extensions/wikihow/AdminImageRemoval.php");
 	require_once("$IP/extensions/wikihow/wikihowAds/AdminAdExclusions.php");
+	require_once("$IP/extensions/wikihow/mobile/ucipatrol/UCIPatrol.php");
+	require_once("$IP/extensions/wikihow/RecommendationPresenter/RecommendationAdmin.php");
+	require_once("$IP/extensions/wikihow/RecommendationPresenter/RecommendationPresenter.php");
 }
 if($wgLanguageCode == "zh") {
 	require_once("$IP/extensions/wikihow/chinesevariantselector/ChineseVariantSelector.php");
 }
+
+require_once("$IP/extensions/wikihow/wikihowAds/AdminAdExclusions.php");
 require_once("$IP/extensions/wikihow/WikihowPreferences/WikihowPreferences.php");
-require_once("$IP/extensions/UndeleteBatch/UndeleteBatch.php");
 require_once("$IP/extensions/wikihow/whvid/WHVid.php");
 require_once("$IP/extensions/wikihow/translateeditor/TranslateEditor.php");
 require_once("$IP/extensions/wikihow/QuickEdit.php");
@@ -87,7 +92,7 @@ require_once("$IP/extensions/wikihow/Standings.php");
 require_once("$IP/extensions/wikihow/qc/QC.php");
 require_once("$IP/extensions/wikihow/Unguard.php");
 require_once("$IP/extensions/wikihow/CheckG.php");
-if(!defined('IS_DEV_SITE') || !IS_DEV_SITE) {
+if((!defined('IS_DEV_SITE') || !IS_DEV_SITE) && $wgLanguageCode == 'en') {
 	require_once("$IP/extensions/wikihow/Vanilla.php");
 }
 require_once("$IP/extensions/ProxyConnect/ProxyConnect.php");
@@ -141,7 +146,7 @@ require_once("$IP/extensions/wikihow/cattool/Categorizer.php");
 require_once("$IP/extensions/wikihow/articledata/ArticleData.php");
 require_once("$IP/extensions/wikihow/catsearch/CategoryInterests.php");
 require_once("$IP/extensions/wikihow/Mypages.php");
-require_once("$IP/extensions/wikihow/WikihowHooks.php");
+require_once("$IP/extensions/wikihow/hooks/WikihowHooks.php");
 require_once("$IP/extensions/wikihow/Wikihow_i18n.class.php");
 require_once("$IP/extensions/wikihow/HtmlSnips.class.php");
 require_once("$IP/extensions/wikihow/FeaturedArticles.php");
@@ -250,10 +255,15 @@ require_once("$IP/extensions/wikihow/Watermark.php");
 require_once("$IP/extensions/wikihow/ArticleHTMLParser.php");
 require_once("$IP/extensions/wikihow/WikiError.php");
 
-if(IS_CLOUD_SITE) {
+if(IS_CLOUD_SITE || IS_DEV_SITE) {
 	require_once("$IP/extensions/wikihow/titus/ApiTitus.php");
-        require_once("$IP/extensions/wikihow/flavius/ApiFlavius.php");
+    require_once("$IP/extensions/wikihow/flavius/ApiFlavius.php");
 	require_once("$IP/extensions/wikihow/dedup/Dedup.php");
+	require_once("$IP/extensions/wikihow/dedup/CommunityExpert.php");
+	require_once("$IP/extensions/wikihow/dedup/QueryCat.php");
+	require_once("$IP/extensions/wikihow/dedup/ApiDedup.php");
+    require_once("$IP/extensions/wikihow/leonard/Leonard.php");
+	require_once("$IP/extensions/wikihow/editcontribution/EditContribution.php");
 }
 
 #REDESIGN
@@ -273,3 +283,7 @@ require_once("$IP/extensions/wikihow/CategoryNames.php");
 #UPGRADE 1.23
 require_once("$IP/extensions/wikihow/WikihowLogin.php");
 require_once("$IP/extensions/wikihow/MassMessage/MassMessage.php");
+require_once("$IP/extensions/Echo/Echo.php");
+require_once("$IP/extensions/wikihow/EchoWikihow/EchoWikihow.php");
+require_once("$IP/extensions/wikihow/hooks/Email.php");
+

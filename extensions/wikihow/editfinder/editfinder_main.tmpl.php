@@ -5,6 +5,7 @@
 ?>
 <div class="tool">
 <div id="editfinder_head" class="tool_header">
+	<a href="#" id="edit_keys">Get Shortcuts</a>
 	<div id="editfinder_options">
 		<a href="#" id="editfinder_skip" class="button secondary"><?=$nope?></a>
 		<a href="#" class="button primary" id="editfinder_yes"><?=$yep?></a>
@@ -20,4 +21,7 @@
 <div id="editfinder_cat_footer">
 	Not finding an article you like?  <a href="" class="editfinder_choose_cats">Choose <?=$lc_categories?></a>
 </div>
+</div>
+<div id="edit_info" style="display:none;">
+	<?= wfMessage('editfinder_keys')->text(); ?>
 </div>

@@ -130,7 +130,7 @@ class WikihowImagePage extends ImagePage {
         if( !$this->getDisplayedFile()->isLocal() )
             return;
 
-        $html .= '<br /><ul>';
+        $html = '<br /><ul>';
 
         # "Upload a new version of this file" link
         # Disabling upload a new version of this file link per Bug #585
@@ -172,7 +172,7 @@ class WikihowImageHistoryList extends ImageHistoryList {
 
 	public function beginImageHistoryList($navLink) {
 	   global $wgOut;
-        $s .= '<div class="minor_section">' . Xml::element( 'h2', array( 'id' => 'filehistory' ), wfMessage( 'filehist' )->text() )
+        $s = '<div class="minor_section">' . Xml::element( 'h2', array( 'id' => 'filehistory' ), wfMessage( 'filehist' )->text() )
             . '<div class="wh_block">'. $wgOut->parse( wfMsgNoTrans( 'filehist-help' ) )
             . Xml::openElement( 'table', array( 'class' => 'filehistory history_table' ) ) . "\n";
         return $s;

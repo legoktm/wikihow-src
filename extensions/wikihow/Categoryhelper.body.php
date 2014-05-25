@@ -182,7 +182,7 @@ class Categoryhelper extends UnlistedSpecialPage {
 			$a = array_shift($parenttree);
 			if (!$a) {
 				$keys = array_keys($parenttree_tier1);
-				$result = str_replace($catNamespace, "", $keys[0]);
+				$result = str_replace($catNamespace, "", @$keys[0]);
 				break;
 			}
 			$last = $a;

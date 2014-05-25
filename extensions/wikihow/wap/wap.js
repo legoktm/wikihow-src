@@ -302,7 +302,12 @@
 
 	$(document).on('click', '#rpt_assigned_articles_admin, #rpt_completed_articles_admin', function(e) {
 		e.preventDefault();
-		var data = {'a' : $(this).attr('id'), 'langcode': $('#langcode').val()};
+		var data = {
+			'a' : $(this).attr('id'), 
+			'langcode': $('#langcode').val(),
+			'fromDate': $('#fromDate').val() || null,
+			'toDate': $('#toDate').val() || null
+		};
 		$.download(controller, data);
 	});
 

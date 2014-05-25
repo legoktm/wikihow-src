@@ -69,13 +69,13 @@ class BabelfishArticle extends WAPArticle {
 			//$pricing = explode("\n", trim(wfMsg('babelfish_mult')));
 			$pricing = "
 				fr,1,0,10000
-				pt,.0085,4,20
-				ru,.0085,5,24
+				pt,.0085,2.50,20
+				ru,.0085,3.50,24
 				zh,.0075,3,20
 				it,1,0,10000
 				de,.015,8,32
 				nl,.015,8,32
-				es,.0055,3,15";
+				es,.0055,2,15";
 			$pricing = explode("\n", trim($pricing));
 
 			foreach ($pricing as $price) {

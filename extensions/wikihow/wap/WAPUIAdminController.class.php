@@ -263,7 +263,8 @@ abstract class WAPUIAdminController extends WAPUIController {
 		global $wgRequest;
 		$userController = $this->config->getUIUserControllerClassName();
 		$controller = new $userController($this->config);
-		$controller->completedArticlesReport($wgRequest->getVal('langcode'));
+		$controller->completedArticlesReport($wgRequest->getVal('langcode'), 
+			$wgRequest->getVal('fromDate', null), $wgRequest->getVal('toDate', null));
 	}
 
 

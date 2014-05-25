@@ -698,6 +698,37 @@ class IntroImageStandingsIndividual extends StandingsIndividual {
 
 }
 
+class UCIPatrolStandingsIndividual extends StandingsIndividual {
+
+	function __construct() {
+		$this->mLeaderboardKey = "ucitool_indiv1";
+	}
+
+	function getTable() {
+		return "logging";
+	}
+
+	function getTitle() {
+		return wfMessage('ucipatrol_stats_title')->text();
+	}
+
+	function getOpts($ts = null) {
+		global $wgUser;
+		$opts = array();
+		$opts['log_user'] =$wgUser->getId();
+		$opts['log_type'] = "ucipatrol";
+		if ($ts) {
+			$opts[]= "log_timestamp >'{$ts}'";
+		}
+		return $opts;
+	}
+
+	function getGroupStandings() {
+		return new UCIPatrolStandingsGroup();
+	}
+}
+
+
 class TipsPatrolStandingsIndividual extends StandingsIndividual {
 
 	function __construct() {
@@ -1008,6 +1039,30 @@ class EditFinderStandingsGroup extends StandingsGroup  {
 		return wfMessage('editfinder_leaderboard_title')->text();
 	}
 }
+
+class UCIPatrolStandingsGroup extends StandingsGroup  {
+	function __construct() {
+		parent::__construct("ucitool_standings2");
+	}
+
+	function getSQL($ts) {
+		global $wgSharedDB;
+		$sql = "SELECT user_name, count(*) as C ".
+			"FROM logging left join ".$wgSharedDB.".user on log_user = user_id ".
+			"WHERE log_type = 'ucipatrol' and log_timestamp >= '$ts' ".
+			"GROUP BY user_name ORDER by C desc limit 25";
+		return $sql;
+	}
+
+	function getField() {
+		return "user_name";
+	}
+
+	function getTitle() {
+		return wfMessage('ucipatrol_leaderboard_title')->text();
+	}
+}
+
 
 class TipsPatrolStandingsGroup extends StandingsGroup  {
 	function __construct() {

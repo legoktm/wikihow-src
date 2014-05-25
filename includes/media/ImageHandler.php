@@ -66,6 +66,15 @@ abstract class ImageHandler extends MediaHandler {
 	}
 
 	function parseParamString( $str ) {
+		// Reuben, 5/20/2014: Added this hook to be able to parse wikiHow's
+		// custom parameters (such as crop and nowatermark) from the
+		// thumbnail's filename.
+		$params = false;
+		wfRunHooks('ImageHandlerParseParamString', array($str, &$params));
+		if (is_array($params)) {
+			return $params;
+		}
+
 		$m = false;
 		if ( preg_match( '/^(\d+)px$/', $str, $m ) ) {
 			return array( 'width' => $m[1] );

@@ -26,7 +26,7 @@ function gatTrack(category, action, label, value) {
 function gatStartObservers() {
 	//alert('gatStartObserver');
 
-	function regClickEvent(id, param2, param3) {
+	var regClickEvent = function(id, param2, param3) {
 		var evtType, fn;
 		if (typeof param2 == 'string') {
 			evtType = param2;
@@ -36,17 +36,30 @@ function gatStartObservers() {
 			fn = param2;
 		}
 
-		// use prototype or jquery, depending what's available
-		if (typeof Event != 'undefined' && typeof Event.observe != 'undefined') {
-			Event.observe(id, evtType, fn);
-		} else {
-			if (evtType == 'click') {
-				jQuery('#' + id).click(fn);
-			} else if (evtType == 'submit') {
-				jQuery('#' + id).submit(fn);
-			}
+		if (evtType == 'click') {
+			jQuery('#' + id).click(fn);
+		} else if (evtType == 'submit') {
+			jQuery('#' + id).submit(fn);
 		}
 	};
+
+	var regClickEventByClass = function(klass, param2, param3) {
+		var evtType, fn;
+		if (typeof param2 == 'string') {
+			evtType = param2;
+			fn = param3;
+		} else {
+			evtType = 'click';
+			fn = param2;
+		}
+
+		if (evtType == 'click') {
+			jQuery('.' + klass).click(fn);
+		} else if (evtType == 'submit') {
+			jQuery('.' + klass).submit(fn);
+		}
+	};
+
 
 	if (document.getElementById("gatEdit")) {
 		regClickEvent('gatEdit', function(e) {
@@ -208,16 +221,41 @@ function gatStartObservers() {
 			gatTrack("Search","Search","Custom_search");
 		});
 	} */
+	window.oTrackUserAction = function() {
+		window['optimizely'] = window['optimizely'] || [];
+
+		// Optimizely 'hack' to track the total number of actions (i.e. one user may possibly do multiple actions)
+		window['optimizely'].push(["trackEvent","user_action",{'anonymous':true}]);
+		
+		var actions = getCookie('nuacts');
+		if(actions === undefined) {
+			actions = 0;	
+		}
+		actions++;
+		$.cookie('nuacts', actions, {expires: 365, path: '/'});
+		if(actions == 1) {
+			window['optimizely'].push(["trackEvent","user_action1"]);
+		}
+		else if(actions == 5) {
+			window['optimizely'].push(["trackEvent","user_action5"]);	
+		}
+		else if(actions == 10) {
+			window['optimizely'].push(["trackEvent","user_action10"]);	
+		}
+	}
+
 	var oTrackEdit = function() {
 		if(typeof window['wgNamespaceNumber'] !== 'undefined' && window.wgNamespaceNumber == 0) {
 			window['optimizely'] = window['optimizely'] || [];
+			
+			// Optimizely 'hack' to track the total number of edits (i.e. one user may possibly do multiple edits)
 			window['optimizely'].push(["trackEvent","edit",{'anonymous':true}]);
 			var edits = getCookie('num_edits');
 			if(edits === undefined) {
 				edits = 0;	
 			}
 			edits++;
-			setCookie('num_edits', edits, 365);
+			$.cookie('num_edits', edits, {expires: 365, path: '/'});
 			if(edits == 1) {
 				window['optimizely'].push(["trackEvent","edit1"]);
 			}
@@ -227,15 +265,24 @@ function gatStartObservers() {
 			else if(edits == 10) {
 				window['optimizely'].push(["trackEvent","edit10"]);	
 			}
-			
+			window.oTrackUserAction();	
 		}
 	}
+
 	// save preview edit page
 	if (document.getElementById('wpSave')) {
-		regClickEvent('wpSave', function(e) {
-			oTrackEdit();
-			gatTrack(gatUser,"Save","Save_button");
-		});
+		if(typeof isGuided !== "undefined" && isGuided) {
+			regClickEventByClass('wpSave', function(e) {
+				oTrackEdit();
+				gatTrack(gatUser,"Save","Save_button");
+			});
+		}
+		else {
+			regClickEvent('wpSave', function(e) {
+				oTrackEdit();
+				gatTrack(gatUser,"Save","Save_button");
+			});
+		}
 	}
 
 	if (document.getElementById('wpPreview')) {
@@ -258,7 +305,6 @@ function gatStartObservers() {
 
 	if (document.getElementById('gatGuidedSave')) {
 		regClickEvent('gatGuidedSave', function(e) {
-			oTrackEdit();
 			gatTrack(gatUser,"Save","Save_button");
 		});
 	}

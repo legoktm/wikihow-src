@@ -58,7 +58,7 @@ class SkinWikihowskin extends SkinTemplate {
 		);
 
 		$result = $linkText;
-		$format = $formatting[$langCode];
+		if (isset($formatting[$langCode])) $format = $formatting[$langCode];
 		if(!empty($format)) {
 			$result = preg_replace("@(\\$1)@", $linkText, $format);
 		}
@@ -182,9 +182,9 @@ class SkinWikihowskin extends SkinTemplate {
 		if (is_array($cats) && sizeof($cats) > 0) {
 			$keys = array_keys($cats);
 			$templates = wfMessage('templates_further_editing')->inContentLanguage()->text();
-			$templates = split("\n", $templates);
+			$templates = explode("\n", $templates);
 			$templates = array_flip($templates); // switch all key/value pairs
-			for ($i = 0; $i < sizeof($keys) && !$found; $i++) {
+			for ($i = 0; $i < sizeof($keys); $i++) {
 				$t = Title::newFromText($keys[$i]);
 				if (isset($templates[$t->getText()]) ) {
 					return true;
@@ -214,7 +214,7 @@ class SkinWikihowskin extends SkinTemplate {
 		if (is_array($cats) && sizeof($cats) > 0) {
 			$keys = array_keys($cats);
 			$templates = wfMessage('categories_to_ignore')->inContentLanguage()->text();
-			$templates = split("\n", $templates);
+			$templates = explode("\n", $templates);
 			$templates = str_replace("http://www.wikihow.com/Category:", "", $templates);
 			$templates = array_flip($templates); // make the array associative.
 			for ($i = 0; $i < sizeof($keys); $i++) {
@@ -284,7 +284,7 @@ class SkinWikihowskin extends SkinTemplate {
 					$result = "<h3>" . wfMessage('relatedarticles')->text() . "</h3>$result<div class='clearall'></div>\n"; }
 			}
 		}
-		$wgMemc->set($cachekey, $result, 3600);
+		$wgMemc->set($cachekey, $result);
 		return $result;
 	}
 
@@ -402,7 +402,7 @@ class SkinWikihowskin extends SkinTemplate {
 		$html = "";
 		$data = self::featuredArticlesAttrs($t, $t->getText(), $width, $height);
 		$articleName = $t->getText();
-		if($wgLangaugeCode == "zh") {
+		if ($wgLanguageCode == "zh") {
 			$articleName = $wgContLang->convert($articleName);	
 		}
 		$html .= "<div class='thumbnail' style='width:{$width}px; height:{$height}px;'><a href='{$data['url']}'><img src='{$data['img']}' alt='' /><div class='text'><p>" . wfMessage('Howto','')->text() . "<br /><span>{$articleName}</span></p></div></a></div>";
@@ -654,23 +654,26 @@ class SkinWikihowskin extends SkinTemplate {
 
 			asort($tempout);
 			$olds = $s;
-			$s .= $tempout[0]; // this usually works
+			if ($tempout) $s .= $tempout[0]; // this usually works
 
 			if (strpos($s, "/Category:WikiHow") !== false
-                || strpos($s, "/Category:Featured") !== false
-                || strpos($s, "/Category:Nomination") !== false
-            ) {
-                for ($i = 1; $i <= sizeof($tempout); $i++) {
-                    if (strpos($tempout[$i], "/Category:WikiHow") === false
-                    && strpos($tempout[$i], "/Category:Featured") == false
-                    && strpos($tempout[$i], "/Category:Nomination") == false
-                    ) {
-                        $s = $olds;
-                        $s .= $tempout[$i];
-                        break;
-                    }
-                }
-            }
+				|| strpos($s, "/Category:Featured") !== false
+				|| strpos($s, "/Category:Nomination") !== false
+			) {
+				for ($i = 1; $i <= sizeof($tempout); $i++) {
+					// Reuben: changed to add this isset($tempout[$i]) stuff so that
+					// functionality remains identical but without variable not defined
+					// notice, even though I don't understand the functionality
+					if ( strpos(@$tempout[$i], "/Category:WikiHow") === false
+						&& strpos(@$tempout[$i], "/Category:Featured") == false
+						&& strpos(@$tempout[$i], "/Category:Nomination") == false
+					) {
+						$s = $olds;
+						$s .= isset($tempout[$i]) ? $tempout[$i] : '';
+						break;
+					}
+				}
+			}
 
 		}
 		return $s;
@@ -785,8 +788,9 @@ class SkinWikihowskin extends SkinTemplate {
 			if ($wgTitle->getNamespace() == NS_USER ||
 				$wgTitle->getNameSpace() == NS_IMAGE || 
 				$wgTitle->getNameSpace() == NS_CATEGORY || 
-				($wgTitle->getNamespace == NS_MAIN) && ($action == 'edit' || $action == 'submit2')) {
-					$result = false;
+				($action == 'edit' || $action == 'submit2'))
+			{
+				$result = false;
 			}
 		}
 		return $result;
@@ -803,12 +807,13 @@ class SkinWikihowskin extends SkinTemplate {
 
 		wfRunHooks('pageTabs', array(&$tabs));
 
-		if(count($tabs) > 0) {
+		if (count($tabs) > 0) {
 			return $tabs;
 		}
 
-		if(!$showArticleTabs)
+		if (!$showArticleTabs) {
 			return;
+		}
 
 		//article
 		if ($wgTitle->getNamespace() != NS_CATEGORY) {
@@ -922,7 +927,7 @@ class SkinWikihowskin extends SkinTemplate {
 				$html .= "<li><a {$attributes}>{$tab->text}</a>";
 				//$activeClass = $tab->active?'on':'';
 				//$html .= "<li><a href='{$tab->link}' id='{$tab->id}' class='{$activeClass}'>{$tab->text}";
-				if($tab->hasSubMenu) {
+				if(isset($tab->hasSubMenu) && $tab->hasSubMenu) {
 					$html .= "<span class='admin_arrow'></span>";
 					$html .= "<div id='{$tab->subMenuName}' class='menu'>";
 					foreach($tab->subMenu as $subTab) {
@@ -1011,6 +1016,7 @@ class SkinWikihowskin extends SkinTemplate {
 				if ($isLoggedIn) {
 					$html = Linker::link(Title::makeTitle(NS_SPECIAL, 'Mytalk', 'post'), wfMessage('mytalkpage')->text() ) .
 							Linker::link(Title::makeTitle(NS_SPECIAL, 'Mypage'), wfMessage('myauthorpage')->text() ) .
+							Linker::link(Title::makeTitle(NS_SPECIAL, 'Notifications'), wfMessage('mynotifications')->text() ) .
 							Linker::link(Title::makeTitle(NS_SPECIAL, 'Watchlist'), wfMessage('watchlist')->text() ) .
 							Linker::link(Title::makeTitle(NS_SPECIAL, 'Drafts'), wfMessage('mydrafts')->text() ) .
 							Linker::link(SpecialPage::getTitleFor('Mypages', 'Contributions'),  wfMessage ('mycontris')->text()) .
@@ -1065,7 +1071,48 @@ class SkinWikihowskin extends SkinTemplate {
 				}
 				break;
 			case 'messages':
-				list($html,$this->notifications_count) = Notifications::loadNotifications();
+			
+				if (class_exists('EchoEvent') && $wgUser->hasCookies()) {
+					$maxNotesShown = 5;
+					$notif = ApiEchoNotifications::getNotifications( $wgUser, 'html', $maxNotesShown );
+
+					if ($notif) {
+						//show those notifications
+						foreach($notif as $note) {
+							$this_note = $note['*'];
+							//unread?
+							if ( !isset( $note['read'] ) ) $this_note = str_replace('mw-echo-state','mw-echo-state mw-echo-unread',$this_note);
+							$html .= $this_note;
+						}
+						
+						//get the unread count
+						$notifUser = MWEchoNotifUser::newFromUser($wgUser);
+						$this->notifications_count = $notifUser->getNotificationCount();
+						
+						if ($this->notifications_count > $maxNotesShown) {
+							$unshown = '<br /><a href="/Special:Notifications">('.($this->notifications_count - $maxNotesShown).' unread)</a>';
+						}
+						else {
+							$unshown = '';
+						}
+						
+						//add view all link
+						$html .= '<div class="menu_message_morelink"><a href="/Special:Notifications">'.wfMessage('more-notifications-link')->text().'</a>'.$unshown.'</div>';
+					}
+					else {
+						//no notifications
+						$html .= '<div class="menu_message_morelink">'.wfMessage('no-notifications')->parse().'</div>';
+					}
+
+				}
+				else {
+					//old school
+					$ret = Notifications::loadNotifications();
+					if (is_array($ret)) {
+						list($html, $this->notifications_count) = $ret;
+					}
+				}
+				
 				$menu_css = 'menu_messages';
 				break;
 		}
@@ -1080,7 +1127,7 @@ class SkinWikihowskin extends SkinTemplate {
 		global $wgMimeType, $wgOutputEncoding, $wgUseDatabaseMessages;
 		global $wgRequest, $wgUseNewInterlanguage;
 		global $wgDisableCounters, $wgLogo, $action, $wgFeedClasses;
-		global $wgMaxCredits, $wgShowCreditsIfMax;
+		global $wgMaxCredits, $wgShowCreditsIfMax, $wgHideInterlanguageLinks;
 		global $wgServer;
 
 		global $wgSquidMaxage, $IP;
@@ -1140,6 +1187,7 @@ class SkinWikihowskin extends SkinTemplate {
 		}
 
 		ArticleMetaInfo::addFacebookMetaProperties($tpl->data['title']);
+		ArticleMetaInfo::addTwitterMetaProperties();
 
 		if( $wgOut->isSyndicated() ) {
 			$feeds = array();
@@ -1292,7 +1340,7 @@ class SkinWikihowskin extends SkinTemplate {
 		wfProfileOut( "$fname-stuff4" );
 
 		# Personal toolbar
-		$tpl->set('personal_urls', $this->buildPersonalUrls());
+		//$tpl->set('personal_urls', $this->buildPersonalUrls());
 		/*$content_actions = $this->buildContentActionUrls();
 		$tpl->setRef('content_actions', $content_actions);
 
@@ -1490,6 +1538,7 @@ class WikiHowTemplate extends QuickTemplate {
 			}
 		}
 
+		$heading = '';
 		if (! $sk->suppressH1Tag()) {
 			if ($wgTitle->getNamespace() == NS_MAIN && $wgTitle->exists() && $action == "view") {
 				if (Microdata::showRecipeTags() && Microdata::showhRecipeTags()) {
@@ -1521,9 +1570,10 @@ class WikiHowTemplate extends QuickTemplate {
 		wfRunHooks('getBreadCrumbs', array(&$catLinksTop));
 		$mainPageObj = Title::newMainPage();
 
-		if (MWNamespace::isTalk($wgTitle->getNamespace()) && $action == "view")
-
+		$isPrintable = false;
+		if (MWNamespace::isTalk($wgTitle->getNamespace()) && $action == "view") {
 			$isPrintable = $wgRequest->getVal("printable") == "yes";
+		}
 
 		// QWER links for everyone on all pages
 
@@ -1543,7 +1593,7 @@ class WikiHowTemplate extends QuickTemplate {
 		$uploadlink = Linker::link(Title::makeTitle(NS_SPECIAL, "Upload"), wfMessage('upload')->text());
 		$freephotoslink = Linker::link(Title::makeTitle(NS_SPECIAL, "ImportFreeImages"), wfMessage('imageimport')->text());
 		$relatedchangeslink = "";
-		if ($wgArticle != null)
+		if ($isArticlePage)
 			$relatedchangeslink = "<li> <a href='" .
 				Title::makeTitle(NS_SPECIAL, "Recentchangeslinked")->getFullURL() . "/" . $wgTitle->getPrefixedURL() . "'>"
 				. wfMessage('recentchangeslinked')->text() . "</a></li>";
@@ -1564,7 +1614,11 @@ class WikiHowTemplate extends QuickTemplate {
 			}
 		}
 		
-		if (!$isMainPage && !$isDocViewer && !$_COOKIE["sitenoticebox"]) $siteNotice = $sk->getSiteNotice();
+		if (!$isMainPage && !$isDocViewer && (!isset($_COOKIE['sitenoticebox']) || !$_COOKIE['sitenoticebox'])) {
+			$siteNotice = $sk->getSiteNotice();
+		} else {
+			$siteNotice = '';
+		}
 		
 		// Right-to-left languages
 		$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
@@ -1586,8 +1640,8 @@ class WikiHowTemplate extends QuickTemplate {
 			$printable_media = "all";
 
 		$top_search = "";
-	   	$footer_search = "";
-	   	if ($wgLanguageCode == 'en') {
+		$footer_search = "";
+		if ($wgLanguageCode == 'en') {
 		   //INTL: Search options for the english site are a bit more complex
 		   if (!$isLoggedIn) {
 				   $top_search = GoogSearch::getSearchBox("cse-search-box");
@@ -1601,7 +1655,7 @@ class WikiHowTemplate extends QuickTemplate {
 		} else {
 			//INTL: International search just uses Google custom search
 			$top_search = GoogSearch::getSearchBox("cse-search-box");
-	   	}
+		}
 
 
 		$text = $this->data['bodytext'];
@@ -1620,7 +1674,7 @@ class WikiHowTemplate extends QuickTemplate {
 			//$this->data['bodytext'] = preg_replace("@<div id=\"featurestar\">(.|\n)*<div style=\"clear:both\"></div>@mU", '', $this->data['bodytext']);
 		}
 
-		$body = "";
+		$body = '';
 
 		if ($wgTitle->userCan('edit') && 
 			$action != 'edit' && 
@@ -1703,7 +1757,8 @@ class WikiHowTemplate extends QuickTemplate {
 		}
 
 		// Reuben (11/2013): Micro-customization as a test for BR
-		$slowSpeedUsers = array('BR');
+		//$slowSpeedUsers = array('BR');
+		$slowSpeedUsers = array();
 		$isSlowSpeedUser = $wgUser && in_array($wgUser->getName(), $slowSpeedUsers);
 
 		$optimizelyJS = false;
@@ -1813,6 +1868,13 @@ class WikiHowTemplate extends QuickTemplate {
 			!$isMainPage &&
 			strpos($this->data['bodytext'], 'textscroller_outer') !== false;
 
+		$showUserCompletedImages =
+			class_exists('UCIPatrol') &&
+			$wgTitle->exists() &&
+			$wgTitle->getNamespace() == NS_MAIN &&
+			!$isMainPage &&
+			UCIPatrol::showUCI($this->getSkin()->getContext()->getTitle());
+
 		$showImageFeedback =
 			class_exists('ImageFeedback') &&
 			ImageFeedback::isValidPage();
@@ -1849,6 +1911,7 @@ class WikiHowTemplate extends QuickTemplate {
 			($isMainPage ? ',hp' : '') .
 			($showWikivideo ? ',whv' : '') . 
 			($showImageFeedback ? ',ii' : '') . 
+			($showUserCompletedImages ? ',uci' : '') .
 			($showTextScroller ? ',ts' : '');
 
 		if ($wgOut->mJSminCodes) {
@@ -1867,6 +1930,7 @@ class WikiHowTemplate extends QuickTemplate {
 			($showTextScroller ? ',tsc' : '') .
 			($isMainPage ? ',hpc' : '') .
 			($showImageFeedback ? ',iic' : '') .
+			($showUserCompletedImages ? ',ucic' : '') .
 			($isSpecialPage ? ',spc' : '');
 
 		if ($wgOut->mCSSminCodes) {
@@ -1883,7 +1947,7 @@ class WikiHowTemplate extends QuickTemplate {
 <?= $head_element ?><head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
 	<title><?= $pageTitle ?></title>
 	<?php /*Hack to add variable WH as a global variable before loading script. This is need because load.php creates a closure when loading wikibits.js 
-		    Add by Gershon Bialer on 12/2/2013*/?><script>
+			Add by Gershon Bialer on 12/2/2013*/?><script>
 <!--
 var WH = WH || {};
 //-->
@@ -1910,11 +1974,10 @@ UVPERF.start = new Date().getTime();
 	<? if ($isArticlePage || $isMainPage): ?>
 	<link rel="alternate" media="only screen and (max-width: 640px)" href="http://<?php if($wgLanguageCode != 'en') { echo ($wgLanguageCode . "."); } ?>m.wikihow.com/<?= $wgTitle->getPartialUrl() ?>">
 	<? endif; ?>
-<?= Skin::makeVariablesScript( $wgOut->getJSVars ) ?>
 	<? // add CSS files to extensions/min/groupsConfig.php ?>
 	<style type="text/css" media="all">/*<![CDATA[*/ @import "<?= $fullCSSuri ?>"; /*]]>*/</style>
 	<? // below is the minified http://www.wikihow.com/extensions/min/f/skins/owl/printable.css ?>
-	<style type="text/css" media="<?=$printable_media?>">/*<![CDATA[*/ body{background-color:#FFF;font-size:1.2em}#header_outer{background:0 0;position:relative}#header{text-align:center;height:63px!important;width:242px!important;background:url(/skins/owl/images/logo_lightbg_242.jpg) no-repeat center center;margin-top:15px}#article_shell{margin:0 auto;float:none;padding-bottom:2em}.sticking{position:absolute!important;top:0!important}#actions,#article_rating,#article_tabs,#breadcrumb,#bubble_search,#cse-search-box,#end_options,#footer_outer,#header_space,#logo_link,#notification_count,#originators,#sidebar,#sliderbox,.edit,.editsection,.mwimg,.section.relatedwikihows,.section.video,.whvid_cont{display:none!important} /*]]>*/</style>	
+	<style type="text/css" media="<?=$printable_media?>">/*<![CDATA[*/ body{background-color:#FFF;font-size:1.2em}#header_outer{background:0 0;position:relative}#header{text-align:center;height:63px!important;width:242px!important;background:url(/skins/owl/images/logo_lightbg_242.jpg) no-repeat center center;margin-top:15px}#article_shell{margin:0 auto;float:none;padding-bottom:2em}.sticking{position:absolute!important;top:0!important}#actions,#article_rating,#article_tabs,#breadcrumb,#bubble_search,#cse-search-box,#end_options,#footer_outer,#header_space,#logo_link,#notification_count,#originators,#sidebar,#sliderbox,.edit,.editsection,.mwimg,.section.relatedwikihows,.section.video,.whvid_cont,.altadder_section{display:none!important} /*]]>*/</style>	
 		<?
 		// Bootstapping certain javascript functions:
 		// A function to merge one object with another; stub funcs
@@ -1970,8 +2033,8 @@ UVPERF.start = new Date().getTime();
 			<link rel="alternate" hreflang="<?= $lang ?>" href="<?= htmlspecialchars($url) ?>" />
 		<? endforeach; ?>
 		</head>
-		<body <?php if($this->data['body_ondblclick']) { ?>ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
-			  <?php if($this->data['body_onload']) { ?>onload="<?php $this->text('body_onload') ?>"<?php } ?> 
+		<body <?php if(isset($this->data['body_ondblclick']) && $this->data['body_ondblclick']) { ?>ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
+			  <?php if(isset($this->data['body_onload']) && $this->data['body_onload']) { ?>onload="<?php $this->text('body_onload') ?>"<?php } ?> 
 			  class="mediawiki <?=$userdir?>  sitedir-<?=$sitedir?>"
 			>
 		<?php wfRunHooks( 'PageHeaderDisplay', array( $sk->isUserAgentMobile() ) ); ?>
@@ -1985,12 +2048,12 @@ UVPERF.start = new Date().getTime();
 				<? foreach ($navTabs as $tabid => $tab): ?>
 					<li id="<?= $tabid ?>_li">
 						<div class="nav_icon"></div>
-						<a id='<?= $tabid ?>' class='nav <?= $tab['status'] ?>' href='<?= $tab['link'] ?>' <?= $tab['mouseevents'] ?>><?= $tab['text'] ?></a>
+						<a id='<?= $tabid ?>' class='nav' href='<?= $tab['link'] ?>'><?= $tab['text'] ?></a>
 						<?= $tab['menu'] ?>
 					</li>
 				<? endforeach; ?>
 			</ul><!--end actions-->
-			<? if ((int)$sk->notifications_count > 0): ?>
+			<? if (isset($sk->notifications_count) && (int)$sk->notifications_count > 0): ?>
 				<div id="notification_count" class="notice"><?= $sk->notifications_count ?></div>
 			<? endif; ?>
 			<? $holidayLogo = SkinWikihowskin::getHolidayLogo(); 
@@ -2027,7 +2090,6 @@ UVPERF.start = new Date().getTime();
 		WH.translationData = {<?= join(',', $translationData) ?>};
 		//-->
 		</script>
-		<?= $announcement ?>
 		<?= $mpActions ?>
 		<?php
 		$sidebar = !$showSideBar ? 'no_sidebar' : '';
@@ -2041,14 +2103,11 @@ UVPERF.start = new Date().getTime();
 		<div id="article"<?= Microdata::genSchemaHeader() ?>>
 
 			<?php wfRunHooks( 'BeforeTabsLine', array( &$wgOut ) ); ?>
-			<?= $profileBox ?>
 			<? 
 			if (!$isArticlePage && !$isMainPage && $this->data['bodyheading']) {
 				echo '<div class="wh_block">'.$this->data['bodyheading'].'</div>';
 			}
 			echo $this->html('bodytext');	
-			
-			echo $bottom_site_notice;
 			
 			$showingArticleInfo = 0;
 			if (in_array($wgTitle->getNamespace(), array(NS_MAIN, NS_PROJECT)) && $action == 'view' && !$isMainPage) {
@@ -2119,7 +2178,7 @@ UVPERF.start = new Date().getTime();
 								//only show this ad on article pages
 								echo wikihowAds::getAdUnitPlaceholder(7);
 							} ?>
-                        <div class="clearall"></div>
+						<div class="clearall"></div>
 					</div><!--end article_info section_text-->
 						<p class='page_stats'><?= $sk->pageStats() ?></p>
 
@@ -2128,6 +2187,15 @@ UVPERF.start = new Date().getTime();
 						</div>
 				</div><!--end section-->
 
+			<? }
+
+			if($showUserCompletedImages) { ?>
+				<div class="section">
+					<h2 class="section_head" id="uci_header"><span><?= wfMessage('user_completed_images')->text() ?></span></h2>
+					<div id="uci_images" class="section_text">
+						<?= UCIPatrol::getHTMLForArticle($this->getSkin()->getContext()) ?>
+					</div> <!-- end section_text-->
+				</div><!--end section-->
 			<? }
 			if (in_array($wgTitle->getNamespace(), array(NS_USER, NS_MAIN, NS_PROJECT)) && $action == 'view' && !$isMainPage) {
 			?>
@@ -2305,7 +2373,6 @@ UVPERF.start = new Date().getTime();
 
 				<? //if (!$isLoggedIn) echo $navMenu; ?>
 
-				<?= $user_links ?>
 				<? if ($showFollowWidget): ?>
 					<div class="sidebox">
 						<? FollowWidget::showWidget(); ?>
@@ -2531,6 +2598,9 @@ UVPERF.start = new Date().getTime();
 
 			if (typeof WH.imageFeedback != 'undefined') {
 				WH.imageFeedback();
+			}
+			if (typeof WH.uciFeedback != 'undefined') {
+				WH.uciFeedback();
 			}
 		});
 	})(jQuery);

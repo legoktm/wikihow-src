@@ -7,11 +7,6 @@ $maintenance = new TitusMaintenance();
 $maintenance->nightly();
 //$maintenance->sendErrorEmail();
 
-// To repair - run this call instead of nightly. This will recalc daily edits for the number of days lookback
-// that you specify.  NOTE: historical data for the lookback period will not be repaired, just the current day
-//$lookBack = 1;
-//$maintenance->repairTitus($lookBack);
-
 class TitusMaintenance {
 	var $titus = null;
 
@@ -125,15 +120,6 @@ class TitusMaintenance {
 		echo "calcAccuracy finish: " . wfTimestampNow() . "\n";
 	}
 
-	public function repairTitus($lookBack = 1) {
-		$titus = new TitusDB(true);
-		$dailyEditStats = TitusConfig::getDailyEditStats();
-		$titus->calcLatestEdits($dailyEditStats, $lookBack);
-
-		$nightlyStats = TitusConfig::getNightlyStats();
-		$titus->calcStatsForAllPages($nightlyStats);
-	}
-
 	/*
 	* Dumps the current state of the titus table into titus_historical.  At the time of the dump, this should be a full days
 	* worth of titus page rows. The titus_historical table should maintain 30-60 days worth of titus table dumps
@@ -222,13 +208,15 @@ class TitusMaintenance {
 		}
 	}
 	private function reportErrors() {
-    $activeStats = TitusConfig::getAllStats();
+		global $wgLanguageCode;
+
+    	$activeStats = TitusConfig::getAllStats();
 		$errors = $this->titus->getErrors($activeStats);
 		if($errors != "") {
 				print("Errors are " . $errors);
 				$to = new MailAddress("gershon@wikihow.com,elizabeth@wikihow.com,reuben@wikihow.com,chris@wikihow.com");
 				$from = new MailAddress("alerts@wikihow.com");
-				$subject = "Titus Errors";
+				$subject = "Titus Errors - " . $wgLanguageCode;
 				UserMailer::send($to,$from, $subject, $errors);
 		}
 	}

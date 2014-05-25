@@ -105,7 +105,7 @@ class PostComment extends UnlistedSpecialPage {
 			";
 		
 		//add anchor link
-		$return = '<a name="leave-a-message" id="leave-a-message"></a>'.$return;
+		$return = '<a name="leave-a-message" id="leave-a-message"></a>';
 		
 		if ($return_result)
 			return $result;

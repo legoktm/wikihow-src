@@ -106,7 +106,7 @@ class FeaturedArticles {
 		$feeds = $wgMemc->get($cachekey);
 		if (is_array($feeds)) return $feeds;
 
-		if (!$texts[$titleHash]) {
+		if (!isset($texts[$titleHash]) || !$texts[$titleHash]) {
 			$title = Title::newFromText($feedTitle, NS_PROJECT);
 			$rev = Revision::newFromTitle($title);
 			if (!$rev) return array();
@@ -124,8 +124,8 @@ class FeaturedArticles {
 				// now entry is
 				// ==2011-03-18==
 				// http://www.wikihow.com/Article How to Alternative Title
-				$lines = split("\n", $entry);
-				$parts = split(" ", trim($lines[1]));
+				$lines = explode("\n", $entry);
+				$parts = explode(" ", trim($lines[1]));
 				$item = array();
 				$item[] = $parts[0]; // the url
 				$item[] = $d; // the date
@@ -154,7 +154,7 @@ class FeaturedArticles {
 			if (isset($d_index[$d]))
 				$index = $d_index[$d];
 			$hour = floor( $index  * (24 / ($count) ) ) + $wgRSSOffsetHours;
-			$d_array = split("-", $d);
+			$d_array = explode("-", $d);
 			$ts = mktime($hour, 0, 0, $d_array[1], $d_array[2], $d_array[0]);
 			$t_array[] = $ts;
 

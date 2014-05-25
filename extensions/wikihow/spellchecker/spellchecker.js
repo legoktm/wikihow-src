@@ -260,6 +260,7 @@ function saveArticle() {
 		},
 		'json'
 	);
+	window.oTrackUserAction();
 }
 
 /***

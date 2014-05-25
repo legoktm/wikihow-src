@@ -116,8 +116,8 @@ class BitmapHandler extends ImageHandler {
 	function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 ) {
 		// AG - add original height and width for use in cropping
 		// also add the crop and heighpreference param to the scalerParams
-		$originalHeight = $params['height'];
-		$originalWidth = $params['width'];
+		$originalWidth = isset($params['width']) ? $params['width'] : 0;
+		$originalHeight = isset($params['height']) ? $params['height'] : 0;
 
 		if ( !$this->normaliseParams( $image, $params ) ) {
 			return new TransformParameterError( $params );
@@ -141,8 +141,7 @@ class BitmapHandler extends ImageHandler {
 			'mimeType' => $image->getMimeType(),
 			'dstPath' => $dstPath,
 			'dstUrl' => $dstUrl,
-			'crop' =>  $params['crop'] == 1 ? true : false,
-			'heightPreference' =>  $params['heightPreference'] == 1 ? true : false,
+			'crop' =>  isset($params['crop']) && $params['crop'] == 1 ? true : false,
 			'originalWidth' => $originalWidth,
 			'originalHeight' => $originalHeight,
 		);
@@ -374,13 +373,22 @@ class BitmapHandler extends ImageHandler {
 		$thumbnail = array( '-thumbnail', "{$width}x{$height}!" );
 		$crop = array();
 		if ( $params['crop'] ) {
-			$physicalWidth = $params['originalWidth'];
-			$physicalHeight = $params['originalHeight'];
-			$crop = array( '-gravity', 'center', '-crop', "{$physicalWidth}x{$physicalHeight}+0+0" );
-			if ( $params['heightPreference'] ) {
-				$thumbnail = array( '-thumbnail', "x{$physicalHeight}" );
+			$originalWidth = $params['originalWidth'];
+			$originalHeight = $params['originalHeight'];
+			$thumbAspectRatio = $originalWidth / $originalHeight;
+			$sourceAspectRatio = $width / $height;
+
+			// Aspect ratio of desired thumbnail is less than aspect ratio of
+			// source image, so we conclude that desired image is more portrait-y
+			// and we should set heightPreference = true.
+			// This change was made by Reuben and reviewed by Bebeth, May 2014.
+			$heightPreference = $thumbAspectRatio < $sourceAspectRatio;
+
+			$crop = array( '-gravity', 'center', '-crop', "{$originalWidth}x{$originalHeight}+0+0" );
+			if ( $heightPreference ) {
+				$thumbnail = array( '-thumbnail', "x{$originalHeight}" );
 			} else {
-				$thumbnail = array( '-thumbnail', "{$physicalWidth}x" );
+				$thumbnail = array( '-thumbnail', "{$originalWidth}x" );
 			}
 		}
 
@@ -412,7 +420,7 @@ class BitmapHandler extends ImageHandler {
 		wfDebug( __METHOD__ . ": running ImageMagick: $cmd\n" );
 		wfProfileIn( 'convert' );
 		$retval = 0;
-		if (wfRunHooks("ImageConvert", array($dstPath, $params))) {
+		if (wfRunHooks("ImageConvert", array($params))) {
 			$err = wfShellExecWithStderr( $cmd, $retval, $env );
 			wfRunHooks("ImageConvertComplete", array($params));
 		}

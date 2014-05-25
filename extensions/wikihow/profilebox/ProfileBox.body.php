@@ -1119,24 +1119,25 @@ $wgOut->addHTML("
 		}
 
 		$pb_showlive = false;
+		$pb_live = '';
 		$t = Title::newFromText($u->getUserPage() . '/profilebox-live');
 		if ($t->getArticleId() > 0) {
 			$r = Revision::newFromTitle($t);
 			$pb_live = $r->getText();
-			if($pb_live != "")
-				$pb_showlive = true;
+			if ($pb_live) $pb_showlive = true;
 		}
 
 		$pb_showwork = false;
+		$pb_work = '';
 		$t = Title::newFromText($u->getUserPage() . '/profilebox-occupation');
 		if ($t->getArticleId() > 0) {
 			$r = Revision::newFromTitle($t);
 			$pb_work = $r->getText();
-			if($pb_work != "")
-				$pb_showwork = true;
+			if ($pb_work) $pb_showwork = true;
 		}
 
 		$t = Title::newFromText($u->getUserPage() . '/profilebox-aboutme');
+		$pb_aboutme = '';
 		if ($t->getArticleId() > 0) {
 			$r = Revision::newFromTitle($t);
 			$pb_aboutme = $r->getText();
@@ -1153,7 +1154,7 @@ $wgOut->addHTML("
 			'pb_display_show' => $u->getOption('profilebox_display'),
 			'pb_regdate' => $pb_regdate,
 			'pb_showlive' => $pb_showlive,
-			'pb_live' =>$pb_live,
+			'pb_live' => $pb_live,
 			'pb_showwork' => $pb_showwork,
 			'pb_work' => $pb_work,
 			'pb_aboutme' => $pb_aboutme,
@@ -1366,7 +1367,7 @@ class ProfileStats {
 		if ($results) {
 			$fas = ProfileBox::getFeaturedArticles();
 			foreach($results as $i => $row) {
-				$row->fa = (bool)$fas[ $row->page_title ];
+				$row->fa = isset($fas[ $row->page_title ]) ? (bool)$fas[ $row->page_title ] : false;
 
 				$title = Title::makeTitle($row->page_namespace, $row->page_title);
 				$rs = $dbr->selectField('pagelist', array('count(*)'), array('pl_page'=>$title->getArticleID(), 'pl_list'=>'risingstar'), __METHOD__) > 0;

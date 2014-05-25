@@ -239,13 +239,26 @@ abstract class WAPUIUserController extends WAPUIController {
 		return;
 	}
 
-	public function completedArticlesReport($langCode = null) {
+	public function completedArticlesReport($langCode = null, $fromDate = null, $toDate = null) {
 		global $IP, $wgRequest;
 		$lang = is_null($langCode) ? $this->cu->getLanguageTag() : $langCode;
 		$reportClass = $this->config->getReportClassName();
 		$cr = new $reportClass($this->dbType);
-		$fromDate = wfTimestamp(TS_MW, strtotime("-6 weeks", strtotime(date('Ymd', time()))));
-		$rpt = $cr->getCompletedArticles($lang, $fromDate);
+
+		$maxFromDate = strtotime("-6 weeks", strtotime(date('Ymd', time())));
+        if (empty($fromDate) || strtotime($fromDate) < $maxFromDate) {
+            $fromDate = wfTimestamp(TS_MW, $maxFromDate);;
+        }
+
+        if (empty($toDate)) {
+            $toDate = wfTimestampNow();
+        }
+
+        $fromDate = wfTimestamp(TS_MW, strtotime($fromDate));
+        $toDate = wfTimestamp(TS_MW, strtotime("+1 day", strtotime($toDate)));
+
+
+		$rpt = $cr->getCompletedArticles($lang, $fromDate, $toDate);
 		$system = $this->config->getSystemName();
 		Misc::outputFile("{$system}_completed_{$rpt['ts']}" . $reportClass::FILE_EXT, 
 			$rpt['data'], $reportClass::MIME_TYPE);

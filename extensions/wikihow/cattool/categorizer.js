@@ -256,6 +256,7 @@ $(function() {
 			$('#cat_search_outer').fadeIn('fast');
 			$("#cat_article").html(result['article']);
 		}, 'json');
+		window.oTrackUserAction();
 	}
 
 	function getSelectedCategories() {

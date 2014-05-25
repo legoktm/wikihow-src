@@ -240,10 +240,21 @@ class HAWelcomeJob extends Job {
 							$real_name = User::whoIsReal($mSysop->getID());
 							if ($real_name == "") { $real_name = $mSysop->getName(); }
 							$comment = $welcomeMsg;
+							//add a hidden variable to id welcome user notifications for echo
+							$comment .= '<!--welcomeuser-->';
 							
 							$formattedComment = wfMsg('postcomment_formatted_comment', $dateStr, $mSysop->getName(), $real_name, $comment);
 
 							$talkArticle->doEdit( $formattedComment, wfMsgForContent( "welcome-message-log" ), $flags );
+							
+							//notify via the echo notification system
+							if (class_exists('EchoEvent')) {
+								EchoEvent::create( array(
+									'type' => 'edit-user-talk',
+									'title' => $talkPage,
+									'agent' => $mSysop,
+								) );
+							}
 						}
 //					}
 					$wgTitle = $tmpTitle;
@@ -358,10 +369,21 @@ class HAWelcomeJob extends Job {
 							$real_name = User::whoIsReal($mSysop->getID());
 							if ($real_name == "") { $real_name = $mSysop->getName(); }
 							$comment = $welcomeMsg;
+							//add a hidden variable to id welcome user notifications for echo
+							$comment .= '<!--welcomeuser-->';
 							
 							$formattedComment = wfMsg('postcomment_formatted_comment', $dateStr, $mSysop->getName(), $real_name, $comment);
 
 							$talkArticle->doEdit( $formattedComment, wfMsgForContent( "welcome-message-log" ), $flags );
+							
+							//notify via the echo notification system
+							if (class_exists('EchoEvent')) {
+								EchoEvent::create( array(
+									'type' => 'edit-user-talk',
+									'title' => $talkPage,
+									'agent' => $mSysop,
+								) );
+							}
 						}
 					}
 				}

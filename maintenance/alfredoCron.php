@@ -12,7 +12,7 @@
  */
 
 require_once("commandLine.inc");
-if(preg_match("@doh@",$wgServerName)) {
+if(IS_DEV_SITE) {
 	define('WH_API_HOST', 'gershon2.doh.wikidiy.com');
 	define('WH_API_PROTOCOL', 'http');
 }

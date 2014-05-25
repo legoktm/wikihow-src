@@ -162,6 +162,23 @@ class MassMessageJob extends Job {
 			'bot' => true,
 			'token' => $user->getEditToken()
 		);
+		
+		//XXCHANGEDXX [sc]
+		//notify via the echo notification system
+		if (class_exists('EchoEvent')) {
+			if ($this->params['comment'][0]) {
+				$agent = User::newFromName($this->params['comment'][0]);
+			}
+			else {
+				$agent = $user; //default (yuck) to out bot name
+			}
+				
+			EchoEvent::create( array(
+				'type' => 'edit-user-talk',
+				'title' => $this->title,
+				'agent' => $agent,
+			) );
+		}
 
 		$this->makeAPIRequest( $params );
 	}

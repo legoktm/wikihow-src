@@ -356,7 +356,9 @@ class SpecialMassMessage extends SpecialPage {
 		if (!$real_name) $real_name = $user;
 		
 		$msg = wfMsg('postcomment_formatted_comment', $dateStr, $user, $real_name, $msg);
-	
+		//add a hidden variable to id mass message notifications for echo
+		$msg .= '<!--massmessage-->';
+		
 		return $msg;
 	}
 }

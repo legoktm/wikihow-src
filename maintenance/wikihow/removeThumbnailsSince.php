@@ -1,7 +1,7 @@
 <?php
-
 // script to regenerate thumbnails for an image and clear then from caches
 require_once( __DIR__ . '/../Maintenance.php' );
+require_once( __DIR__ . '/cdnetworkssupport/CDNetworksSupport.php' );
 
 class RemoveThumbnailsSince extends Maintenance {
 
@@ -9,24 +9,39 @@ class RemoveThumbnailsSince extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->addOption( 'title', 'start article id', false, true, 't');
+		$this->addOption( 'title', 'title', false, true, 't');
 		$this->addOption( 'start', 'start article id', false, true, 's');
+		$this->addOption( 'stop', 'stop article id', false, true);
 		$this->addOption( 'purgelocal', 'clear local thumbnail files', false, false);
 		$this->addOption( 'regenerate', 'recreate the thumbs', false, false);
 		$this->addOption( 's3', 'clear from s3', false, false);
 		$this->addOption( 'cdn', 'clear from cdn', false, false);
 		$this->addOption( 'cdnuser', 'cdnetworks username (usually email)', false, true, 'u');
 		$this->addOption( 'cdnpass', 'cdnetworks password', false, true, 'p');
+		$this->addOption( 'stream', 'stream input list of titles', false, false);
 	}
 
 	public function execute() {
 		global $IP;
 		require_once("$IP/extensions/wikihow/common/S3.php");
-
 		define('WH_USE_BACKUP_DB', true);
 
 		$pageIds = array();
 
+		// allow for the input files to be specified on the command line
+		if ($this->getOption('stream')) {
+			$data = stream_get_contents(STDIN);
+			$data = array_map('trim', explode("\n", $data));
+
+			foreach($data as $inputTitle) {
+				$title = Title::newFromText($inputTitle, 6);
+				if (!$title) {
+					continue;
+				}
+				$id = $title->getArticleID();
+				$pageIds[] = $id;
+			}
+		}
 		// if provided title, add that to the array
 		$titleText = $this->getOption('title');
 		if ($titleText) {
@@ -40,6 +55,10 @@ class RemoveThumbnailsSince extends Maintenance {
 		if ($start) {
 			$dbr = wfGetDB(DB_SLAVE);
 			$options = array("page_id > $start", "page_namespace = 6");
+			$stop = $this->getOption('stop');
+			if ($stop) {
+				$options[] = "page_id < $stop";
+			}
 			$res = $dbr->select("page",
 					"page_id",
 					$options,
@@ -61,7 +80,8 @@ class RemoveThumbnailsSince extends Maintenance {
 			}
 
 			$userName = $file->getUser("text");
-			if ($userName == "Wikiphoto" || $userName == "Maintenance script") {
+			if (WatermarkSupport::isWikihowCreator($userName)) {
+				decho("file", $title->getText(), false);
 
 				if ($this->getOption('s3')) {
 					decho("will purge from s3", false, false);
@@ -104,9 +124,7 @@ class RemoveThumbnailsSince extends Maintenance {
 
 		if ($this->getOption('cdn')) {
 			decho("will purge from cdn", false, false);
-			foreach( $filesToPurgeFromCDN as $file) {
-				$this->purgeThumbnailsFromCDNetworks($file);
-			}
+			$this->purgeThumbnailsFromCDNetworks($filesToPurgeFromCDN);
 		}
 	}
 
@@ -136,61 +154,31 @@ class RemoveThumbnailsSince extends Maintenance {
 		}
 	}
 
-	// copied from cdn_flush for now because can't import it easily
-	// todo don't have two copies of the same function
-	public static function doCDnetworksApiCall($params) {
-		$url = 'https://openapi.us.cdnetworks.com/purge/rest/doPurge';
-
-		$object = preg_replace('@http://[^/]+@', '', $params['url']);
-		if (!preg_match('@^/@', $object)) {
-			print "Error: Path should start with '/'\n";
-			exit;
-		}
-		$type = strpos($object, '*') !== false ? 'wildcard' : 'item';
-		$double = strpos($object, '**') !== false;
-		#if ($type == 'wildcard' && !$double) {
-			# Per justin.rodriguez from CDNetworks <support@cdnetworks.com>
-			# in March 20, 2013 email to Reuben
-			#print "Notice: to clear 'recursively' all subdirs, it's necessary to use /path/fo/**\n";
-		#}
-		$sendParams = array(
-			'pad=pad1.whstatic.com',
-			'user=' . $params['user'],
-			'pass=' . $params['password'],
-			'type=' . $type,
-			'path=' . $object, //urlencode($object),
-			'output=json',
-		);
-		$paramStr = join('&', $sendParams);
-		$ch = curl_init($url . '?' . $paramStr);
-		#curl_setopt($ch, CURLOPT_VERBOSE, true);
-		#curl_setopt($ch, CURLOPT_POST, true);
-		#curl_setopt($ch, CURLOPT_POSTFIELDS, $paramStr);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-		$ret = curl_exec($ch);
-		curl_close($ch);
-
-		return $ret;
-	}
-
 	// todo make this function take username and password then it can be static too
-	function purgeThumbnailsFromCDNetworks($file) {
-		$thumbnails = $file->getThumbnails();
-		$dir = array_shift( $thumbnails );
+	function purgeThumbnailsFromCDNetworks($files) {
+		$locations = array();
 
-		// set up the directory path for cdnetworks
-		$dirPath = str_replace("mwstore://local-backend/local-thumb/", "", $dir);
-		$cdnUrl = "/images_en/thumb/".$dirPath.'/*';
+		foreach($files as $file) {
+			$thumbnails = $file->getThumbnails();
+			$dir = array_shift( $thumbnails );
+			foreach($thumbnails as $thumbnail) {
+				$dirPath = str_replace("mwstore://local-backend/local-thumb/", "", $dir);
+				$locations[] = "/images/thumb/" . $dirPath . "/" . $thumbnail;
+			}
+		}
 
 		$user = $this->getOption('cdnuser');
 		$pass = $this->getOption('cdnpass');
 
 		if ($user && $pass) {
-			$params = array($user, $pass, $cdnUrl);
-			decho("will call to cdnet with", $cdnUrl, false);
-			//$html = self::doCDnetworksApiCall($params);
+			$params = array('user'=>$user, 'password'=>$pass);
+			decho("will call to cdnet with", $locations, false);
+			//TODO if this list is longer than 1000 split into separate calls
+			// or maybe just write this all to a file
+			$html = CDNetworksSupport::doCDnetworksApiCall($params, $locations);
 			decho("response from CDN", $html, false);
+		} else {
+			decho("must provide user and password to do cdn flush");
 		}
 	}
 }

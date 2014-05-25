@@ -219,6 +219,9 @@ class AdminConfigEditor extends UnlistedSpecialPage {
 		<? if ($bURL) { ?>
 			<option value="wikihow-watermark-article-list">wikihow-watermark-article-list</option>
 			<option value="wikiphoto-article-exclude-list">wikiphoto-article-exclude-list</option>
+			<option value="wikihow-methodtoc-test-01">wikihow-methodtoc-test-01</option>
+			<option value="wikihow-methodtoc-test-02">wikihow-methodtoc-test-02</option>
+			<option value="wikihow-nointro-test">wikihow-nointro-test</option>
 		<? } else {
 			foreach ($configs as $config): ?>
 				<option value='<?= $config ?>'><?= $config ?></option>

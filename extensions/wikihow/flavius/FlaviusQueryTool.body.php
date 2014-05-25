@@ -164,10 +164,18 @@ class FlaviusQueryTool extends UnlistedSpecialPage {
 			$ids = array();
 			foreach($users as $user) {
 				if(preg_match("@http://www\.wikihow\.com/User:(.+)@i", $user, $matches)) {
-					$u = User::newFromName($matches[1]);
-					if($u) {
-						$ids[] = $u->getId();
+					if($matches[1] == "127.0.0.1") {
+						$ids[] = 0;
 					}
+					else {
+						$u = User::newFromName($matches[1]);
+						if($u) {
+							$ids[] = $u->getId();
+						}
+					}
+				}
+				elseif ($user == "anon" || $user == "Anon") {
+					$ids[] = 0;	
 				}
 			}
 			if(sizeof($ids) > 0) {

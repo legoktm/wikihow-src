@@ -90,7 +90,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	 * Insert the captcha prompt into the edit form.
 	 */
 	function getForm() {
-		global $wgOut, $wgExtensionAssetsPath, $wgEnableAPI, $wgTitle;
+		global $wgOut, $wgExtensionAssetsPath, $wgEnableAPI, $wgTitle, $wgRequest;
 
 		// Uses addModuleStyles so it is loaded when JS is disabled.
 		$wgOut->addModuleStyles( 'ext.confirmEdit.fancyCaptcha.styles' );
@@ -129,7 +129,15 @@ class FancyCaptcha extends SimpleCaptcha {
 				wfMessage('captcha_login_label')->plain()
 			);
 		}
-		
+
+		//XXCHANGEDXX - Different tabindex position on different pages
+		$ult = SpecialPage::getTitleFor("UserLogin");
+		if (Title::compare($wgTitle,$ult) == 0 && $wgRequest->getVal('type','') == 'signup') {
+			$tabindex = 7;	
+		}
+		else {
+			$tabindex = 4;	
+		}
 		return "<div class='fancycaptcha-wrapper'><div class='fancycaptcha-image-container'>" .
 			Html::element( 'img', array(
 					'class'  => 'fancycaptcha-image',
@@ -150,7 +158,7 @@ class FancyCaptcha extends SimpleCaptcha {
 					'autocorrect' => 'off',
 					'autocapitalize' => 'off',
 					'required' => 'required',
-					'tabindex' => 1,
+					'tabindex' => $tabindex,
 					'class' => 'input_med'
 				)
 			) . // tab in before the edit textarea

@@ -22,6 +22,13 @@ class WikihowShare {
 		else
 			$gp1 = "";
 		
+		// Reuben added to remove certain images from pinterest sharing where
+		// we are having video thumbnail / Google index CTR problems. We
+		// override the $img variable to be '' so that the thumbnail image 
+		// for the video isn't shared.
+		if(ArticleMetaInfo::isImageExclusionArticle()) {
+			$img = '';
+		}
 		$pinterest = '<div id="pinterest"><a href="http://pinterest.com/pin/create/button/?url=' . $url . '&media=' . $img . '&description=' . $desc . '" class="pin-it-button" count-layout="vertical">Pin It</a></div>';
 
 		// German includes "how to " in the title text
@@ -92,6 +99,13 @@ class WikihowShare {
 		else
 			$gp1 = "";
 		
+		// Reuben added to remove certain images from pinterest sharing where
+		// we are having video thumbnail / Google index CTR problems. We
+		// override the $img variable to be '' so that the thumbnail image 
+		// for the video isn't shared.
+		if(ArticleMetaInfo::isImageExclusionArticle()) {
+			$img = '';
+		}
 		$pinterest = '<div id="pinterest"><a data-pin-config="beside" href="http://pinterest.com/pin/create/button/?url=' . $url . '&media=' . $img . '&description=' . $desc . '" class="pin-it-button" data-pin-do="buttonPin">Pin It</a></div>';
 		
 		if ($wgLanguageCode != 'en') {

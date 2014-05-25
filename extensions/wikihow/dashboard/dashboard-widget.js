@@ -19,7 +19,7 @@ if (WH.dashboard && !WH.dashboard.DashboardWidget) {
 			}
 
 			if (type == 'df') {
-				return wfGetPad('/skins/WikiHow/images/default_profile.png');
+				return wfGetPad('/skins/WikiHow/images/80x80_user.png');
 			} else if (type == 'fb' || type == 'gp') {
 				return param;
 			} else {

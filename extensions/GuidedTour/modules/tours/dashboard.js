@@ -44,9 +44,9 @@
 			descriptionmsg: 'guidedtour-tour-dashboard-tipspatrol-description',
 
 			// attachment
-			attachTo: 'div.comdash-widget-TipsPatrolWidget div.comdash-widget-body',
-			position: 'right',
-			offset: {'top': 0, 'left': -20},
+			attachTo: 'div.comdash-widget-TipsPatrolWidget',
+			position: 'top',
+			offset: {'top': 20, 'left': 0},
 
 			buttons: [ {
 				action: 'next'
@@ -56,9 +56,9 @@
 			descriptionmsg: 'guidedtour-tour-dashboard-rc-description',
 
 			// attachment
-			attachTo: 'div.comdash-widget-RecentChangesAppWidget div.comdash-widget-body',
-			position: 'right',
-			offset: {'top': 0, 'left': -20},
+			attachTo: 'div.comdash-widget-RecentChangesAppWidget',
+			position: 'top',
+			offset: {'top': 20, 'left': 0},
 
 			buttons: [ {
 				action: 'next'
@@ -81,9 +81,9 @@
 			descriptionmsg: 'guidedtour-tour-dashboard-answerrequests-description',
 
 			// attachment
-			attachTo: 'div.comdash-widget-WriteAppWidget > div.comdash-widget-body',
-			position: '3',
-			offset: {'top': 0, 'left': 15},
+			attachTo: 'div.comdash-widget-WriteAppWidget',
+			position: 'top',
+			offset: {'top': 20, 'left': 0},
 
 			buttons: [ {
 				action: 'next'

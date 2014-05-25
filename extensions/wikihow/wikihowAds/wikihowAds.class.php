@@ -129,20 +129,38 @@ EOHTML;
 	}
 	
 	function adExclusions($title){
+		global $wgLanguageCode, $wgMemc;
+
 		if (!$title || !$title->exists()) {
 			return false;
 		}
 
-		$msg = ConfigStorage::dbGetConfig('ad-exclude-list'); //popular companies
-		$articles = split("\n", $msg);
+		/**
+		 * For now we're using memcache to store the array. If we get
+		 * over ~2000 articles then we should switch to querying the table
+		 * each time rather than storing the whole array.
+		 **/
+		$key = wfMemcKey('adExclusions', $wgLanguageCode);
+		$excludeList = $wgMemc->get($key);
+		if (!$excludeList || !is_array($excludeList)) {
+			$excludeList = array();
 
-		if(in_array($title->getArticleID(), $articles)) {
+			$dbr = wfGetDB(DB_SLAVE);
+			$res = $dbr->select(AdminAdExclusions::EXCLUSION_TABLE, "ae_page", array(), __METHOD__);
+			foreach($res as $row) {
+				$excludeList[] = $row->ae_page;
+			}
+			$wgMemc->set($key, $excludeList);
+		}
+
+		if(in_array($title->getArticleID(), $excludeList)) {
 			return true;
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
-	
+
 	function resetAllAdExclusionCaches() {
 		global $wgActiveLanguages, $wgDBname;
 
@@ -161,7 +179,10 @@ EOHTML;
 	function resetAdExclusionCache(&$dbr, $languageCode) {
 		global $wgMemc, $wgDBname;
 
+		$oldDBname = $wgDBname;
+		$wgDBname = Misc::getLangDB($languageCode);
 		$key = wfMemcKey('adExclusions', $languageCode);
+		$wgDBname = $oldDBname;
 		$excludeList = array();
 
 		if($languageCode == "en") {
@@ -170,7 +191,7 @@ EOHTML;
 			$dbr->selectDB('wikidb_'.$languageCode);
 		}
 
-		$res = $dbr->select(AdminAdExclusions::EXCLUSION_TABLE, "ae_page", array(), __METHOD__);	
+		$res = $dbr->select(AdminAdExclusions::EXCLUSION_TABLE, "ae_page", array(), __METHOD__);
 		foreach($res as $row) {
 			$excludeList[] = $row->ae_page;
 		}
@@ -245,7 +266,7 @@ EOHTML;
 				}
 				else {
 					$tmpl->set_vars(array('adLabel' => wfMsg('ad_label')));
-					$s = $tmpl->execute('wikihowAdCSIIntl.tmpl.php');
+					$s = $tmpl->execute('wikihowAdAsyncIntl.tmpl.php');
 				}
 			}
 
@@ -298,7 +319,7 @@ EOHTML;
 			$titleUrl = $wgTitle->getFullURL();
 			
 			$msg = wfMessage('IAtest')->text();
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					return wikihowAds::getAdUnitPlaceholder(4);
@@ -327,7 +348,7 @@ EOHTML;
 			$title = $wgTitle->getFullURL();
 			$titleUrl = $wgTitle->getFullURL();
 			$msg = ConfigStorage::dbGetConfig('T_bin1'); //popular companies
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $title){
 					$foundTech = true;
@@ -351,7 +372,7 @@ EOHTML;
 
 			if (!$foundTech) {
 				$msg = ConfigStorage::dbGetConfig('T_bin2'); //startup companies
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$foundTech = true;
@@ -435,7 +456,7 @@ EOHTML;
 			
 			//Original WRM bucket
 			$msg = ConfigStorage::dbGetConfig('Dec2010_bin0');
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					self::$mGlobalChannels[] = "8110356115"; //original wrm channels
@@ -448,7 +469,7 @@ EOHTML;
 			$found = false;
 			$title = $wgTitle->getFullText();
 			$msg = ConfigStorage::dbGetConfig('Dec2010_bin1');
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $title){
 					$found = true;
@@ -458,7 +479,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin2');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -469,7 +490,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin3');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -480,7 +501,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin4');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -491,7 +512,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin5');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -502,7 +523,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin6');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -513,7 +534,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin7');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -524,7 +545,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin8');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -535,7 +556,7 @@ EOHTML;
 			}
 			if(!$found){
 				$msg = ConfigStorage::dbGetConfig('Dec2010_bin9');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				foreach ($articles as $article) {
 					if($article == $title){
 						$found = true;
@@ -546,7 +567,7 @@ EOHTML;
 			}
 
 			$msg = ConfigStorage::dbGetConfig('Dec2010_e1');
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					self::$mGlobalChannels[] = "8107511392"; //WRM Bucket: E1
@@ -555,7 +576,7 @@ EOHTML;
 			}
 
 			$msg = ConfigStorage::dbGetConfig('Dec2010_e2');
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					self::$mGlobalChannels[] = "3119976353"; //WRM Bucket: E2
@@ -564,7 +585,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('DrawTest'); //drawing articles
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -573,12 +594,12 @@ EOHTML;
 				}
 			}
 
-			if (self::$mCategories['Recipes'] != null) {
+			if (isset(self::$mCategories['Recipes']) && self::$mCategories['Recipes'] != null) {
 				self::$mGlobalChannels[] = "5820473342"; //Recipe articles
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_a'); //content strategy A
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -588,7 +609,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_b'); //content strategy B
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -598,7 +619,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_c'); //content strategy C
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -608,7 +629,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_d'); //content strategy D
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -618,7 +639,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_e'); //content strategy E
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -628,7 +649,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_f'); //content strategy F
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -638,7 +659,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_g'); //content strategy G
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -648,7 +669,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_h') . "\n" . wfMessage('CS_h1')->text(); //content strategy H
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -658,7 +679,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_i'); //content strategy I
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -668,7 +689,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_j'); //content strategy J
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -678,7 +699,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_k'); //content strategy K
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -688,7 +709,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_l'); //content strategy L
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -698,7 +719,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_m'); //content strategy M
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -708,7 +729,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_n'); //content strategy N
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -718,7 +739,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_o'); //content strategy O
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -728,7 +749,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_p'); //content strategy P
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -738,7 +759,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_q'); //content strategy Q
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -748,7 +769,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_r'); //content strategy R
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -758,7 +779,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_s'); //content strategy S
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -768,7 +789,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_t'); //content strategy T
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -778,7 +799,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('CS_u'); //content strategy U
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -788,7 +809,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2012Q1'); 
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -798,7 +819,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2012Q2'); 
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -808,7 +829,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2012Q3');
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -818,7 +839,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2012Q4'); 
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -828,7 +849,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2013Q1'); 
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -838,7 +859,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2013Q2'); 
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -848,7 +869,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2013Q3');
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -858,7 +879,7 @@ EOHTML;
 			}
 			
 			$msg = ConfigStorage::dbGetConfig('WRM_2013Q4'); 
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 			foreach ($articles as $article) {
 				if($article == $titleUrl){
 					$ts = $details->rev_timestamp;
@@ -1146,7 +1167,7 @@ EOHTML;
 		$wikihowUrl = "http://www.wikihow.com/" . $wgTitle->getPartialURL();
 		
 		$msg = ConfigStorage::dbGetConfig('redesign_control'); 
-		$articles = split("\n", $msg);
+		$articles = explode("\n", $msg);
 		if(in_array($wikihowUrl, $articles))
 			return true;
 		else
@@ -1159,7 +1180,7 @@ EOHTML;
 		$wikihowUrl = "http://www.wikihow.com/" . $wgTitle->getPartialURL();
 		
 		$msg = ConfigStorage::dbGetConfig('redesign_test'); 
-		$articles = split("\n", $msg);
+		$articles = explode("\n", $msg);
 		if(in_array($wikihowUrl, $articles))
 			return true;
 		else
@@ -1170,7 +1191,7 @@ EOHTML;
 		global $wgTitle;
 		
 		$msg = wfMessage('Js_control')->text(); //JS test
-		$articles = split("\n", $msg);
+		$articles = explode("\n", $msg);
 		
 		if(in_array($wgTitle->getDBkey(), $articles) ) 
 			return true;
@@ -1183,7 +1204,7 @@ EOHTML;
 		global $wgTitle;
 		
 		$msg = wfMessage('Js_test')->text(); //JS test
-		$articles = split("\n", $msg);
+		$articles = explode("\n", $msg);
 		
 		if(in_array($wgTitle->getDBkey(), $articles) ) 
 			return true;
@@ -1222,7 +1243,7 @@ EOHTML;
 			preg_match_all("/^#.*/im", $content, $matches);
 			foreach ($matches[0] as $match) {
 				$match = str_replace("#", "", $match);
-				$cats = split(",", $match);
+				$cats = explode(",", $match);
 				$channel= trim(array_pop($cats));
 				foreach($cats as $c) {
 					$c = trim($c);
@@ -1270,7 +1291,7 @@ EOHTML;
 
 		$params = $categories['Other']; // default category
 		foreach ($categories as $category => $par) {
-			if (self::$mCategories[$category] != null) {
+			if (isset(self::$mCategories[$category]) && self::$mCategories[$category] != null) {
 				$params = $par;
 				break;
 			}
@@ -1294,7 +1315,7 @@ EOHTML;
 			return true;
 		}
 		else {
-			if (self::$mCategories['Home-and-Garden'] != null) {
+			if (isset(self::$mCategories['Home-and-Garden']) && self::$mCategories['Home-and-Garden'] != null) {
 				return true;
 			}
 		}
@@ -1328,6 +1349,28 @@ EOHTML;
 		if (!$show) $hideit_style = ' style="display: none;"';
 		
 		$s = "<div class='wh_ad wh_ad_interstitial'$hideit_style>$s</div>";	
+	
+		return $s;
+	}
+	
+	function getAdUnitTaboola($show = true) {
+		global $wgTitle;
+		
+		if (self::adExclusions($wgTitle))
+			$placement = 'below-article-thumbs-pg-13';
+		else
+			$placement = 'below-article-thumbs';
+		
+		$tmpl = new EasyTemplate( dirname(__FILE__) );
+		$tmpl->set_vars(array(
+			'placement' => $placement,
+		));
+		$s = $tmpl->execute('wikiHowAdTaboola.tmpl.php');
+
+		$hideit_style = '';
+		if (!$show) $hideit_style = ' style="display: none;"';
+		
+		$s = "<div class='wh_ad'$hideit_style>$s</div>";
 	
 		return $s;
 	}
@@ -1412,7 +1455,7 @@ EOHTML;
 				$wikihowUrl = "http://www.wikihow.com/" . $wgTitle->getPartialURL();
 
 				$msg = ConfigStorage::dbGetConfig('beta_test');
-				$articles = split("\n", $msg);
+				$articles = explode("\n", $msg);
 				if(in_array($wikihowUrl, $articles))
 					wikihowAds::$isABTest = true;
 			}
@@ -1448,7 +1491,7 @@ EOHTML;
 
 		if($wgLanguageCode == "en") {
 			$msg = ConfigStorage::dbGetConfig('ad_jump'); //articles that need the jump
-			$articles = split("\n", $msg);
+			$articles = explode("\n", $msg);
 				if(in_array($wgTitle->getArticleID(), $articles)) {
 					return wfMsg('ad_jump');
 				}

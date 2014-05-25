@@ -13,6 +13,7 @@
 </div>
 <div id="tip" class="tool">
 	<div id="tip_header" class="tool_header">
+		<a href="#" id="tips_keys">Get Shortcuts</a>
 		<h1>Should we publish this tip or delete it?</h1> 
 		<textarea id="tip_tip" class="mousetrap" tabindex="1"></textarea><br />
 		<input id="tip_read" type="checkbox"  type="checkbox" tabindex="2"/>This tip has been fully reviewed and is ready to be published on the article.<br />
@@ -24,4 +25,7 @@
 </div>
 <div id="tip_error" style="display:none;">
 	There are no additional tips to approve at this time. Please check again later. In the interim, please visit our <a href="/Special:CommunityDashboard">community dashboard</a> to find another way to help out.
+</div>
+<div id="tips_info" style="display:none;">
+    <?= wfMessage('tipspatrol_keys')->text(); ?>
 </div>

@@ -154,3 +154,9 @@ a.clickfail:hover {
 	font-size: .75em;
 	padding-top: .5em;
 }
+
+#edit_keys {
+    float: right;
+	font-size: 10px;
+	margin-top: -45px;
+}

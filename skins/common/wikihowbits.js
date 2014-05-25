@@ -1,4 +1,4 @@
-var WH = WH || {};                                                                                                                                            
+var WH = WH || {};
 
 var ua = navigator.userAgent.toLowerCase(); // get client browser info
 
@@ -87,7 +87,7 @@ WH.onLoadChineseSpecific = function () {
 	$('#header #wpUserVariant').change( function () {
 		var variant = $('#wpUserVariant').val();
 		setCookie('wiki_sharedvariant', variant, 0);
-		
+
 		var hs = location.href.split("?");
 		var loc = "";
 		if(hs.length > 1) {
@@ -191,7 +191,7 @@ function addClickHandler( element, handler ) {
 //	  so the below should be redundant. It's there just in case.
 hookEvent("load", runOnloadHook);
  */
- 
+
 var share_requester;
 function handle_shareResponse() {
 }
@@ -290,11 +290,11 @@ function setCookie(name, value, expireDays) {
 	var daysMs = expireDays * 24 * 60 * 60 * 1000
 	var expireDate = new Date();
 	expireDate.setDate(expireDate.getDate() + daysMs);
-	document.cookie = name + "=" + escape(value) + (!expireDays ? "" : ";expires=" + expireDate.toGMTString());
+	document.cookie = name + "=" + escape(value) + (!expireDays ? "" : ";expires=" + expireDate.toGMTString()) + ";path=/";
 }
 
 function getCookie(c_name) {
-	var x, y, 
+	var x, y,
 		cookiesArr = document.cookie.split(";");
 	for (var i = 0; i < cookiesArr.length; i++) {
 		x = cookiesArr[i].substr(0, cookiesArr[i].indexOf("="));
@@ -925,7 +925,10 @@ function extractParamFromUri(uri, paramName) {
 }
 
 WH.addScrollEffectToTOC = function() {
-	WH.addScrollEffectToHashes( $('#toc * a') );
+	//regular TOC
+	if ($('#toc').length) WH.addScrollEffectToHashes( $('#toc * a') );
+	//Alt Method TOC
+	if ($('#method_toc').length) WH.addScrollEffectToHashes( $('#method_toc a') );
 };
 
 // add a scroll effect using jQuery.scrollTo
@@ -975,13 +978,13 @@ WH.isPageScrolledToWarningsORArticleInfo = function () {
 	var elem1 = '#warnings';
 	var elem2 = '#article_info_header';
 	var the_elem = '';
-	
+
 	if ($(elem1).length) {
 		the_elem = elem1;
 	} else {
 		the_elem = elem2;
 	}
-	
+
     var docViewTop = $(window).scrollTop();
     var docViewBottom = docViewTop + $(window).height();
 
@@ -991,7 +994,7 @@ WH.isPageScrolledToWarningsORArticleInfo = function () {
 
 WH.isPageScrolledToFollowTable = function () {
 	var the_elem = '#follow_table';
-	
+
     var docViewTop = $(window).scrollTop();
     var docViewBottom = docViewTop + $(window).height();
 
@@ -1011,7 +1014,7 @@ WH.isPageScrolledToFollowTable = function () {
 })(jQuery);
 
 $(document).ready(function() {
-	
+
 	// Slider -- not for browsers that don't render +1 buttons
 	var oldMSIE = $.browser.msie && $.browser.version <= 7;
 	if ($('#slideshowdetect').length
@@ -1048,13 +1051,13 @@ $(document).ready(function() {
 			});
 		}
 	}
-	
+
 	//fire off slideshow if we need to
 	if ($('#showslideshow').length) {
 		//var url = '/Special:GallerySlide?show-slideshow=1&aid='+wgArticleId;
 		//var url = '/Special:GallerySlide?show-slideshow=1&big-show=1&aid='+wgArticleId;
 		var url = '/Special:GallerySlide?show-slideshow=1&big-show=1&article_layout=2&aid='+wgArticleId;
-		
+
 		$.getJSON(url, function(json) {
 			if (json && json.content) {
 				document.getElementById('showslideshow').innerHTML = json.content;
@@ -1062,7 +1065,7 @@ $(document).ready(function() {
 				$('#showslideshow').slideDown();
 			}
 		});
-	}	
+	}
 
 	//add checkbox click handlers
 	$('.step_checkbox').click(function() {
@@ -1089,13 +1092,13 @@ $(document).ready(function() {
 
 	//site notice close
 	$('#site_notice_x').click(function() {
-	
+
 		//30 day cookie
 		var exdate = new Date();
 		var expiredays = 30;
 		exdate.setDate(exdate.getDate()+expiredays);
 		document.cookie = "sitenoticebox=1;expires="+exdate.toGMTString();
-		
+
 		//good-bye
 		$('#site_notice').hide();
 	});
@@ -1117,11 +1120,11 @@ WH.setGooglePlusOneLangCode = function() {
 jQuery(document).on('click', 'a#wikitext_downloader', function(e) {
 	e.preventDefault();
 	var data = { 'pageid' : wgArticleId };
-	jQuery.download('/Special:WikitextDownloader', data);           
+	jQuery.download('/Special:WikitextDownloader', data);
 });
 
 jQuery("#authors").click(function(e){
-	$("#originator_names").toggle();	
+	$("#originator_names").toggle();
 	return false;
 });
 jQuery("#originator_names_close").click(function(e){
@@ -1144,7 +1147,7 @@ WH.displayTranslationCTA = function() {
 	var transCookie = getCookie('trans');
 	if (transCookie != '1'
 		&& userLang
-		&& typeof WH.translationData != 'undefined' 
+		&& typeof WH.translationData != 'undefined'
 		&& typeof WH.translationData[userLang] != 'undefined')
 	{
 		var msg = WH.translationData[userLang]['msg'];
@@ -1163,7 +1166,7 @@ WH.displayTranslationCTA = function() {
 $(document).ready(WH.displayTranslationCTA);
 
 /**
- * 
+ *
  */
 WH.maybeDisplayTopSocialCTA = function() {
 	var referrer = document.referrer ? document.referrer : '';
@@ -1184,7 +1187,7 @@ WH.maybeDisplayTopSocialCTA = function() {
 	}
 
 	if (social) {
-		
+
 		var checkMsg = function(msg) { return msg && $.trim(msg).indexOf('[') !== 0; }
 		var insertHTMLcallback = function(html) {
 			if (! $.trim(html) ) return;
@@ -1241,13 +1244,13 @@ WH.supplementAnimations = function() {
 			return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
 		},
 		easeInOutBack: function (x, t, b, c, d, s) {
-			if (s == undefined) s = 1.70158; 
+			if (s == undefined) s = 1.70158;
 			if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
 			return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
 		}
 	});
 }
-	
+
 function initAdminMenu() {
 	$('ul#tabs li').hover(function(){
 		var that = $(this);
@@ -1255,7 +1258,7 @@ function initAdminMenu() {
 	}, function() {
 		var that = $(this);
 		menu_hide(that);
-	});	
+	});
 }
 
 var on_menu = false;
@@ -1265,7 +1268,7 @@ function initTopMenu() {
 	WH.supplementAnimations();
 
 	var on_menu = false;
-	
+
 	//intelligent delay so we don't have flickering menus
 	$('#header ul#actions li').hover(function() {
 		var that = $(this);
@@ -1279,19 +1282,19 @@ function initTopMenu() {
 		var that = $(this);
 		var wait = 150;
 		clearTimeout(that.data('timeout'));
-		
+
 		//Firefox fix: lengthen delay to make sure they aren't on an autocomplete menu
-		if ((/Firefox/.test(navigator.userAgent)) && 
-			($('#wpName1_head').is(":focus") || $('#wpPassword1_head').is(":focus"))) { 
+		if ((/Firefox/.test(navigator.userAgent)) &&
+			($('#wpName1_head').is(":focus") || $('#wpPassword1_head').is(":focus"))) {
 				wait = 2000;
 		}
-		
+
 		that.data('timeout2', setTimeout( function () {
 			menu_hide(that);
 			on_menu = false;
 		  }, wait));
 	});
-	
+
 	//thumbs up deletion
 	$('.th_close').click(function() {
 		var revId = $(this).attr('id');
@@ -1299,22 +1302,22 @@ function initTopMenu() {
 		var url = '/Special:ThumbsNotifications?rev=' + revId + '&givers=' + giverIds;
 
 		$.get(url, function(data) {});
-		$('#th_msg_' + revId).hide();	
-		
+		$('#th_msg_' + revId).hide();
+
 		//lower the notification count in the header by 1
 		$('#notification_count').html($('#notification_count').html()-1);
 	});
-	
+
 	//logged-in search click
 	$('#bubble_search .search_box, #cse_q').click(function() {
 		$(this).addClass('search_white');
 	});
-	
+
 	//----- login stuff
 	$(".nav").click(function() {
 		if ($(this).attr('href')=='#') return false;
 	});
-	
+
 	$('.userlogin #wpName1, #wpName1_head').val(wfMsg('usernameoremail'))
 	.css('color','#ABABAB')
 	.click(function() {
@@ -1329,28 +1332,28 @@ function initTopMenu() {
 		if ($('.userlogin #wpPassword1').get(0)) $('.userlogin #wpPassword1').get(0).type = 'text';
 		if ($('#wpPassword1_head').get(0)) $('#wpPassword1_head').get(0).type = 'text';
 	}
-	
+
 	$('.userlogin #wpPassword1, #wpPassword1_head').val(wfMsg('password'))
 	.css('color','#ABABAB')
 	.focus(function() {
-		if ($(this).val() == wfMsg('password')) { 
+		if ($(this).val() == wfMsg('password')) {
 			$(this).val('');
 			$(this).css('color','#333'); //change font color
 			$(this).get(0).type = 'password'; //switch to dots
 		}
 	});
-	
+
 	$("#forgot_pwd").click(function() {
 		if ($("#wpName1").val() == 'Username or Email') $("#wpName1").val('');
-		getPassword(escape($("#wpName1").val())); 
+		getPassword(escape($("#wpName1").val()));
 		return false;
-	});	
-	
+	});
+
 	$("#forgot_pwd_head").click(function() {
 		if ($("#wpName1_head").val() == 'Username or Email') $("#wpName1_head").val('');
-		getPassword(escape($("#wpName1_head").val())); 
+		getPassword(escape($("#wpName1_head").val()));
 		return false;
-	});	
+	});
 	//-----------------
 }
 
@@ -1398,7 +1401,7 @@ $(document).ready(function() {
 	function toggleHeader(bShrink) {
 		//not so fast, ie7...
 		if ($.browser.msie && parseFloat($.browser.version) < 8) return;
-		
+
 		if (bShrink) {
 			$('#header')
 				.addClass('shrunk')
@@ -1427,12 +1430,12 @@ $(window).scroll(function() {
 	headerHeight = $("#header").height();
 	previousHeader = null;
 	currentHeader = null;
-	
+
 	if ($.browser.msie && parseFloat($.browser.version) < 8) {
 		//ie7 doesn't like stickiness
 	}
 	else {
-	
+
 		$(".section.sticky").each(function(){
 			currentHeader = $(this).find("h2"); //need to get either h2 or h3
 			if(!$(currentHeader).is(":visible")) //likely means we're in a steps section with h3 headers
@@ -1441,7 +1444,7 @@ $(window).scroll(function() {
 				return;
 			makeSticky($(this),currentHeader);
 		});
-		
+
 		$(".tool.sticky").each(function(){
 			currentHeader = $('.tool_header');
 			if(currentHeader.length == 0) //if there's nothing to use, just skip this section. Shouldn't really even end up in this case
@@ -1451,7 +1454,7 @@ $(window).scroll(function() {
 				makeSticky($(this),currentHeader);
 			}
 		});
-	
+
 	}
 });
 
@@ -1505,7 +1508,7 @@ function addOptions() {
 			//hide it!
 			$('.tool_options').slideUp();
 		}
-	}); 
+	});
 }
 
 function menu_show(choice) {
@@ -1516,13 +1519,59 @@ function menu_show(choice) {
 		.show();
 	}
 	else {
-		//for every other browser		
+		//for every other browser
 		$(choice).find('.menu, .menu_login, .menu_messages')
 		.stop(true, true)
 		.slideDown(300,'easeInOutBack');
 	}
+
+	//reset the notification count
+	if ($('.menu_message_morelink') && $(choice).attr('id') == 'nav_messages_li' && $('#notification_count').is(":visible")) {
+		//first, let's just hide it
+		$('#notification_count').hide();
+
+		if (mw.echo) {
+			//now grab the unread messages and mark them as read
+			var api = new mw.Api( { ajax: { cache: false } } ),
+				notifications, data, unread = [], apiData;
+
+			apiData = {
+				'action' : 'query',
+				'meta' : 'notifications',
+				'notformat' : 'flyout',
+				'notprop' : 'index|list|count',
+				'notlimit': 5,
+			};
+
+			api.get( mw.echo.desktop.appendUseLang( apiData ) ).done( function ( result ) {
+				notifications = result.query.notifications;
+				unread = [];
+
+				$.each( notifications.index, function ( index, id ) {
+					data = notifications.list[id];
+
+					if ( !data.read ) {
+						unread.push( id );
+					}
+				} );
+
+				//no unread ones? forget about it...
+				if (unread.length == 0) return;
+
+				api.post( mw.echo.desktop.appendUseLang( {
+					'action' : 'echomarkread',
+					'list' : unread.join( '|' ),
+					'token': mw.user.tokens.get( 'editToken' )
+				} ) ).done( function ( result ) {
+					//SUCCESS!
+				} ).fail( function () {
+					//FAIL
+				} );
+			});
+		}
+	}
 }
-	
+
 function menu_hide(choice) {
 	if ($.browser.msie && parseFloat($.browser.version) < 9) {
 		//ie7 and ie8 fix
@@ -1536,3 +1585,16 @@ function menu_hide(choice) {
 			.slideUp(200);
 	}
 }
+
+//post-load taboola
+ window._taboola = window._taboola || [];
+_taboola.push({article:'auto'});
+_taboolaScriptElem = document.createElement('script');
+_taboolaBeforeElem = document.getElementsByTagName('script')[0];
+$(window).load( function() {
+        !function (e, f, u) {
+           e.async = 1;
+           e.src = u;
+           f.parentNode.insertBefore(e, f);
+		}(_taboolaScriptElem, _taboolaBeforeElem, 'http://cdn.taboola.com/libtrc/wikihow/loader.js');
+});

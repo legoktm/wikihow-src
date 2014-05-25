@@ -84,6 +84,10 @@ class Patrolcount extends SpecialPage {
 	        ");
 		while ( ($row = $dbr->fetchObject($res)) != null) {
 			$u = User::newFromID($row->log_user);
+			
+			//skip auto-patrolled patrols
+			if (in_array('bot', $u->getGroups()) || $u->getOption('autopatrol')) continue;
+			
 			$percent = $total == 0 ? "0" : number_format($row->C / $total * 100, 2);
 			$count = number_format($row->C, 0, "", ',');
 			$class = "";

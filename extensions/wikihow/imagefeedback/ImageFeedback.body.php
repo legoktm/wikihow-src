@@ -136,7 +136,6 @@ class ImageFeedback extends UnlistedSpecialPage {
 	public static function isMainPage() {
 		global $wgTitle;
 		return $wgTitle && $wgTitle->getNamespace() == NS_MAIN && 
-			$wgTitle->getText() == wfMessage('mainpage')->text() && 
-			$action == 'view';
+			$wgTitle->getText() == wfMessage('mainpage')->text();
 	}
 }

@@ -1,0 +1,456 @@
+.ac_method {
+	margin-bottom: 20px;
+	list-style-type: none;
+	padding-top: 30px !important;
+	background-color: #f6f5f4;
+	padding: 62px 27px 20px 27px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	margin-bottom: 25px;
+	position: relative;
+	line-height: 25px;
+	border: 1px solid #e5e5e5;
+}
+
+.ac_method_editor {
+	margin-bottom: 15px;
+}
+.ac_method_controls {
+	margin-bottom: 10px;
+}
+
+#ac_edit_form {
+	background-color: #ecebe8;
+	padding: 5px 5px 20px 5px;
+}
+
+.ac_method #ac_edit_form {
+	margin: 10px -20px -20px -20px;	
+}
+
+.ac_other_section #ac_edit_form {
+	margin: 10px -10px -10px -10px;
+}
+
+#introduction .ac_new_li {
+	margin-top: 10px;
+}
+.ac_new_li,  .mce-panel textarea, .ac_edit_method_text, #ac_edit_text {
+	margin-bottom: 10px;
+	width: 658px;
+	height: 50px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border: 1px #e5e5e5 solid;
+	resize: none;
+}
+
+#ac_edit_text {
+	width: 98.4%;
+}
+
+.ac_li_adder .step_num {
+/* 	margin-top: 50px; */
+	margin: 50px 0 0 -6px
+}
+
+#steps .ac_li_adder div.mce-tinymce {
+	margin-left: 40px;
+}
+
+.ac_wikitext {
+	margin: 10px 0;
+	width: 535px;
+	height: 200px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border: 1px #e5e5e5 solid;
+	resize: none;
+}
+
+.ac_add_li {
+	margin-right: 0px;
+	float: right;
+	line-height: normal;
+}
+
+.hasPlaceholder {
+	color: #777;
+}
+
+
+ul.ac_lis {
+	display: none;
+	padding: 10px 0;
+}
+
+.ac_lis > li {
+	background: #fff;
+	/*border: 1px #e5e5e5;*/
+	border: 1px #e5e5e5;;
+	border-left-style: solid;
+	border-right-style: solid;
+	border-bottom-style: dotted;
+	border-top: 0px;
+	padding: 10px;
+	margin: 0px;
+	list-style-position: inside;
+
+	margin-left: -28px;
+	margin-right: -28px;
+
+}
+
+.ac_lis li li {
+	border: none;
+	margin: 0;
+	list-style: disc;
+	padding: 0;
+}
+
+.ac_ordered_methods li:hover {
+	cursor: move;
+}
+
+.ac_lis li.ui-sortable-helper, .ac_ordered_methods li.ui-sortable-helper {
+	cursor: move;
+}
+
+.ac_ordered_methods {
+	margin: 15px 0	;
+}
+
+.ac_ordered_methods li {
+	padding-top: 5px;
+	color: #383;
+}
+ 
+#ac_ordered_methods_close {
+	display: inline-block;
+	margin: 20px 0 10px 0;	
+}
+
+.ac_lis ul {
+	padding-left: 55px;
+	padding-top: 5px;
+}
+
+.ac_txt:hover, .ac_method_title:hover {
+	border-bottom: 1px dashed #383 !important;
+	color: #383;
+	cursor: pointer;
+	cursor: hand;
+	
+}
+
+.ac_txt a:hover {
+	border-bottom: none !important;
+}
+
+.ac_lis > li:first-child {
+	border-top: 1px solid #e5e5e5;
+}
+
+.ac_lis > li:last-child {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+#steps .ac_lis > li, #introduction .ac_lis > li, .ac_ordered_methods {
+	list-style: none;	
+}
+
+#steps .ac_lis > li {
+	padding: 10px 20px 20px 20px;
+}
+
+.section h2, #steps h2 {
+	line-height: 22px !important;
+	position: static !important;
+}
+
+#main_container h2 {
+	display: inline;
+}
+
+.ac_desc {
+	display: inline-block;
+	margin-left: 5px;
+	margin-bottom: 10px;
+	font-size: 14px
+}
+
+#main_container .section {
+	padding-top: 27px;
+}
+
+
+#ac_delete {
+	float: left;
+}
+
+#ac_step_adder {
+	padding-bottom: 50px;
+}
+
+#ac_add_steps, #ac_save, #ac_cancel {
+	float: right;
+	line-height: normal;
+}
+
+#ac_save {
+	margin-right: 0px;
+}
+
+ul.ac_toolbar {
+	list-style-type: none;
+	margin: 0;
+	padding: 10px 0 0 0;
+}
+
+.ac_toolbar li.ac_tool_button {
+	float: left;
+	padding: 3px;
+	border: 1px solid ;
+	margin-right: 3px;
+	clear: none !important;
+	list-style: none;
+}
+
+.mce-panel {
+	border: 0px !important;
+	background-color: #f6f5f4 !important;
+}
+
+.ac_lis .mce-panel {
+	background-color: #ecebe8 !important;
+}
+
+.ac_lis .mce-panel.mce-edit-area {
+	background-color: white !important;
+}
+
+
+.mce-edit-area {
+	padding:5px !important;
+	background-color: white !important;
+	border: 1px #e5e5e5 solid !important;
+	border-radius: 4px !important;
+	-moz-border-radius: 4px !important;
+	-webkit-border-radius: 4px !important;
+	font-size: 14px !important;
+}
+
+.mce-toolbar {
+	padding: 5px 0 !important;
+}
+
+.ac_edit_method_text {
+/* 	width: 87%; */
+	height: 23px;
+	padding: 10px 3px 6px 10px;
+	margin: 0;
+	font-size: 16px;
+}
+
+.ac_edit_method {
+	float: right;
+	margin-right: 0px;
+}
+
+input[name="method_format"] {
+	margin-left: 10px;
+}
+
+#ac_add_new_method {
+	border: 1px solid #e5e5e5;
+	padding: 15px 25px;
+}
+
+#ac_method_selector {
+	background-color: #d9eacb;
+	padding: 4px 25px;
+	line-height: 25px;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-topright: 4px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+#ac_add_new_method {
+	padding: 20px 10px 20px 25px;
+}
+
+.ac_add_new_method {
+	float: right;
+	margin-top: -8px;
+}
+
+.ac_method_tools {
+	float: right;
+	margin-top: -15px;
+}
+
+.ac_remove_method, .ac_reorder_method {
+	display: inline-block;
+	cursor: pointer;
+	border: 1px solid #c9c9c9;
+	padding: 5px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	width: 25px;
+	height: 25px;
+}
+
+.ac_question {
+	background: url(/skins/owl/images/ac_question.png) center no-repeat; 
+	background-size: 15px 15px;
+	width: 15px;
+	height: 15px;
+	display: inline-block;
+	padding-bottom: 10px;
+	cursor: hand;
+	cursor: pointer;
+}
+.ac_remove_method {	
+	background: url(/skins/owl/images/ac_delete.png) center no-repeat;	
+	background-size: 18px 22px;
+}
+
+.ac_remove_method:hover {
+	background: url(/skins/owl/images/ac_delete_hover.png) center no-repeat;
+	background-size: 18px 22px;
+}
+
+.ac_reorder_method {	
+	background: url(/skins/owl/images/ac_move.png) center no-repeat;	
+	background-size: 23px 18px;
+}
+
+.ac_reorder_method:hover {
+	background: url(/skins/owl/images/ac_move_hover.png) center no-repeat;
+	background-size: 23px 18px;
+}
+
+.ac_confirm_buttons {
+	margin-top: 35px;
+	height: 35px;
+}
+
+.ac_abstract_confirm_dialog {
+	text-align: center;
+}
+
+.ac_question_dialog {
+	text-align: left;
+}
+
+.ac_question_dialog .ac_confirm_buttons {
+	width: 64px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.ac_publishing_error .ui-dialog-title {
+	color: red;
+}
+
+.ac_no_close .ui-dialog-titlebar-close {
+	/*display: none;*/
+}
+
+.ac_remove_method_dialog .ac_method_name {
+	font-weight: bold;
+}
+
+.ac_remove_method_dialog .ac_method_id {
+	display: none;
+}
+
+#introduction {
+	padding-bottom: 20px;
+}
+
+#introduction .ac_lis li {
+/* 	border-radius: 4px !important; */
+/* 	-moz-border-radius: 4px !important; */
+/* 	-webkit-border-radius: 4px !important; */
+	padding: 10px;
+}
+
+#ac_footer_buttons {
+	float:right;
+	line-height: 50px;
+}
+
+#ac_footer_buttons a {
+	font-size: 16px;
+}
+
+#main_container {
+	padding-bottom:30px;
+}
+
+#main_container h1 {
+	font-size: 28px;
+}
+
+#ac_token {
+	display: none;
+}
+
+a.button {
+	line-height: normal;
+}
+
+.ac_method h3 {
+	line-height: 24px;
+}
+
+#ac_whats_this {
+	float: right;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.ac_txt a:hover {
+	text-decoration: none;
+}
+
+#mce_3.mce-button {
+	border: 1px solid #c9c9c9 !important;
+}
+
+div[id^="ac_error_guider"] .guider_title {
+	color: red;
+}
+
+.ac_glowing {
+	color: #2483ef !important;
+	border: 1px solid #2483ef;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05) inset, 0px 0px 8px rgba(82, 168, 236, 0.6);
+}
+
+#ac_add_sources {
+background: url(/skins/owl/images/plus-button.png) no-repeat;
+padding-left: 35px;
+margin-bottom: 10px;
+line-height: 36px !important;
+background-size: 25px 25px;
+font-size: 22px;
+font-weight: normal;
+}
+
+#ac_add_sources a {
+	cursor: finger;
+	cursor: pointer;
+}
+
+#sourcesandcitations {
+	display: none;
+}

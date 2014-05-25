@@ -1496,7 +1496,11 @@ var mw = ( function ( $, undefined ) {
 								}
 							}
 
-							currReqBase = $.extend( { version: formatVersionNumber( maxVersion ) }, reqBase );
+							// WIKIHOW - aaron we just do not want to use the version..it's giving us no end of problems
+							// so commenting out its use here.
+							//currReqBase = $.extend( { version: formatVersionNumber( maxVersion ) }, reqBase );
+							currReqBase = reqBase;
+
 							// For user modules append a user name to the request.
 							if ( group === 'user' && mw.config.get( 'wgUserName' ) !== null ) {
 								currReqBase.user = mw.config.get( 'wgUserName' );

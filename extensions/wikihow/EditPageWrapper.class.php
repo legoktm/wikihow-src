@@ -102,7 +102,7 @@ class EditPageWrapper extends EditPage {
 		$r = Revision::newFromTitle($t);
 		if (!$r)
 			return '';
-		$cat_array = split("\n", $r->getText());
+		$cat_array = explode("\n", $r->getText());
 		$s = "";
 		foreach($cat_array as $line) {
 			$line = trim($line);
@@ -161,9 +161,9 @@ class EditPageWrapper extends EditPage {
 	# but use our own display
 	function showEditForm( $formCallback=null ) {
 		global $wgOut, $wgLanguageCode, $wgRequest, $wgTitle, $wgUser, $wgLang;
+		global $wgScriptPath;
 
 		$whow = null;
-
 
 		// conflict resolution
 		if (!$wgRequest->wasPosted()) {
@@ -191,7 +191,7 @@ class EditPageWrapper extends EditPage {
 
 
 		// do we have a new article? if so, format the title if it's English
-		$wgRequest->getVal("new_article");
+		$new_article = $wgRequest->getVal("new_article");
 		if ($new_article && $wgLanguageCode == "en") {
 			$title = $this->mTitle->getText();
 			$old_title = $title;
@@ -554,7 +554,7 @@ class EditPageWrapper extends EditPage {
 			$relatedHTML = str_replace("*", "", $relatedHTML);
 			$relatedHTML = str_replace("[[", "", $relatedHTML);
 			$relatedHTML = str_replace("]]", "", $relatedHTML);
-			$lines = split("\n", $relatedHTML);
+			$lines = explode("\n", $relatedHTML);
 			$relatedHTML = "";
 			foreach ($lines as $line) {
 				$xx = strpos($line, "|");
@@ -647,6 +647,7 @@ class EditPageWrapper extends EditPage {
 		else
 			$token = EDIT_TOKEN_SUFFIX;
 
+		$show_weave = false;
 		if ( 'preview' == $this->formtype ) {
 			$previewOutput = $this->getPreviewText();
 			$this->showPreview( $previewOutput );
@@ -661,6 +662,7 @@ class EditPageWrapper extends EditPage {
 			$show_weave = true;
 		}
 
+		$weave_links = '';
 		if ( $show_weave ) {
 			$relBtn = $wgLanguageCode == 'en' ? PopBox::getGuidedEditorButton() : '';
 			$relHTML = PopBox::getPopBoxJSGuided() . PopBox::getPopBoxDiv() . PopBox::getPopBoxCSS();
@@ -956,7 +958,7 @@ enctype=\"application/x-www-form-urlencoded\"  onSubmit=\"return checkForm();\">
 
 			// Remove any "quotes" from surrounding -- common mistake
 			$title = preg_replace('@^"(.*)"$@', '$1', $title);
-			$words = split(' ', $title);
+			$words = explode(' ', $title);
 
 			// Remove To from start -- common mistake
 			if (count($words) >= 1
@@ -1062,7 +1064,7 @@ enctype=\"application/x-www-form-urlencoded\"  onSubmit=\"return checkForm();\">
 			'title'     => wfMsg( 'tooltip-save' ).' ['.wfMsg( 'accesskey-save' ).']',
 			//XXCHANGED
 			'onclick'   => 'needToConfirm = false',
-			'class'     => 'button primary submit_button',
+			'class'     => 'button primary submit_button wpSave',
 		);
 		$buttons['save'] = XML::element('input', $temp, '');
 

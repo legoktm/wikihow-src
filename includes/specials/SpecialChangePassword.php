@@ -124,8 +124,9 @@ class SpecialChangePassword extends FormSpecialPage {
 		global $wgAuth;
 
 		$request = $this->getRequest();
-
-		if ( $request->getCheck( 'wpLoginToken' ) ) {
+		
+		//XXCHANGEDXX - gotta go false here if we're coming from the header or the main-page [sc]
+		if ( $request->getCheck( 'wpLoginToken' ) || $request->getCheck( 'sitelogin' ) == 1 ) {
 			// This comes from Special:Userlogin when logging in with a temporary password
 			return false;
 		}

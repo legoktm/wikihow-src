@@ -870,7 +870,7 @@ class ApiSectionParser {
 					$list = $this->processListWithHeaders($doc);
 					$section = array_merge( $section, $list );
 				} elseif ($type == 'relatedwikihows') {
-					$list = $this->processList($doc, self::LIST_TYPE_TYPICAL);
+					$list = $this->processList($doc);
 					$section = array_merge( $section, $list );
 					if (is_array($section['list'])) {
 						$articles = $this->processRelatedWikihows($section['list']);
@@ -896,7 +896,6 @@ class ApiSectionParser {
 				$sections[] = $section;
 			}
 		}
-
 		return $sections;
 	}
 
@@ -1275,12 +1274,9 @@ class ApiSectionParser {
 		return $relateds;
 	}
 
-	const LIST_TYPE_TYPICAL = 1;
-	const LIST_TYPE_REFERENCES = 2;
-
-	private function processListHTML($html, $listType) {
+	private function processListHTML($html) {
 		$doc = phpQuery::newDocumentHTML($html);
-		return $this->processList($doc, $listType);
+		return $this->processList($doc);
 	}
 
 	/**

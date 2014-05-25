@@ -27,30 +27,30 @@ class AdminUserCompletedImages extends UnlistedSpecialPage {
 		if ($wgLanguageCode != 'en' || $wgUser->isBlocked() || !in_array('staff', $userGroups) && $wgUser->getName() != "G.bahij") {
 			$wgOut->setRobotpolicy('noindex,nofollow');
 			$wgOut->showErrorPage('nosuchspecialpage', 'nospecialpagetext');
+		} else {
+			// Fetch images before or after time 't'
+			$timeCutoff = $wgRequest->getVal('t') or wfTimestamp(TS_MW);
+			if (!ctype_digit($timeCutoff))
+				$timeCutoff = wfTimestamp(TS_MW);
+
+			$after = (bool) $wgRequest->getVal('a');
+			$gridView = (bool) $wgRequest->getVal('g');
+
+			$rowsPerPage = $wgRequest->getVal('r');
+			if ($rowsPerPage && is_numeric($rowsPerPage) && ctype_digit($rowsPerPage))
+				$rowsPerPage = max(5, min(100, $rowsPerPage)); // limit it to something reasonable
+			else
+				$rowsPerPage = $this->defaultRowsPerPage;
+
+			$copyVioFilter = (bool) $wgRequest->getVal('c');
+
+			$title = 'Admin - Manage User Completed Images';
+			$wgOut->setHTMLTitle(wfMsg('pagetitle', $title));
+			$wgOut->setPageTitle('Manage User Completed Images');
+
+			$tmpl = $this->genAdminForm($timeCutoff, $after, $rowsPerPage, $gridView, $copyVioFilter);
+			$wgOut->addHTML($tmpl);
 		}
-
-		// Fetch images before or after time 't'
-		$timeCutoff = $wgRequest->getVal('t') or wfTimestamp(TS_MW);
-		if (!ctype_digit($timeCutoff))
-			$timeCutoff = wfTimestamp(TS_MW);
-
-		$after = (bool) $wgRequest->getVal('a');
-		$gridView = (bool) $wgRequest->getVal('g');
-
-		$rowsPerPage = $wgRequest->getVal('r');
-		if ($rowsPerPage && is_numeric($rowsPerPage) && ctype_digit($rowsPerPage))
-			$rowsPerPage = max(5, min(100, $rowsPerPage)); // limit it to something reasonable
-		else
-			$rowsPerPage = $this->defaultRowsPerPage;
-
-		$copyVioFilter = (bool) $wgRequest->getVal('c');
-
-		$title = 'Admin - Manage User Completed Images';
-		$wgOut->setHTMLTitle(wfMsg('pagetitle', $title));
-		$wgOut->setPageTitle('Manage User Completed Images');
-
-		$tmpl = $this->genAdminForm($timeCutoff, $after, $rowsPerPage, $gridView, $copyVioFilter);
-		$wgOut->addHTML($tmpl);
 	}
 
 	private function genAdminForm($timeCutoff, $after, $rowsPerPage, $gridView, $copyVioFilter) {

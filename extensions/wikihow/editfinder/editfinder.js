@@ -24,6 +24,18 @@ $(document).ready(function() {
 	Mousetrap.bind(mod + 'p', function() {$('#wpSave').click();});
 	Mousetrap.bind(mod + 'v', function() {$('#wpPreview').click();});
 	Mousetrap.bind(mod + 'c', function() {$('#edit_cancel_btn').click();});
+
+	 $("#edit_keys").click(function(e){
+        e.preventDefault();
+        $("#edit_info").dialog({
+            width: 500,
+            minHeight: 300,
+            modal: true,
+            title: 'Greenhouse Keys',
+            closeText: 'Close',
+            position: 'center',
+        });
+    });	
 });
 
 EditFinder.prototype.init = function () {
@@ -244,6 +256,7 @@ EditFinder.prototype.edit = function (id,title) {
 			//Publish button
 			jQuery('#wpSave').click(function() {
 				editfinder_preview = false;
+				window.oTrackUserAction();
 			});
 			//form submit
 			jQuery('#editform').submit(function(e) {

@@ -331,28 +331,6 @@ class TitusConfig {
 	}
 
 	/*
-	*  Get config to calc stu stats
-	*/
-	public static function getStuStats() {
-		global $wgLanguageCode;
-		$stats = array(
-			"PageId" => 1,
-			"LanguageCode" => 1,
-			"Timestamp" => 1,
-			"Stu" => 1,
-			"PageViews" => 1,
-		);
-		if($wgLanguageCode != "en") {
-			$stats["Stu"] = 0;
-		}
-		return $stats;
-	}
-
-	public static function getNightlyStats() {
-		return self::getStuStats();
-	}
-
-	/*
 	* Get config for stats that we want to calculate on a nightly basis
 	*/
 	public static function getDailyEditStats() {
@@ -416,7 +394,8 @@ class TitusConfig {
 			"LastPatrolledEditTimestamp" => 1,
 			"BabelfishData" => 0,
 			"NAB" => 1,
-			"WikiVideo" => 1
+			"WikiVideo" => 1,
+			"PetaMetrics" => 1
 			);
 		if($wgLanguageCode != "en") {
 			$stats["LangLinks"] = 0;
@@ -429,6 +408,7 @@ class TitusConfig {
 			$stats["BabelfishData"] = 1;
 			// NO NAB on internatioanl
 			$stats["NAB"] = 0;
+			$stats["PetaMetrics"] = 0;
 		}
 		return $stats;
 	}
@@ -961,7 +941,7 @@ class TSPhotos extends TitusStat {
 		$stats=array();
 		$stats['ti_num_photos'] = $numPhotos;
 		if($wgLanguageCode == "en") {
-			$numWikiPhotos = intVal($dbr->selectField(array('imagelinks','image'),'count(*)', array('il_from' => $pageRow->page_id, 'img_name = il_to', 'img_user_text' => 'Wikiphoto')));
+			$numWikiPhotos = intVal($dbr->selectField(array('imagelinks','image'),'count(*)', array('il_from' => $pageRow->page_id, 'img_name = il_to', 'img_user_text' => array('Wikiphoto','Wikivisual'))));
 			$stats = array_merge($stats, $this->getIntroPhotoStats($r));
 			$stats['ti_num_wikiphotos'] = $numWikiPhotos;
 			$stats['ti_enlarged_wikiphoto'] = intVal($this->hasEnlargedWikiPhotos($r));
@@ -1781,6 +1761,87 @@ class TSNAB extends TitusStat {
 	public function calc(&$dbr, &$r, &$t, &$pageRow) {
 		$nab = Newarticleboost::isNABbed($dbr, $pageRow->page_id) ? '1' : '0';
 		$ret = array('ti_nab' => $nab);
+		return($ret);
+	}
+}
+/**
+ * Load data into Titus from Petametrics API
+ */
+class TSPetaMetrics extends TitusStat {
+	private $_stats;
+	private $_loaded;
+	private $_errors;
+	private $_hasError;
+
+	public function __construct() {
+		$this->_loaded = false;	
+		$this->_errors = 0;
+	}
+
+	// Load spreadsheet from Peta-Metrics API
+	private function loadSpreadsheet() {
+		$url = 'https://api.petametrics.com/v1/metrics/bydevice/export?$apiKey=' . WH_PETAMETRICS_API_KEY;
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		$str = curl_exec($ch);
+		curl_close($ch);
+
+		$lines = preg_split("@[\r\n]+@",$str);
+		$first = true;
+		foreach($lines as $line) {
+			if($first) {
+				$header = preg_split("@\t@",$line);
+				$first = false;
+			}
+			else {
+				$fs = preg_split("@\t@",$line);
+				for($n=0;$n < sizeof($header); $n++) {
+					$this->_stats[$fs[1]][$header[$n]] = $fs[$n]; 
+				}
+			}
+		}
+	}
+	// Some Petametrics data returns -1 on NULL. We want to convert this to NULL	
+	private function nullOrVal($val) {
+		$nv = floatval($val);
+		if(!is_numeric($val) || $nv < 0.0) {
+			$this->_hasError = true;
+			return(NULL);	
+		}
+		return($nv);
+	}
+
+	// We are loading for pages, everynight
+	public function getPageIdsToCalc(&$dbr,$date) {
+		return(TitusDB::ALL_IDS);
+	}
+
+	public function calc(&$dbr, &$r, &$t, &$pageRow) {
+		if(!$this->_loaded) {
+			$this->loadSpreadsheet();
+			$this->_loaded = true;
+		}
+		$articleId = $t->getArticleId();
+		if(isset($this->_stats[$articleId])) {
+			$statsForPage = $this->_stats[$articleId];
+			$this->_hasError = false;
+			$ret = array('ti_pm_desktop_30day_views' => $statsForPage['desktop:30days:views'], 'ti_pm_mobile_30day_views' => $statsForPage['mobile:30days:views'], 'ti_pm_tablet_30day_views' => $statsForPage['tablet:30days:views'], 'ti_pm_desktop_10s' => $this->nullOrVal($statsForPage['desktop:bounce10s'])*100.0, 'ti_pm_mobile_10s' => $this->nullOrVal($statsForPage['mobile:bounce10s']) * 100, 'ti_pm_tablet_10s' => $this->nullOrVal($statsForPage['tablet:bounce10s']) * 100, 'ti_pm_desktop_3m' => $this->nullOrVal($statsForPage['desktop:stay3mRate']) * 100, 'ti_pm_mobile_3m' => $this->nullOrVal($statsForPage['mobile:stay3mRate']) * 100, 'ti_pm_tablet_3m' => $this->nullOrVal($statsForPage['tablet:stay3mRate']) * 100, 'ti_pm_desktop_scroll_px' => $this->nullOrVal($statsForPage['desktop:avgSpx']), 'ti_pm_mobile_scroll_px' => $this->nullOrVal($statsForPage['mobile:avgSpx']), 'ti_pm_tablet_scroll_px' => $this->nullOrVal($statsForPage['tablet:avgSpx']), 'ti_pm_desktop_scroll_pct' => $this->nullOrVal($statsForPage['desktop:avgSpct']), 'ti_pm_mobile_scroll_pct' => $this->nullOrVal($statsForPage['mobile:avgSpct']), 'ti_pm_tablet_scroll_pct' => $this->nullOrVal($statsForPage['tablet:avgSpct']) ); 
+			if($this->_hasError) {
+				if($this->_errors < 50) {
+					$this->reportError("Null or bad values for article " . $t->getArticleID());	
+				}
+				else if($this->_errors == 50) {
+					$this->reportError("Too many bad values in articles. Deprecating further PetaMetrics errors.");
+				}
+				$this->_errors++;
+			}
+		}
+		else {
+			$ret = array('ti_pm_desktop_30day_views' => '', 'ti_pm_tablet_30day_views' => '', 'ti_pm_mobile_30day_views' => '', 'ti_pm_desktop_10s' => '','ti_pm_mobile_10s' => '', 'ti_pm_tablet_10s' => '', 'ti_pm_desktop_3m' => '', 'ti_pm_mobile_3m' => '', 'ti_pm_tablet_3m' => '', 'ti_pm_desktop_scroll_px' => '', 'ti_pm_mobile_scroll_px' => '', 'ti_pm_tablet_scroll_px' => '', 'ti_pm_desktop_scroll_pct' => '', 'ti_pm_mobile_scroll_pct' => '', 'ti_pm_tablet_scroll_pct' => ''); 
+		}
 		return($ret);
 	}
 }

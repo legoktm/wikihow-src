@@ -57,6 +57,8 @@ $wgWidgetList = array(
 	'SpellcheckerAppWidget',
     'MethodGuardianAppWidget',
     'MethodEditorAppWidget',
+	// disabled until this feature is live
+	//'UCIPatrolWidget',
 );
 
 /**
@@ -82,6 +84,7 @@ $wgWidgetShortCodes = array(
 	'SpellcheckerAppWidget' => 'spl',
     'MethodGuardianAppWidget' => 'amg',
     'MethodEditorAppWidget' => 'ame',
+	'UCIPatrolWidget' => 'uci',
 );
 
 /**

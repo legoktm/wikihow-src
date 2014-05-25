@@ -1,0 +1,72 @@
+.uci_thumbnail {
+	float:left;
+	position: relative;
+	padding: 3px;
+}
+
+#uci_images {
+	display:inline-block;
+}
+
+.uci_thumbnail img {
+	display:block;
+}
+
+.uci_img {
+	position: absolute;
+	bottom: 4px;
+	z-index: 2;
+	padding: 2px 2px 2px 2px;
+	font-size: .8em;
+	display: none;
+	color: rgb(248, 248, 248);
+	background-color: rgb(0,0,0) !important;
+	background-color: rgba(0,0,0,.6) !important;
+	line-height: 25px;
+}
+
+.uci_img_ico {
+	display: block;
+	height: 13px;
+	width: 10px;
+	margin: 6px 6px 0 0;
+	vertical-align: middle;
+	background: url(/skins/owl/images/article_sprite.png) no-repeat -91px -58px;
+	float: left;
+}
+
+.uci_reason {
+	height: 55px;
+	width: 320px;
+	margin: 5px 0 10px 0;
+}
+
+.uci_button {
+	vertical-align: middle;
+}
+
+.uci_button:hover {
+	background-position: 0px -26px;
+}
+
+.uci_controls {
+	line-height: 26px;
+	float: right;
+}
+
+.uci_cancel {
+	margin-left: 5px;
+}
+
+.uci_margin_5px {
+	margin-top: 5px;
+}
+
+.uci_margin_20px {
+	margin-top: 20px;
+}
+
+.uci_input_spacing {
+	margin-left: 20px;
+}
+

@@ -107,8 +107,8 @@ class Alfredo extends UnlistedSpecialPage {
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, array("api"=>1,"articleIds"=>$pageId, "auth"=>WH_DEV_ACCESS_AUTH));
 		curl_setopt($ch, CURLOPT_USERPWD, WH_DEV_ACCESS_AUTH);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$text = curl_exec($ch);
 		curl_close($ch);
@@ -221,7 +221,6 @@ class Alfredo extends UnlistedSpecialPage {
 		}
 		return($results);
 	}
-
 	/**
 	 * Handle API calls to get the steps from an article 
 	 */
@@ -241,8 +240,34 @@ class Alfredo extends UnlistedSpecialPage {
 					$txt = $r->getText();
 					$intro = Wikitext::getIntro($txt);
 					$text = Wikitext::getStepsSection($txt, true);
-					if(is_array($text) && sizeof($text) > 0) {
-						$articles[$articleId] = array("steps" => $text[0],
+					$lines = preg_split("@\n@",$text[0]);
+					$text = "";
+
+					// We remove extra lines technically in the 'steps' section, but which don't actually contain steps
+					// Find the last line starting with a '#'
+					$lastLine = 0;	
+					$n = 0;
+					foreach($lines as $line) {
+						if($line[0] == '#') {
+							$lastLine = $n;
+						}
+						$n++;
+					}
+
+					// Truncate lines after the last line with a '#'
+					$n = 0;
+					foreach($lines as $line) {
+						if($n > $lastLine) {
+							break;	
+						}
+						if($n != 0) {
+							$text .= "\n";	
+						}
+						$text .= $line;
+						$n++;
+					}
+					if(strlen($text) > 0) {
+						$articles[$articleId] = array("steps" => $text,
 																					"intro" => $intro,
 																					"altImageTags" => array($wgContLang->getNSText(NS_IMAGE)));
 					}

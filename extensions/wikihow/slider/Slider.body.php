@@ -12,9 +12,14 @@ class Slider extends UnlistedSpecialPage {
 	
 	public function getBox() {
 		//global $wgTitle;
-		
+	
+		// First try to see if we have a recommendation
+		$html = self::getRecBox();
+		if($html) {
+			return($html);	
+		}
 		// Contribute to wikiHow slider
-		return self::getBox_09();
+		return self::getBox_08();
 	}
 	
 	//original slider
@@ -203,6 +208,30 @@ class Slider extends UnlistedSpecialPage {
 					</div>";
 
 		return $theBox;
+	}
+
+	public function getRecBox() {
+		global $wgUser;
+
+		wfLoadExtensionMessages('Slider');
+
+		if($wgUser->getId() == 0 || !class_exists('RecommendationPresenter')) {
+			return(false);
+		}
+		
+		$t = RecommendationPresenter::getRecommendation($wgUser);
+		if(!$t) {
+			return(false);	
+		}
+
+		$theBox = "<div id='sliderbox' class='sliderbox_08'>
+						<div id='slider_thanks_08'>
+							<a href='#' id='slider_close_button'></a>
+							<div class='slider_become_main'>
+								<p class='slider_editing_text'>Can you help edit...</p><a href=\"" . $t['url'] . "&action=edit\">" . str_replace('-',' ',$t['page_title']) . "</a>
+						</div>
+					</div>";
+		return($theBox);
 	}
 	
 	/**

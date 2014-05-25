@@ -47,11 +47,31 @@ class MethodEditor extends SpecialPage {
 		}
 
 		$this->skipTool = new ToolSkip("methodeditor", MethodEditor::TABLE_NAME, "ama_checkout", "ama_checkout_user", "ama_page");
-		
+
+		if( $wgRequest->getVal('allarticles')) {
+
+			$wgOut->setArticleBodyOnly(true);
+
+			$dbr = wfGetDB(DB_SLAVE);
+
+			$date = date('Y-m-d');
+			header('Content-type: application/force-download');
+			header('Content-disposition: attachment; filename="methods_' . $date . '.xls"');
+
+			$res = $dbr->select(MethodEditor::TABLE_NAME, array('ama_page'), array('ama_patrolled' => '1'), __METHOD__, array('GROUP BY' => 'ama_page'));
+			foreach($res as $row) {
+				$title = Title::newFromID($row->ama_page);
+				if($title) {
+					echo $title->getFullURL() . "\n";
+				}
+			}
+
+			return;
+		}
 		if ( $wgRequest->getVal('getNext') ) {
 			$wgOut->disable();
 			
-			$result = $this->getNextMethod();
+			$result = $this->getNextMethod($wgRequest->getVal('aid'));
 			echo json_encode($result);
 			return;
 		} else if ( $wgRequest->getVal('skipMethod') ) {
@@ -113,8 +133,12 @@ class MethodEditor extends SpecialPage {
 		$wgOut->addJScode('methj');
         $wgOut->addJScode('jcookj');
 		$wgOut->addHTML(PopBox::getPopBoxJSAdvanced());
+
+		$groups = $user->getGroups();
+		$showList = in_array('staff', $groups) || in_array('staff_widget', $groups);
 		
 		$tmpl = new EasyTemplate( dirname(__FILE__) );
+		$tmpl->set_vars(array('showList' => $showList));
 
 		$wgOut->addHTML($tmpl->execute('MethodEditor.tmpl.php'));
 		$this->displayLeaderboards();
@@ -122,7 +146,7 @@ class MethodEditor extends SpecialPage {
 		$wgOut->addHTML(QuickNoteEdit::displayQuickEdit());
 	}
 	
-	private function getNextMethod() {
+	private function getNextMethod($aid = "false") {
 		global $wgUser, $wgOut;
 		
 		$dbw = wfGetDB(DB_MASTER);
@@ -130,6 +154,55 @@ class MethodEditor extends SpecialPage {
 		$i = 0;
 		$content['error'] = true;
 		$goodRevision = false;
+
+		if($aid != "false" && $aid != "") {
+			$where = array();
+			$where[] = "ama_page = $aid";
+			$where[] = "ama_checkout < '$expired'";
+			$where[] = "ama_patrolled = 1";
+			$where[] = "NOT EXISTS (SELECT rc_id from recentchanges where rc_cur_id = ama_page and rc_patrolled = 0 LIMIT 1)";
+			$row = $dbw->selectRow(MethodEditor::TABLE_NAME, array('*'), $where, __METHOD__);
+			$content['sql' . $i] = $dbw->lastQuery();
+			if($row !== false) {
+				$title = Title::newFromID($row->ama_page);
+				$isRedirect = false;
+				if ($title) {
+					$dbr = wfGetDB(DB_SLAVE);
+					$isRedirect = intval($dbr->selectField('page', 'page_is_redirect',
+						array('page_id' => $row->ama_page), __METHOD__, array("LIMIT" => 1)));
+				}
+				if($title && !$isRedirect) {
+					$this->skipTool->useItem($row->ama_page);
+					$revision = Revision::newFromTitle($title);
+					$popts = $wgOut->parserOptions();
+					$popts->setTidy(true);
+					$parserOutput = $wgOut->parse($revision->getText(), $title, $popts);
+					$magic = WikihowArticleHTML::grabTheMagic($revision->getText());
+					$content['article'] = WikihowArticleHTML::processArticleHTML($parserOutput, array('no-ads' => true, 'ns' => NS_MAIN, 'magic-word' => $magic));
+					$content['method'] = $row->ama_method;
+					$content['methodId'] = $row->ama_id;
+					$content['articleId'] = $row->ama_page;
+					$content['steps'] = $row->ama_steps;
+					$content['articleTitle'] = "<a href='{$title->getLocalURL()}'>{$title->getText()}</a>";
+
+					$editURL = Title::makeTitle(NS_SPECIAL, "QuickEdit")->getFullURL() . '?type=editform&target=' . urlencode($title->getFullText());
+					$class = "class='button secondary buttonleft'";
+					$link =  "<a id='qe_button' title='" . wfMessage("rcpatrol_quick_edit_title")->text() . "' accesskey='e' href='' $class onclick=\"return loadQuickEdit('".$editURL."') ;\">" . htmlspecialchars( 'Quick edit' ) . "</a> ";
+
+					$content['quickEditUrl'] = $link;
+					$content['error'] = false;
+					return $content;
+				}
+				else {
+					$content['error_msg'] = "That title cannot be loaded. The article id may not exist or it might be a redirect.";
+					return $content;
+				}
+			}
+			else {
+				$content['error_msg']  = "That title cannot be loaded. It might be checked out by another user.";
+				return $content;
+			}
+		}
 		do {
 			$skippedIds = $this->skipTool->getSkipped();
 			$content['debug']["skippedIds"] = $skippedIds;
@@ -259,6 +332,10 @@ class MethodEditor extends SpecialPage {
 			$logPage->addEntry("Added", $title, wfMessage('editor-quickedit-logentry', $title->getFullText())->text());
 
 			$dbw = wfGetDB(DB_MASTER);
+
+			//now we need to log the save in the new table
+			$dbw->insert(MethodEditor::LOGGING_TABLE_NAME, array('mel_timestamp' => wfTimestampNow(), 'mel_user' => $wgUser->getID()));
+
 			$dbw->delete(MethodEditor::TABLE_NAME, array('ama_id' => $methodId));
 
 			wfRunHooks("MethodEdited", array($wgUser, $title, '0'));

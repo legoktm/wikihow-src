@@ -608,7 +608,8 @@ abstract class UploadBase {
 		 * Check whether the resulting filename is different from the desired one,
 		 * but ignore things like ucfirst() and spaces/underscore things
 		 */
-		$comparableName = str_replace( ' ', '_', $this->mDesiredDestName );
+		 //WIKIHOW - ARG - we use dash instead of underscore
+		$comparableName = str_replace( ' ', '-', $this->mDesiredDestName );
 		$comparableName = Title::capitalize( $comparableName, NS_FILE );
 
 		if ( $this->mDesiredDestName != $filename && $comparableName != $filename ) {

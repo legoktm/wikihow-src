@@ -151,15 +151,23 @@ class WAPReport {
 		return self::getReportArray(WAPUtil::generateTSVOutput($rows));
 	}
 
-	public function getCompletedArticles($langCode, $fromDate) {
+	public function getCompletedArticles($langCode, $fromDate, $toDate = null) {
 		global $IP;
 		$dbr = self::getDBR();
 		require_once("$IP/extensions/wikihow/DatabaseHelper.class.php");
 		$articleTable = $this->config->getArticleTableName();
 		$defaultUser = $this->config->getDefaultUserName();
-		$rows = DatabaseHelper::batchSelect($articleTable, 
-			array('*'), array("ct_completed" => 1, "ct_lang_code" => $langCode, "ct_completed_timestamp > '$fromDate'", "ct_user_text != '$defaultUser'"), 
-			__METHOD__, array(), DatabaseHelper::DEFAULT_BATCH_SIZE, $dbr);
+
+		$fromDate = $dbr->strencode($fromDate);
+		$toDate = $dbr->strencode($toDate);
+
+		$conditions =  array("ct_completed" => 1, "ct_completed_timestamp >= '$fromDate'", "ct_completed_timestamp <= '$toDate'", "ct_user_text != '$defaultUser'");
+
+		if ($langCode != 'all') {
+			$conditions["ct_lang_code"] = $langCode;
+		}
+		$rows = DatabaseHelper::batchSelect($articleTable, array('*'), 
+			$conditions, __METHOD__, array(), DatabaseHelper::DEFAULT_BATCH_SIZE, $dbr);
 		$this->formatData($rows);
 		return self::getReportArray(WAPUtil::generateTSVOutput($rows));
 	}

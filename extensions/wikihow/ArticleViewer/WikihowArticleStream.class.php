@@ -17,7 +17,7 @@ class WikihowArticleStream extends ContextSource {
 		$startTime = strtotime('December 19, 2013');
 		$oneWeek = 7 * 24 * 60 * 60;
 		$rolloutArticle = Misc::percentileRollout($startTime, $oneWeek);
-		if ($rolloutArticle && is_array($this->viewer->articles_fa)) {
+		if ($rolloutArticle && isset($this->viewer->articles_fa) && is_array($this->viewer->articles_fa)) {
 			$this->articles = array_merge($this->viewer->articles_fa, $this->viewer->articles);
 		} else {
 			$this->articles = $this->viewer->articles;
@@ -88,7 +88,7 @@ class WikihowArticleStream extends ContextSource {
 				$across2 = 0;
 				$html .= "<table cellpadding='0' cellspacing='0' width='100%'><tr>";
 				foreach ($layout as $item) {
-					if (!$item['title']) {
+					if (!isset($item['title']) || !$item['title']) {
 						//$html .= "- image=(null) dims={$item['dims']}<br>\n";
 					} else {
 						$dims = explode("x", $item['dims']);
@@ -286,8 +286,8 @@ class WikihowBlockLayout {
 		$consumeArticle = function(&$spot, $i)
 		use(&$articles, &$consumed)
 		{
-			$spot = array('title' => $articles[$i]['title'],
-				'image' => $articles[$i]['image'],
+			$spot = array('title' => @$articles[$i]['title'],
+				'image' => @$articles[$i]['image'],
 				'dims' => $spot);
 			$consumed[] = $i;
 		};

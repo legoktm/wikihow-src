@@ -149,11 +149,11 @@ class RCTest {
 			//do we need to clear tests out?
 			$takenTestIds = explode(",", $userInfo['ru_quiz_ids']);
 			
-			$sql = "SELECT COUNT(*) AS C FROM `rctest_quizzes` WHERE rq_difficulty = 1";
+			$sql = "SELECT COUNT(*) AS C FROM rctest_quizzes WHERE rq_difficulty = 1";
 			$res = $dbr->query($sql);
 			$row = $dbr->fetchObject($res);
 			
-			if (count($takenTestIds) == $row->C) {
+			if (count($takenTestIds) >= $row->C) {
 				//reached limit; reset scores
 				if ($this->resetTestScores()) {
 					//start again...
@@ -188,7 +188,9 @@ class RCTest {
 			$newNextPatrolCount = $nextPatrolCount - ($nextPatrolCount % 500) + 500;
 		}
 		else {
-			$testPatrolCounts = array (5, 25, 50, 100, 150, 200, 250, 500, 750, 1000);
+			//MORE TESTS!!!
+			//$testPatrolCounts = array (5, 25, 50, 100, 150, 200, 250, 500, 750, 1000);
+			$testPatrolCounts = array (5, 10, 15, 25, 40, 50, 75, 100, 125, 150, 175, 200, 250, 350, 500, 750, 1000);
 			for ($i = 0; $i < sizeof($testPatrolCounts); $i++) {
 				if ($nextPatrolCount >= $testPatrolCounts[$i] && $nextPatrolCount < $testPatrolCounts[$i + 1]) {
 					$newNextPatrolCount = $testPatrolCounts[$i + 1];

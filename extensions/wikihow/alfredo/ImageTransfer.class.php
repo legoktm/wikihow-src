@@ -45,7 +45,7 @@ class ImageTransfer {
 	public $warnings;
 
 	// Database that has the image_transfer_job table
-	const DB_NAME="wikidb_112";
+	const DB_NAME=WH_DATABASE_NAME;
 	// Table used for storing the image transfer info
 	const TABLE_NAME="image_transfer_job";
 
@@ -571,7 +571,7 @@ class ImageTransfer {
 		global $wgUser;
 
 		$dbw = wfGetDB(DB_MASTER);
-		$sql = 'insert into wikidb_112.image_transfer_invalids(iti_from_url, iti_to_lang, iti_creator, iti_time_started) values(' . $dbw->addQuotes($url) . ',' . $dbw->addQuotes($lang) . ','  . $dbw->addQuotes($wgUser->getName()) . ','  . $dbw->addQuotes(wfTimestampNow()) . ') on duplicate key update iti_time_finished=NULL' ;
+		$sql = 'insert into ' . self::DB_NAME . '.image_transfer_invalids(iti_from_url, iti_to_lang, iti_creator, iti_time_started) values(' . $dbw->addQuotes($url) . ',' . $dbw->addQuotes($lang) . ','  . $dbw->addQuotes($wgUser->getName()) . ','  . $dbw->addQuotes(wfTimestampNow()) . ') on duplicate key update iti_time_finished=NULL' ;
 		$dbw->query($sql, __METHOD__);
 	}
 
@@ -581,7 +581,7 @@ class ImageTransfer {
 		*/
 	public static function getErrorURLsByCreator($language, $dryRun) {
 		$dbr = wfGetDB(DB_SLAVE);
-		$sql = 'select iti_from_url, iti_creator from wikidb_112.image_transfer_invalids where iti_to_lang=' . $dbr->addQuotes($language) . ' AND iti_time_finished is null';
+		$sql = 'select iti_from_url, iti_creator from ' . self::DB_NAME . '.image_transfer_invalids where iti_to_lang=' . $dbr->addQuotes($language) . ' AND iti_time_finished is null';
 
 		$urls = array();
 		$ret = array();
@@ -592,7 +592,7 @@ class ImageTransfer {
 		}
 		if(!empty($urls)) {
 			$dbw = wfGetDB(DB_MASTER);
-			$sql = 'update wikidb_112.image_transfer_invalids set iti_time_finished=' . $dbw->addQuotes(wfTimestampNow()) . ' where iti_to_lang=' . $dbw->addQuotes($language) . ' AND iti_from_url in (' . implode(',',$urls) . ')' ; 
+			$sql = 'update ' . self::DB_NAME . '.image_transfer_invalids set iti_time_finished=' . $dbw->addQuotes(wfTimestampNow()) . ' where iti_to_lang=' . $dbw->addQuotes($language) . ' AND iti_from_url in (' . implode(',',$urls) . ')' ; 
 			if(!$dryRun) {
 				$dbw->query($sql, __METHOD__);
 			}

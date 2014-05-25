@@ -397,7 +397,7 @@ abstract class DashboardWidget {
 			$type = 'df';
 		}
 		if ($type == 'df') {
-			return wfGetPad('/skins/WikiHow/images/default_profile.png');
+			return Avatar::getDefaultProfile();
 		} else if ($type == 'fb' || $type == 'gp') {
 			return $param;
 		} else {

@@ -1,4 +1,5 @@
 <?
+global $wgMaxUploadFiles;
 $messages = array();
 $messages['en'] = 
         array(

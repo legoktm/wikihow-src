@@ -1932,10 +1932,15 @@ class OutputPage extends ContextSource {
 		}
 
 		if ( $this->mEnableClientCache ) {
-			if (
-				$wgUseSquid && session_id() == '' && !$this->isPrintable() &&
-				$this->mSquidMaxage != 0 && !$this->haveCacheVaryCookies()
-			) {
+			// Reuben, 5/20/2014: Add live debugging around why an article couldn't be cached
+			$noCache = array();
+			if ( !$wgUseSquid ) $noCache[] = 'wg';
+			if ( !count($noCache) && session_id() != '' ) $noCache[] = 'ss';
+			if ( !count($noCache) && $this->isPrintable() ) $noCache[] = 'pr';
+			if ( !count($noCache) && $this->mSquidMaxage == 0 ) $noCache[] = 'ag';
+			if ( !count($noCache) && $this->haveCacheVaryCookies() ) $noCache[] = 'ck';
+
+			if ( count($noCache) == 0 ) {
 				if ( $wgUseESI ) {
 					# We'll purge the proxy cache explicitly, but require end user agents
 					# to revalidate against the proxy on each visit.
@@ -1961,6 +1966,7 @@ class OutputPage extends ContextSource {
 				wfDebug( __METHOD__ . ": private caching; {$this->mLastModified} **\n", 'log' );
 				$response->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
 				$response->header( "Cache-Control: private, must-revalidate, max-age=0" );
+				$response->header( 'X-P: ' . join( ' ', $noCache ) );
 			}
 			if ( $this->mLastModified ) {
 				$response->header( "Last-Modified: {$this->mLastModified}" );

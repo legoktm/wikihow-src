@@ -113,6 +113,7 @@ function renderGPlusButtons() {
       'callback': 'onSignInCallback',
       'clientid': '475770217963-cj49phca8tqki2ggs0ttcaerhs8339eh.apps.googleusercontent.com',
       'cookiepolicy': 'http://wikihow.com',
+	  'apppackagename': 'com.wikihow.wikihowapp',
       'requestvisibleactions': 'http://schemas.google.com/AddActivity',
       'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email'
     });
@@ -120,6 +121,7 @@ function renderGPlusButtons() {
       'callback': 'onSignInCallback',
       'clientid': '475770217963-cj49phca8tqki2ggs0ttcaerhs8339eh.apps.googleusercontent.com',
       'cookiepolicy': 'http://wikihow.com',
+	  'apppackagename': 'com.wikihow.wikihowapp',
       'requestvisibleactions': 'http://schemas.google.com/AddActivity',
       'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email'
     });

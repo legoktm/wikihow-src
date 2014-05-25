@@ -109,10 +109,10 @@ class TranslationLink {
 	 */
 	public function updateDB() {
 		$dbh = wfGetDB(DB_SLAVE);
-		$sql = "select tl_from_lang, tl_from_aid, tl_to_lang, tl_to_aid FROM wikidb_112.translation_link where tl_from_lang=" . $dbh->addQuotes($this->fromLang) . " AND tl_from_aid="  . $dbh->addQuotes($this->fromAID) . " AND tl_to_lang=" . $dbh->addQuotes($this->toLang);
+		$sql = "select tl_from_lang, tl_from_aid, tl_to_lang, tl_to_aid FROM " . WH_DATABASE_NAME . ".translation_link where tl_from_lang=" . $dbh->addQuotes($this->fromLang) . " AND tl_from_aid="  . $dbh->addQuotes($this->fromAID) . " AND tl_to_lang=" . $dbh->addQuotes($this->toLang);
 		$res = $dbh->query($sql, __METHOD__);
 		$row = $dbh->fetchObject($res);
-		$sql = "select tl_from_lang, tl_from_aid, tl_to_lang, tl_to_aid FROM wikidb_112.translation_link where tl_from_lang=" . $dbh->addQuotes($this->fromLang) . " AND tl_to_lang=" . $dbh->addQuotes($this->toLang) . " AND tl_to_aid=" . $dbh->addQuotes($this->toAID);
+		$sql = "select tl_from_lang, tl_from_aid, tl_to_lang, tl_to_aid FROM " . WH_DATABASE_NAME . ".translation_link where tl_from_lang=" . $dbh->addQuotes($this->fromLang) . " AND tl_to_lang=" . $dbh->addQuotes($this->toLang) . " AND tl_to_aid=" . $dbh->addQuotes($this->toAID);
 		$res2 = $dbh->query($sql, __METHOD__);
 		$row2 = $dbh->fetchObject($res2);
 		//If there are other links for both the translation links 
@@ -122,14 +122,14 @@ class TranslationLink {
 		}
 		if($row) {
 			$dbw = wfGetDB(DB_MASTER);
-			$sql = "update wikidb_112.translation_link set tl_to_aid=" . $dbw->addQuotes($this->toAID) . ", tl_timestamp=" . wfTimestampNow(TS_MW) . " where tl_from_lang=" . $dbw->addQuotes($row->tl_from_lang) . " AND tl_from_aid=" . $dbw->addQuotes($row->tl_from_aid) . " AND tl_to_lang=" . $dbw->addQuotes($this->toLang) ;
+			$sql = "update " . WH_DATABASE_NAME . ".translation_link set tl_to_aid=" . $dbw->addQuotes($this->toAID) . ", tl_timestamp=" . wfTimestampNow(TS_MW) . " where tl_from_lang=" . $dbw->addQuotes($row->tl_from_lang) . " AND tl_from_aid=" . $dbw->addQuotes($row->tl_from_aid) . " AND tl_to_lang=" . $dbw->addQuotes($this->toLang) ;
 			$dbw->query($sql, __METHOD__);
 			$this->setTlStatus(self::TL_STATUS_SAVED);
 			return 2;
 		}
 		elseif($row2) {
 			$dbw = wfGetDB(DB_MASTER);
-			$sql = "update wikidb_112.translation_link set tl_from_aid=" . $dbw->addQuotes($this->fromAID) . ", tl_timestamp=" . wfTimestampNow(TS_MW) . " where tl_from_lang=" . $dbw->addQuotes($row2->tl_from_lang) . " AND tl_to_lang=" . $dbw->addQuotes($row2->tl_to_lang) . " AND tl_to_aid=" . $dbw->addQuotes($row2->tl_to_aid);
+			$sql = "update " . WH_DATABASE_NAME . ".translation_link set tl_from_aid=" . $dbw->addQuotes($this->fromAID) . ", tl_timestamp=" . wfTimestampNow(TS_MW) . " where tl_from_lang=" . $dbw->addQuotes($row2->tl_from_lang) . " AND tl_to_lang=" . $dbw->addQuotes($row2->tl_to_lang) . " AND tl_to_aid=" . $dbw->addQuotes($row2->tl_to_aid);
 			$dbw->query($sql, __METHOD__);
 			$this->setTlStatus(self::TL_STATUS_SAVED);
 			return 2;
@@ -143,7 +143,7 @@ class TranslationLink {
     global $wgLanguageCode;
 
     $dbr = wfGetDB(DB_MASTER);
-		$sql = "insert ignore into wikidb_112.translation_link(tl_from_lang, tl_from_aid, tl_to_lang,tl_to_aid,tl_timestamp) values(" . $dbr->addQuotes($this->fromLang) . "," . intVal($this->fromAID) . "," . $dbr->addQuotes($this->toLang) . "," . intVal($this->toAID) . "," . $dbr->addQuotes(wfTimestampNow( TS_MW))  . ") ";
+		$sql = "insert ignore into " . WH_DATABASE_NAME . ".translation_link(tl_from_lang, tl_from_aid, tl_to_lang,tl_to_aid,tl_timestamp) values(" . $dbr->addQuotes($this->fromLang) . "," . intVal($this->fromAID) . "," . $dbr->addQuotes($this->toLang) . "," . intVal($this->toAID) . "," . $dbr->addQuotes(wfTimestampNow( TS_MW))  . ") ";
 		$dbr->query($sql, __METHOD__);
 		$this->setTlStatus(self::TL_STATUS_SAVED);
 		return true;
@@ -153,7 +153,7 @@ class TranslationLink {
 	 */
 	static function batchAddTranslationLinks(&$links) {
 		$dbr = wfGetDB(DB_MASTER);
-		$sql = "insert ignore into wikidb_112.translation_link(tl_from_lang, tl_from_aid, tl_to_lang,tl_to_aid,tl_timestamp) values"; 
+		$sql = "insert ignore into " . WH_DATABASE_NAME . ".translation_link(tl_from_lang, tl_from_aid, tl_to_lang,tl_to_aid,tl_timestamp) values"; 
 		$first = true;
 		$updateLinks = array();
 		foreach($links as &$link) {
@@ -193,7 +193,7 @@ class TranslationLink {
 	 */
 	static function batchUpdateTLStatus(&$links) {
 		$dbh = wfGetDB(DB_SLAVE);
-		$sql="select tl_from_lang,tl_from_aid,tl_to_lang,tl_to_aid from wikidb_112.translation_link where (tl_from_lang,tl_from_aid) in (";	
+		$sql="select tl_from_lang,tl_from_aid,tl_to_lang,tl_to_aid from " . WH_DATABASE_NAME . ".translation_link where (tl_from_lang,tl_from_aid) in (";	
 		$first = true;
 		foreach($links as $link) {
 			if($link->isValid()) {
@@ -216,7 +216,7 @@ class TranslationLink {
 			}
 		}
 		
-		$sql="select tl_from_lang,tl_from_aid,tl_to_lang,tl_to_aid from wikidb_112.translation_link where (tl_to_lang,tl_to_aid) in (";	
+		$sql="select tl_from_lang,tl_from_aid,tl_to_lang,tl_to_aid from " . WH_DATABASE_NAME . ".translation_link where (tl_to_lang,tl_to_aid) in (";	
 		$first = true;
 		foreach($links as $link) {
 			if($link->isValid()) {
@@ -342,10 +342,10 @@ class TranslationLink {
 	static function batchGetRemovedLinks($lang, $forward) {
 		$dbr = wfGetDB(DB_SLAVE);
 		if($forward) { 
-			$sql = "select otl.tl_from_aid as tl_from_aid, otl.tl_from_lang as tl_from_lang, otl.tl_to_aid as tl_to_aid, otl.tl_to_lang as tl_to_lang from wikidb_112.old_translation_link otl LEFT JOIN wikidb_112.translation_link tl on otl.tl_from_lang=tl.tl_from_lang AND otl.tl_from_aid=tl.tl_from_aid WHERE  tl.tl_from_lang is NULL AND otl.tl_from_lang=" . $dbr->addQuotes($lang);
+			$sql = "select otl.tl_from_aid as tl_from_aid, otl.tl_from_lang as tl_from_lang, otl.tl_to_aid as tl_to_aid, otl.tl_to_lang as tl_to_lang from " . WH_DATABASE_NAME . ".old_translation_link otl LEFT JOIN wikidb_112.translation_link tl on otl.tl_from_lang=tl.tl_from_lang AND otl.tl_from_aid=tl.tl_from_aid WHERE  tl.tl_from_lang is NULL AND otl.tl_from_lang=" . $dbr->addQuotes($lang);
 		}
 		else {
-			$sql = "select otl.tl_from_aid as tl_from_aid, otl.tl_from_lang as tl_from_lang, otl.tl_to_aid as tl_to_aid, otl.tl_to_lang as tl_to_lang from wikidb_112.old_translation_link otl LEFT JOIN wikidb_112.translation_link tl on otl.tl_to_lang=tl.tl_to_lang AND otl.tl_to_aid=tl.tl_to_aid WHERE  tl.tl_to_lang is NULL AND otl.tl_to_lang=" . $dbr->addQuotes($lang);
+			$sql = "select otl.tl_from_aid as tl_from_aid, otl.tl_from_lang as tl_from_lang, otl.tl_to_aid as tl_to_aid, otl.tl_to_lang as tl_to_lang from " . WH_DATABASE_NAME . ".old_translation_link otl LEFT JOIN wikidb_112.translation_link tl on otl.tl_to_lang=tl.tl_to_lang AND otl.tl_to_aid=tl.tl_to_aid WHERE  tl.tl_to_lang is NULL AND otl.tl_to_lang=" . $dbr->addQuotes($lang);
 		}
 		$res = $dbr->query($sql, __METHOD__);
 		$tls = array();
@@ -530,7 +530,7 @@ class TranslationLink {
 		$toPageTable = Misc::getLangDB($toLang) . ".page";
 
 		$dbr = wfGetDB(DB_SLAVE);
-		$sql = "select tl_from_aid, tl_to_aid, fd.page_title as to_title, d.page_title as from_title FROM wikidb_112.translation_link LEFT JOIN " . $fromPageTable . " d on tl_from_aid=d.page_id LEFT JOIN " . $toPageTable . " as fd on tl_to_aid = fd.page_id WHERE tl_from_lang=" . $dbr->addQuotes($fromLang) . " AND tl_to_lang=" . $dbr->addQuotes($toLang) ;
+		$sql = "select tl_from_aid, tl_to_aid, fd.page_title as to_title, d.page_title as from_title FROM " . WH_DATABASE_NAME . ".translation_link LEFT JOIN " . $fromPageTable . " d on tl_from_aid=d.page_id LEFT JOIN " . $toPageTable . " as fd on tl_to_aid = fd.page_id WHERE tl_from_lang=" . $dbr->addQuotes($fromLang) . " AND tl_to_lang=" . $dbr->addQuotes($toLang) ;
 		if(!empty($where)) {
 			$sql .= " AND " . implode(" AND ",$where);	
 		}
@@ -586,7 +586,7 @@ class TranslationLink {
 	static function writeLog($action, $fromLang,$fromRevisionId, $fromAID, $fromTitleName,$toLang, $toTitleName, $toAID = NULL, $toolName=TranslateEditor::TOOL_NAME) {
 		global $wgLanguageCode, $wgUser;
 		$dbr = wfGetDB(DB_MASTER);
-		$query = "insert into wikidb_112.translation_link_log(tll_from_lang, tll_from_aid, tll_from_title, tll_from_revision_id, tll_to_lang, tll_to_aid, tll_to_title, tll_user, tll_tool, tll_action, tll_timestamp) values(" . $dbr->addQuotes($fromLang) . "," . $dbr->addQuotes($fromAID) . "," . $dbr->addQuotes($fromTitleName) . "," . $dbr->addQuotes($fromRevisionId) . "," . $dbr->addQuotes($toLang) . "," . $dbr->addQuotes($toAID) . "," . $dbr->addQuotes($toTitleName) . "," . $dbr->addQuotes($wgUser->getName()) . "," . $dbr->addQuotes($toolName) . "," . $dbr->addQuotes($action) . "," . $dbr->addQuotes(wfTimestampNow( TS_MW)) . ")";
+		$query = "insert into " . WH_DATABASE_NAME . ".translation_link_log(tll_from_lang, tll_from_aid, tll_from_title, tll_from_revision_id, tll_to_lang, tll_to_aid, tll_to_title, tll_user, tll_tool, tll_action, tll_timestamp) values(" . $dbr->addQuotes($fromLang) . "," . $dbr->addQuotes($fromAID) . "," . $dbr->addQuotes($fromTitleName) . "," . $dbr->addQuotes($fromRevisionId) . "," . $dbr->addQuotes($toLang) . "," . $dbr->addQuotes($toAID) . "," . $dbr->addQuotes($toTitleName) . "," . $dbr->addQuotes($wgUser->getName()) . "," . $dbr->addQuotes($toolName) . "," . $dbr->addQuotes($action) . "," . $dbr->addQuotes(wfTimestampNow( TS_MW)) . ")";
 		$dbr->query($query, __METHOD__);
 	}
 	/**
@@ -600,13 +600,13 @@ class TranslationLink {
 			return false;	
 		}
 		$dbr = wfGetDB(DB_SLAVE);
-		$query = "select * from wikidb_112.translation_link where tl_from_lang=" . $dbr->addQuotes($this->fromLang) . " AND tl_from_aid=" . $dbr->addQuotes($this->fromAID) . " AND tl_to_lang=" . $dbr->addQuotes($this->toLang) . " AND tl_to_aid=" . $dbr->addQuotes($this->toAID);
+		$query = "select * from " . WH_DATABASE_NAME . ".translation_link where tl_from_lang=" . $dbr->addQuotes($this->fromLang) . " AND tl_from_aid=" . $dbr->addQuotes($this->fromAID) . " AND tl_to_lang=" . $dbr->addQuotes($this->toLang) . " AND tl_to_aid=" . $dbr->addQuotes($this->toAID);
 		$res = $dbr->query($query);
 		if(!$dbr->fetchObject($res)) {
 			return false;	
 		}
 		$dbh = wfGetDB(DB_MASTER);
-		$query = "delete from wikidb_112.translation_link where tl_from_lang=" . $dbh->addQuotes($this->fromLang) . " AND tl_from_aid=" . $dbh->addQuotes($this->fromAID) . " AND tl_to_lang=" . $dbh->addQuotes($this->toLang) . " AND tl_to_aid=" . $dbh->addQuotes($this->toAID) . " LIMIT 1";
+		$query = "delete from " . WH_DATABASE_NAME . ".translation_link where tl_from_lang=" . $dbh->addQuotes($this->fromLang) . " AND tl_from_aid=" . $dbh->addQuotes($this->fromAID) . " AND tl_to_lang=" . $dbh->addQuotes($this->toLang) . " AND tl_to_aid=" . $dbh->addQuotes($this->toAID) . " LIMIT 1";
 		$dbh->query($query);
 		return(true);
 	}

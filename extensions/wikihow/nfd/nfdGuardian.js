@@ -195,6 +195,7 @@ function nfdVote(vote) {
 	nfd_skip = 0;
 	incCounters(); 
 	submitResponse();
+	window.oTrackUserAction();
 }
 
 function nfdSkip() {
@@ -245,6 +246,7 @@ function getEditor(){
 			//Publish button
 			jQuery('#wpSave').click(function() {
 				nfd_preview = false;
+				window.oTrackUserAction();
 			});
 			jQuery('#editform').submit(function(e) {
 				e.preventDefault();

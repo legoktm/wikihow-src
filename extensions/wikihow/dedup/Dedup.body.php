@@ -36,18 +36,92 @@ class Dedup extends UnlistedSpecialPage {
 		print $this->query . "\t" . $todo . "\t" . $closeURL . "\t" . $closeURLScore . "\t" . implode("| ",$this->queryMatches) . "\t" . implode("| ",$urlMatches) . "\n";
 
 	}
-	public function getBatch() {
+	/** 
+	 * Match dedup queries against themselves instead of against other things
+	 */
+	public function getTopMatchBatch() {
 		set_time_limit(0);
 		require_once('dedupQuery.php');
+		print("\"Query\",\"Status\",\"Dup queries >= 35\",\"Dup queries 19-34\"\n");
 		$queries = preg_split("@[\r\n]+@",$this->queriesR);
-		$queryE = array();
 		$dbw = wfGetDB(DB_MASTER);
+		$queryE = array();
 		foreach($queries as $query) {
 			dedupQuery::addQuery($query);
 			$queryE[] = $dbw->addQuotes($query);
 		}
-		$sql = "insert ignore into dedup.query_match select ql.ql_query as query1, ql2.ql_query as query2, count(*) as ct from dedup.query_lookup ql join dedup.query_lookup ql2 on ql2.ql_url=ql.ql_url where ql.ql_query in (" . implode(',',$queryE) . ") group by ql.ql_query, ql2.ql_query";
-		$dbw->query($sql, __METHOD__);
+		dedupQuery::matchQueries($queries);
+		$dbr = wfGetDB(DB_SLAVE);
+		$sql = "select query1, query2, ct from dedup.query_match where query1 <> query2 and query1 in (" . implode($queryE,",") . ") and query2 in (" . implode($queryE,",") . ") group by query1, query2 order by field(query1," . implode($queryE,",") . ")"; 
+		$res = $dbr->query($sql, __METHOD__);
+		$last = false;
+		
+		header("Content-Type: text/csv");
+		header('Content-Disposition: attachment; filename="Dedup.csv"');
+		$clusters35 = array();
+		$clusters19 = array();
+		$nondup = array();
+		$dup = array();
+		$posDup = array();
+		foreach($res as $row) {
+			if($row->ct >= 35) {
+				$clusters35[$row->query1][] = $row->query2;
+				if(!in_array($row->query1,$dup) && !in_array($row->query1, $posDup)) {
+					$nondup[] = $row->query1;
+				}
+				if(!in_array($row->query2, $nondup)) {
+					$dup[] = $row->query2;	
+				}
+			}
+			elseif($row->ct >= 19) {
+				$clusters19[$row->query1][] = $row->query2;
+				if(!in_array($row->query1, $dup) && !in_array($row->query1, $posDup)) {
+					$nondup[] = $row->query1;
+				}
+				if(!in_array($row->query2, $nondup)) {
+					$posDup[] = $row->query2;
+				}
+			}
+		}
+		foreach($queries as $query) {
+			print("\"" . addslashes($query) . "\",\"");
+			if(in_array($query, $dup)) {
+				print("duplicate");	
+			}
+			elseif(in_array($query, $posDup)) {
+				print("possible duplicate");	
+			}
+			elseif(isset($clusters35[$query])) {
+				print("dup check");	
+			}
+			else {
+				print("write");	
+			}
+			print("\",\"");
+			if(isset($clusters35[$query])) {
+				print(addslashes(implode("\r",$clusters35[$query])));
+			}
+			print("\",\"");
+			if(isset($clusters19[$query])) {
+				print(addslashes(implode("\r",$clusters19[$query])));
+			}
+
+			print("\"\n");
+		}
+		print("\n");
+		exit;
+	}
+	public function getBatch() {
+		set_time_limit(0);
+		require_once('dedupQuery.php');
+		$queries = preg_split("@[\r\n]+@",$this->queriesR);
+		$dbw = wfGetDB(DB_MASTER);
+		$queryE = array();
+		foreach($queries as $query) {
+			dedupQuery::addQuery($query);
+			$queryE[] = $dbw->addQuotes($query);
+		}
+		dedupQuery::matchQueries($queries);
 		$dbr = wfGetDB(DB_SLAVE);
 		$sql = "select query1, query2, ct, tq_title from dedup.query_match left join dedup.title_query on tq_query=query2 where query1 in (" . implode($queryE,",") . ") order by query1, ct desc"; 
 		$res = $dbr->query($sql, __METHOD__);
@@ -83,7 +157,13 @@ class Dedup extends UnlistedSpecialPage {
 		exit;
 	}
 	public function execute() {
-		global $wgOut, $wgRequest;
+		global $wgOut, $wgRequest, $wgUser;
+		$userGroups = $wgUser->getGroups();
+		if(!in_array('staff',$userGroups)) {
+			$wgOut->setRobotpolicy('noindex,nofollow');
+			$wgOut->showErrorPage('nosuchspecialpage', 'nospecialpagetext');
+			return;
+		}
 		$action = $wgRequest->getVal('act');
 		$this->queriesR = $wgRequest->getVal('queries');
 		if($action == NULL) {
@@ -91,7 +171,13 @@ class Dedup extends UnlistedSpecialPage {
 			$wgOut->addHTML(EasyTemplate::html('Dedup.tmpl.php'));
 		}
 		elseif($action == 'getBatch' && $this->queriesR) {
-			$this->getBatch();
+			$internalDedup = $wgRequest->getVal('internalDedup');
+			if($internalDedup) {
+				$this->getTopMatchBatch();	
+			}
+			else {
+				$this->getBatch();
+			}
 		}
 	}
 }

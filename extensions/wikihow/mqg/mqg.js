@@ -35,12 +35,14 @@
 		//yes button
 		$('#mqg_yes').live('click', function() {
 			qcVote(true);
+			window.oTrackUserAction();
 			return false;
 		});
 		
 		//no button
 		$('#mqg_no').live('click', function() {
 			qcVote(false);
+			window.oTrackUserAction();
 			return false;
 		});	
 		

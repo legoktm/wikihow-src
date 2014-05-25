@@ -10,11 +10,13 @@ class RCWidget extends UnlistedSpecialPage {
 
 	private static function addRCElement(&$widget, &$count, $obj) {
 		global $wgLanguageCode, $wgContLang;
-		if ((strlen(strip_tags($obj['text'])) < 100) &&
-			 (strlen($obj['text']) > 0)) {
-			if($wgLanguageCode == "zh") {
+		if (isset($obj['text'])
+			&& strlen(strip_tags($obj['text'])) < 100
+			&& strlen($obj['text']) > 0
+		) {
+			if ($wgLanguageCode == "zh") {
 				$obj['text'] = $wgContLang->convert($obj['text']);
-				if(isset($obj['ts'])) {
+				if (isset($obj['ts'])) {
 					$obj['ts'] = $wgContLang->convert($obj['ts']);		
 				}
 			}
@@ -36,7 +38,7 @@ class RCWidget extends UnlistedSpecialPage {
 			return;
 		}
 
-		$obj = "";
+		$obj = array();
 		$real_user = $row->log_user_text;
 
 		if (preg_match('/\d+\.\d+\.\d+\.\d+/',$real_user)){
@@ -119,11 +121,11 @@ class RCWidget extends UnlistedSpecialPage {
 
 	private static function filterRC(&$widget, &$count, $row) {
 		$bots = self::getBotIDs();
- 		if (in_array($row->rc_user, $bots)) {
+ 		if (isset($row->rc_user) && in_array($row->rc_user, $bots)) {
 			return;
 		}
 	
-		$obj = "";
+		$obj = array();
 		if (preg_match('/\d+\.\d+\.\d+\.\d+/',$row->rc_user_text)){
 			$wuser = wfMessage('rcwidget_anonymous_visitor')->text();;
 			$wuserLink = '/wikiHow:Anonymous';
@@ -167,6 +169,7 @@ class RCWidget extends UnlistedSpecialPage {
 					$obj['ts'] = Misc::getDTDifferenceString($row->rc_timestamp);
 					$userLink = '<a href="'.$wuserLink.'">'.$wuser.'</a>';
 					$resourceLink = '<a href="'.$destUserLink.'">'.preg_replace('/-/',' ',$destUser).'</a>';
+					if (!isset($obj['text'])) $obj['text'] = '';
 					$obj['text'] .= wfMessage('action_edit', $userLink, $resourceLink)->text();
 					self::addRCElement($widget, $count, $obj);
 				}
@@ -363,6 +366,7 @@ class RCWidget extends UnlistedSpecialPage {
 		$cutoff_unixtime = time() - ( 30 * 86400 ); // 30 days
 		$cutoff = $dbr->timestamp( $cutoff_unixtime );
 		$currenttime = $dbr->timestamp( time() );
+		$bots = self::getBotIDs();
 
 		// QUERY RECENT CHANGES TABLE
 		$sql = "SELECT rc_timestamp,rc_user_text,rc_namespace,rc_title,rc_comment,rc_patrolled FROM recentchanges";

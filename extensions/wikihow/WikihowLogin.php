@@ -8,7 +8,7 @@ if( !defined( 'MEDIAWIKI' ) ) die( -1 );
 
 class WikihowLogin {
 
-	private static $BAD_USER_ERRORS = array('noname','userexists');
+	private static $BAD_USER_ERRORS = array('noname','userexists','createaccount-hook-aborted');
 	private static $BAD_PASSWORD_ERRORS = array('badretype','passwordtooshort','password-name-match','password-login-forbidden');
 	private static $BAD_EMAIL_ERRORS = array('noemailtitle','invalidemailaddress');
 
@@ -58,7 +58,7 @@ class WikihowLogin {
 				if(in_array($error[0], self::$BAD_USER_ERRORS)) {
 					if(!isset($errorlist['username'])) {
 						$errorlist['username'] = array();	
-					}
+					}					
 					$errorlist['username'][] = $error;
 				}
 				elseif(in_array($error[0], self::$BAD_PASSWORD_ERRORS)) {
@@ -491,7 +491,7 @@ label[for="wpName2"], label[for="wpPassword2"] {
 			<div class="remember_pwd">
 				<?php if ( $this->data['canremember'] ) { ?>
 					<label class="mw-ui-checkbox-label">
-						<input name="wpRemember" type="checkbox" value="1" id="wpRemember" tabindex="4"
+						<input name="wpRemember" type="checkbox" value="1" id="wpRemember" tabindex="9"
 							<?php if ( $this->data['remember'] ) {
 								echo 'checked="checked"';
 							} ?>

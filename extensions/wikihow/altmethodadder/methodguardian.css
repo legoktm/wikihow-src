@@ -92,3 +92,9 @@
 	text-decoration: none;
 	background-position: 0 -78px; 
 }
+
+#method_keys {
+	float: right;
+	font-size: 10px;
+	margin-top: -45px;
+}

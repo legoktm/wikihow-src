@@ -84,12 +84,14 @@ function va_setLinks(){
 			.removeClass('disabled')
 			.click(function(){
 				va_submit(true);
+				window.oTrackUserAction();
 				return false;
 			});
 	});
 	
 	jQuery('#va_no').click(function(){
 		va_submit(false);
+		window.oTrackUserAction();
 		return false;
 	});
 	jQuery('#va_introlink').click(function(){

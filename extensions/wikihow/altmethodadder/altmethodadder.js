@@ -35,6 +35,7 @@ $(document).on("keypress", "#altmethod", function(e) {
 	var clicked = [];
 	
 	$(document).on('click', '#addalt', function(e) {
+		window.oTrackUserAction();
 		e.preventDefault();
 		
 		$(this).hide();

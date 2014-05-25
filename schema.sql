@@ -148,7 +148,7 @@ CREATE TABLE `altmethodadder` (
   `ama_timestamp` varchar(14) collate utf8_unicode_ci NOT NULL,
   `ama_patrolled` tinyint(3) NOT NULL default '0',
   PRIMARY KEY  (`ama_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=84685 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=140188 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -182,7 +182,7 @@ CREATE TABLE `archive` (
   KEY `name_title_timestamp` (`ar_namespace`,`ar_title`,`ar_timestamp`),
   KEY `usertext_timestamp` (`ar_user_text`,`ar_timestamp`),
   KEY `ar_revid` (`ar_rev_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1408829 DEFAULT CHARSET=latin1 PACK_KEYS=1;
+) ENGINE=InnoDB AUTO_INCREMENT=1430386 DEFAULT CHARSET=latin1 PACK_KEYS=1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -336,7 +336,7 @@ CREATE TABLE `badge_views` (
   `bv_count` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`bv_id`),
   UNIQUE KEY `bv_referrer` (`bv_referrer`(100))
-) ENGINE=InnoDB AUTO_INCREMENT=38724 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=39400 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -418,7 +418,7 @@ CREATE TABLE `category` (
   PRIMARY KEY  (`cat_id`),
   UNIQUE KEY `cat_title` (`cat_title`),
   KEY `cat_pages` (`cat_pages`)
-) ENGINE=InnoDB AUTO_INCREMENT=3280 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3371 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -611,7 +611,7 @@ CREATE TABLE `concierge_tags` (
   `ct_tag` varchar(200) default NULL,
   `ct_raw_tag` varchar(200) default NULL,
   PRIMARY KEY  (`ct_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=517 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=521 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -675,7 +675,7 @@ CREATE TABLE `cu_changes` (
   KEY `cuc_user_ip_time` (`cuc_user`,`cuc_ip`,`cuc_timestamp`),
   KEY `cuc_xff_hex_time` (`cuc_xff_hex`,`cuc_timestamp`),
   KEY `cuc_timestamp` (`cuc_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=11241862 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11871556 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -703,7 +703,7 @@ CREATE TABLE `cu_log` (
   KEY `cul_type_target` (`cul_type`,`cul_target_id`,`cul_timestamp`),
   KEY `cul_target_hex` (`cul_target_hex`,`cul_timestamp`),
   KEY `cul_range_start` (`cul_range_start`,`cul_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=4777 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4829 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -777,7 +777,7 @@ CREATE TABLE `drafts` (
   KEY `draft_user_page_savetime` (`draft_user`,`draft_page`,`draft_namespace`,`draft_title`,`draft_savetime`),
   KEY `draft_savetime` (`draft_savetime`),
   KEY `draft_page` (`draft_page`)
-) ENGINE=InnoDB AUTO_INCREMENT=432769 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=458437 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -806,7 +806,7 @@ CREATE TABLE `dv_links` (
   `dvl_page` int(8) default NULL,
   `dvl_doc` varchar(255) default NULL,
   PRIMARY KEY  (`dvl_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10952 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=11521 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -840,6 +840,73 @@ CREATE TABLE `dv_sampledocs_status` (
   `articles` varchar(1028) default NULL,
   `errors` varchar(1028) default NULL,
   PRIMARY KEY  (`sample`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `echo_email_batch`
+--
+
+DROP TABLE IF EXISTS `echo_email_batch`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `echo_email_batch` (
+  `eeb_id` int(10) unsigned NOT NULL auto_increment,
+  `eeb_user_id` int(10) unsigned NOT NULL,
+  `eeb_event_priority` tinyint(3) unsigned NOT NULL default '10',
+  `eeb_event_id` int(10) unsigned NOT NULL,
+  `eeb_event_hash` varchar(32) character set latin1 collate latin1_bin NOT NULL,
+  PRIMARY KEY  (`eeb_id`),
+  UNIQUE KEY `echo_email_batch_user_event` (`eeb_user_id`,`eeb_event_id`),
+  KEY `echo_email_batch_user_hash_priority` (`eeb_user_id`,`eeb_event_hash`,`eeb_event_priority`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `echo_event`
+--
+
+DROP TABLE IF EXISTS `echo_event`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `echo_event` (
+  `event_id` int(10) unsigned NOT NULL auto_increment,
+  `event_type` varchar(64) character set latin1 collate latin1_bin NOT NULL,
+  `event_variant` varchar(64) character set latin1 collate latin1_bin default NULL,
+  `event_agent_id` int(10) unsigned default NULL,
+  `event_agent_ip` varchar(39) character set latin1 collate latin1_bin default NULL,
+  `event_page_namespace` int(10) unsigned default NULL,
+  `event_page_title` varchar(255) character set latin1 collate latin1_bin default NULL,
+  `event_extra` blob,
+  `event_page_id` int(10) unsigned default NULL,
+  PRIMARY KEY  (`event_id`),
+  KEY `echo_event_type` (`event_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=47132 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `echo_notification`
+--
+
+DROP TABLE IF EXISTS `echo_notification`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `echo_notification` (
+  `notification_event` int(10) unsigned NOT NULL,
+  `notification_user` int(10) unsigned NOT NULL,
+  `notification_timestamp` binary(14) NOT NULL,
+  `notification_read_timestamp` binary(14) default NULL,
+  `notification_bundle_base` tinyint(1) NOT NULL default '1',
+  `notification_bundle_hash` varchar(32) character set latin1 collate latin1_bin NOT NULL,
+  `notification_bundle_display_hash` varchar(32) character set latin1 collate latin1_bin NOT NULL,
+  `notification_anon_ip` varchar(15) NOT NULL default '',
+  UNIQUE KEY `user_event` (`notification_user`,`notification_event`),
+  KEY `echo_user_timestamp` (`notification_user`,`notification_timestamp`),
+  KEY `echo_notification_user_base_read_timestamp` (`notification_user`,`notification_bundle_base`,`notification_read_timestamp`),
+  KEY `echo_notification_user_base_timestamp` (`notification_user`,`notification_bundle_base`,`notification_timestamp`,`notification_event`),
+  KEY `echo_notification_user_hash_timestamp` (`notification_user`,`notification_bundle_hash`,`notification_timestamp`),
+  KEY `echo_notification_user_hash_base_timestamp` (`notification_user`,`notification_bundle_display_hash`,`notification_bundle_base`,`notification_timestamp`),
+  KEY `notification_anon_ip` (`notification_anon_ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
@@ -1054,7 +1121,7 @@ CREATE TABLE `externallinks` (
   KEY `el_from` (`el_from`,`el_to`(40)),
   KEY `el_to` (`el_to`(60),`el_from`),
   KEY `el_index` (`el_index`(60))
-) ENGINE=InnoDB AUTO_INCREMENT=4759421 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5012022 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1129,7 +1196,7 @@ CREATE TABLE `filearchive` (
   KEY `fa_deleted_timestamp` (`fa_deleted_timestamp`),
   KEY `fa_sha1` (`fa_sha1`(10)),
   KEY `fa_user_timestamp` (`fa_user_text`,`fa_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=116990 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=137075 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1366,7 +1433,7 @@ CREATE TABLE `homepage` (
   `hp_active` tinyint(3) NOT NULL default '0',
   `hp_order` int(10) NOT NULL,
   PRIMARY KEY  (`hp_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1514,6 +1581,22 @@ CREATE TABLE `image_transfer_job` (
   `itj_error` text,
   `itj_warnings` text,
   PRIMARY KEY  (`itj_from_lang`,`itj_from_aid`,`itj_to_lang`,`itj_to_aid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `image_votes`
+--
+
+DROP TABLE IF EXISTS `image_votes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `image_votes` (
+  `iv_pageid` int(8) unsigned NOT NULL,
+  `iv_userid` int(8) NOT NULL,
+  `iv_vote` int(8) NOT NULL,
+  `iv_added` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`iv_pageid`,`iv_userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
@@ -1698,7 +1781,7 @@ CREATE TABLE `ipblocks` (
   KEY `ipb_timestamp` (`ipb_timestamp`),
   KEY `ipb_expiry` (`ipb_expiry`),
   KEY `ipb_parent_block_id` (`ipb_parent_block_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=147778 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=148401 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1743,7 +1826,7 @@ CREATE TABLE `job` (
   KEY `job_sha1` (`job_sha1`),
   KEY `job_cmd_token` (`job_cmd`,`job_token`,`job_random`),
   KEY `job_cmd_token_id` (`job_cmd`,`job_token`,`job_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=638282 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1544191 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1823,7 +1906,7 @@ CREATE TABLE `logging` (
   KEY `type_action` (`log_type`,`log_action`,`log_timestamp`),
   KEY `log_user_text_type_time` (`log_user_text`,`log_type`,`log_timestamp`),
   KEY `log_user_text_time` (`log_user_text`,`log_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=14124875 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14851378 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1890,7 +1973,7 @@ CREATE TABLE `methodeditorlog` (
   `mel_user` int(5) NOT NULL default '0',
   PRIMARY KEY  (`mel_id`),
   KEY `mel_time_user` (`mel_timestamp`,`mel_user`)
-) ENGINE=InnoDB AUTO_INCREMENT=9624 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21470 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2035,7 +2118,7 @@ CREATE TABLE `nfd` (
   `nfd_checkout_user` int(5) unsigned NOT NULL default '0',
   PRIMARY KEY  (`nfd_id`),
   KEY `nfd_page` (`nfd_page`)
-) ENGINE=InnoDB AUTO_INCREMENT=66475 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=70518 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2153,7 +2236,7 @@ CREATE TABLE `page` (
   KEY `page_random` (`page_random`),
   KEY `page_len` (`page_len`),
   KEY `page_redirect_namespace_len` (`page_is_redirect`,`page_namespace`,`page_len`)
-) ENGINE=InnoDB AUTO_INCREMENT=4281863 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4587355 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2225,7 +2308,7 @@ CREATE TABLE `page_restrictions` (
   KEY `pr_typelevel` (`pr_type`,`pr_level`),
   KEY `pr_level` (`pr_level`),
   KEY `pr_cascade` (`pr_cascade`)
-) ENGINE=InnoDB AUTO_INCREMENT=8467 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8635 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2421,7 +2504,7 @@ CREATE TABLE `qc` (
   `qc_extra` varchar(32) default '',
   `qc_page_alt` varchar(255) character set latin1 collate latin1_bin NOT NULL default '',
   PRIMARY KEY  (`qc_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1015983 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1052569 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2550,7 +2633,7 @@ CREATE TABLE `quiz_links` (
   `ql_page` int(8) default NULL,
   `ql_name` varchar(255) NOT NULL,
   PRIMARY KEY  (`ql_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=285 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2592,7 +2675,7 @@ CREATE TABLE `ratesample` (
   UNIQUE KEY `rats_id` (`rats_id`),
   UNIQUE KEY `user_month_id` (`rats_page`,`rats_user_text`,`rats_month`),
   KEY `rat_timestamp` (`rats_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=777086 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=942852 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2631,7 +2714,7 @@ CREATE TABLE `rating` (
   UNIQUE KEY `rat_id` (`rat_id`),
   UNIQUE KEY `user_month_id` (`rat_page`,`rat_user_text`,`rat_month`),
   KEY `rat_timestamp` (`rat_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=6646405 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6912397 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2665,7 +2748,7 @@ CREATE TABLE `rating_reason` (
   `ratr_type` varchar(10) NOT NULL,
   PRIMARY KEY  (`ratr_id`),
   KEY `ratr_timestamp` (`ratr_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=26789 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31115 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2689,7 +2772,7 @@ CREATE TABLE `rctest_quizzes` (
   `rq_author` varchar(255) default NULL,
   `rq_deleted` int(1) NOT NULL default '0',
   PRIMARY KEY  (`rq_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2786,7 +2869,7 @@ CREATE TABLE `recentchanges` (
   KEY `rc_user_text` (`rc_user_text`,`rc_timestamp`),
   KEY `rc_patrolled_user` (`rc_patrolled`,`rc_user`),
   KEY `rc_user` (`rc_user`)
-) ENGINE=InnoDB AUTO_INCREMENT=13830654 DEFAULT CHARSET=latin1 PACK_KEYS=1;
+) ENGINE=InnoDB AUTO_INCREMENT=14401207 DEFAULT CHARSET=latin1 PACK_KEYS=1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2835,7 +2918,7 @@ CREATE TABLE `rejected_email_links` (
   `rel_timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `rel_text` text,
   PRIMARY KEY  (`rel_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=173854 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=173985 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2867,7 +2950,7 @@ CREATE TABLE `revision` (
   KEY `user_timestamp` (`rev_user`,`rev_timestamp`),
   KEY `usertext_timestamp` (`rev_user_text`,`rev_timestamp`),
   KEY `page_user_timestamp` (`rev_page`,`rev_user`,`rev_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=13101694 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13692504 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3245,7 +3328,7 @@ CREATE TABLE `spellchecker_page` (
   `sp_word` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`sp_id`),
   UNIQUE KEY `sp_page` (`sp_page`,`sp_word`)
-) ENGINE=InnoDB AUTO_INCREMENT=20050443 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20679725 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3274,7 +3357,7 @@ CREATE TABLE `spellchecker_whitelist` (
   `sw_id` int(10) unsigned NOT NULL auto_increment,
   PRIMARY KEY  (`sw_id`),
   UNIQUE KEY `sw_word` (`sw_word`)
-) ENGINE=InnoDB AUTO_INCREMENT=45622 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=47471 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3289,7 +3372,7 @@ CREATE TABLE `spellchecker_word` (
   `sw_word` varchar(255) character set latin1 collate latin1_general_cs NOT NULL,
   `sw_corrections` varchar(255) collate utf8_unicode_ci NOT NULL,
   PRIMARY KEY  (`sw_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=527340 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=542101 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3437,7 +3520,25 @@ CREATE TABLE `suggested_titles` (
   KEY `st_used` (`st_used`,`st_patrolled`,`st_group`,`st_category`),
   KEY `st_random` (`st_random`),
   KEY `suggested_recommendations` (`st_category`,`st_used`,`st_traffic_volume`,`st_random`)
-) ENGINE=InnoDB AUTO_INCREMENT=598471 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=600230 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `suppress_emails`
+--
+
+DROP TABLE IF EXISTS `suppress_emails`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `suppress_emails` (
+  `se_id` int(10) unsigned NOT NULL auto_increment,
+  `email` varchar(255) NOT NULL,
+  `updated_ts` char(14) NOT NULL default '',
+  `reason` varchar(255) NOT NULL default '',
+  `status` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`se_id`),
+  UNIQUE KEY `seed_idx` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=1813 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3501,7 +3602,7 @@ CREATE TABLE `text` (
   KEY `user_timestamp` (`old_user`,`inverse_timestamp`),
   KEY `usertext_timestamp` (`old_user_text`,`inverse_timestamp`),
   KEY `old_user_teimetsamp` (`old_user`,`old_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=13004473 DEFAULT CHARSET=latin1 MAX_ROWS=100000000 PACK_KEYS=1;
+) ENGINE=InnoDB AUTO_INCREMENT=13592342 DEFAULT CHARSET=latin1 MAX_ROWS=100000000 PACK_KEYS=1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3619,7 +3720,7 @@ CREATE TABLE `tipsandwarnings` (
   `tw_checkout_user` int(5) NOT NULL,
   `tw_timestamp` varchar(14) collate utf8_unicode_ci NOT NULL default '',
   PRIMARY KEY  (`tw_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=617956 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=728688 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3728,7 +3829,7 @@ CREATE TABLE `title_search_key` (
   UNIQUE KEY `skey_id` (`tsk_id`),
   UNIQUE KEY `name_title` (`tsk_namespace`,`tsk_title`),
   KEY `skey_title` (`tsk_title`(20))
-) ENGINE=InnoDB AUTO_INCREMENT=113250502 DEFAULT CHARSET=latin1 PACK_KEYS=1;
+) ENGINE=InnoDB AUTO_INCREMENT=113610191 DEFAULT CHARSET=latin1 PACK_KEYS=1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3826,7 +3927,7 @@ CREATE TABLE `translation_link_log` (
   KEY `index_to` (`tll_to_lang`,`tll_to_aid`),
   KEY `index_user` (`tll_user`),
   KEY `index_timestamp` (`tll_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=435018 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=539891 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -4057,7 +4158,7 @@ CREATE TABLE `uploadstash` (
   UNIQUE KEY `us_key` (`us_key`),
   KEY `us_user` (`us_user`),
   KEY `us_timestamp` (`us_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -4126,8 +4227,11 @@ CREATE TABLE `user_completed_images` (
   `uci_copyright_matches` int(8) unsigned NOT NULL default '0',
   `uci_copyright_violates` tinyint(1) NOT NULL default '0',
   `uci_copyright_top_hits` blob,
+  `uci_upvotes` int(8) default '0',
+  `uci_downvotes` int(8) default '0',
   UNIQUE KEY `uci_image_name` (`uci_image_name`),
-  KEY `uci_article_id` (`uci_article_id`)
+  KEY `uci_article_id` (`uci_article_id`),
+  KEY `uci_article_name` (`uci_article_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
@@ -4188,6 +4292,57 @@ CREATE TABLE `user_newtalk` (
   `user_last_timestamp` varbinary(14) default NULL,
   KEY `user_id` (`user_id`),
   KEY `user_ip` (`user_ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `user_recommendation`
+--
+
+DROP TABLE IF EXISTS `user_recommendation`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `user_recommendation` (
+  `ur_user` int(11) NOT NULL,
+  `ur_page` int(11) NOT NULL,
+  `ur_score` int(11) NOT NULL,
+  `ur_date_recommended` varchar(14) NOT NULL,
+  `ur_deleted` int(1) NOT NULL default '0',
+  `ur_date_used` varchar(14) default NULL,
+  PRIMARY KEY  (`ur_user`,`ur_page`),
+  KEY `idx_deleted` (`ur_deleted`,`ur_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `user_recommendation_click_log`
+--
+
+DROP TABLE IF EXISTS `user_recommendation_click_log`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `user_recommendation_click_log` (
+  `urcl_id` int(11) NOT NULL auto_increment,
+  `urcl_page` int(11) NOT NULL,
+  `urcl_user` int(11) NOT NULL,
+  `urcl_date_added` varchar(24) NOT NULL,
+  PRIMARY KEY  (`urcl_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `user_recommendation_reason`
+--
+
+DROP TABLE IF EXISTS `user_recommendation_reason`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `user_recommendation_reason` (
+  `urr_user` int(11) NOT NULL,
+  `urr_page` int(11) NOT NULL,
+  `urr_reason` int(11) NOT NULL,
+  `urr_date_added` varchar(25) NOT NULL,
+  PRIMARY KEY  (`urr_user`,`urr_page`,`urr_reason`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
@@ -4339,7 +4494,7 @@ CREATE TABLE `videoadder` (
   `va_page_counter` bigint(20) unsigned NOT NULL default '0',
   PRIMARY KEY  (`va_id`),
   UNIQUE KEY `va_page` (`va_page`)
-) ENGINE=InnoDB AUTO_INCREMENT=250382 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=259303 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -4376,7 +4531,7 @@ CREATE TABLE `welcome_wagon_messages` (
   KEY `ww_to_user_id` (`ww_to_user_id`),
   KEY `ww_from_user_id` (`ww_from_user_id`),
   KEY `ww_timestamp` (`ww_timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=6367 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7359 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -4406,7 +4561,7 @@ CREATE TABLE `wh_db_ping` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `i` int(11) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2564789 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2644903 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -4521,6 +4676,82 @@ CREATE TABLE `wikivideo_video_names` (
 SET character_set_client = @saved_cs_client;
 
 --
+-- Table structure for table `wikivisual_article_status`
+--
+
+DROP TABLE IF EXISTS `wikivisual_article_status`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `wikivisual_article_status` (
+  `article_id` int(10) unsigned NOT NULL,
+  `status` int(10) unsigned NOT NULL default '0',
+  `creator` varchar(32) NOT NULL default '',
+  `reviewed` tinyint(3) unsigned NOT NULL default '0',
+  `processed` varchar(14) NOT NULL default '',
+  `vid_processed` varchar(14) NOT NULL default '',
+  `photo_processed` varchar(14) NOT NULL default '',
+  `warning` text NOT NULL,
+  `error` text NOT NULL,
+  `article_url` varchar(255) NOT NULL default '',
+  `retry` tinyint(3) unsigned NOT NULL default '0',
+  `vid_cnt` int(10) unsigned NOT NULL default '0',
+  `photo_cnt` int(10) unsigned NOT NULL default '0',
+  `replaced` int(10) unsigned NOT NULL default '0',
+  `steps` int(10) unsigned NOT NULL default '0',
+  `staging_dir` varchar(255) NOT NULL default '',
+  `incubation` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`article_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `wikivisual_photo_names`
+--
+
+DROP TABLE IF EXISTS `wikivisual_photo_names`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `wikivisual_photo_names` (
+  `filename` varchar(255) NOT NULL,
+  `wikiname` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `wikivisual_vid_names`
+--
+
+DROP TABLE IF EXISTS `wikivisual_vid_names`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `wikivisual_vid_names` (
+  `filename` varchar(255) NOT NULL,
+  `wikiname` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `wikivisual_vid_transcoding_status`
+--
+
+DROP TABLE IF EXISTS `wikivisual_vid_transcoding_status`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `wikivisual_vid_transcoding_status` (
+  `article_id` int(10) unsigned NOT NULL,
+  `aws_job_id` varchar(32) NOT NULL default '',
+  `aws_uri_in` text,
+  `aws_uri_out` text,
+  `aws_thumb_uri` text,
+  `processed` varchar(14) NOT NULL default '',
+  `status` varchar(32) NOT NULL default '',
+  `status_msg` text NOT NULL,
+  PRIMARY KEY  (`aws_job_id`),
+  KEY `article_id` (`article_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `ytas_meta`
 --
 
@@ -4578,4 +4809,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-28  3:05:09
+-- Dump completed on 2014-05-23  3:05:01

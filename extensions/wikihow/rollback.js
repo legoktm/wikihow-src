@@ -26,6 +26,7 @@ function rollback() {
 			if (typeof gPostRollbackCallback == 'function') gPostRollbackCallback();
 		}
 	});
+	window.oTrackUserAction();
 
 	return false;
 }

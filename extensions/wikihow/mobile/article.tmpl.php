@@ -70,7 +70,7 @@
 		</div><!--end article_top-->
 		
 <? $gotFirst = false; foreach ($sections as $id => $section): ?>
-	<? $expandSection = $id == 'steps' || $id == 'ingredients' || $id == 'relatedwikihows' || $id == 'tips'; ?>
+	<? $expandSection = $id == 'steps' || $id == 'ingredients' || $id == 'relatedwikihows' || $id == 'tips' || $id == 'user_completed_images'; ?>
 		<? if ($id == 'steps' && !$gotFirst) { ?>
 		<? } else { echo $sections[$id][0] ?>
 		<div id="drop-heading-<?= $id ?>" class="drop-heading">

@@ -1,5 +1,5 @@
 <div class="createpage_finished">
-	Thank you for writing an article on wikiHow.  Please check the box below if you'd like us to email you when your article gets updated or reaches other exciting milestones. You can also choose to share your article with others by using the buttons below to email it your friends, post it to Facebook, or post it to Twitter.
+	<span id="create_top">Thank you for writing an article on wikiHow.  Please check the box below if you'd like us to email you when your article gets updated or reaches other exciting milestones. You can also choose to share your article with others by using the buttons below to email it your friends, post it to Facebook, or post it to Twitter.</span>
 	<br><br>
 
 	<div>

@@ -123,7 +123,11 @@ class CreatePage extends SpecialPage {
 				{
 					$wgOut->redirect($source->getFullURL() . "?create-new-article=true");
 				} else {
-					$wgOut->redirect($source->getEditURL() . "&review=1");
+					if (!class_exists('ArticleCreator') || !$wgUser->getOption('articlecreator')) {
+						$wgOut->redirect($source->getEditURL() . "&review=1");
+					} else {
+						$wgOut->redirect('/Special:ArticleCreator?t=' . $source->getPartialUrl());
+					}
 				}
 				return;
 			} else {
@@ -207,6 +211,7 @@ class CreatePage extends SpecialPage {
 					'related_block' => $this->getRelatedTopicsText($t),
 				);
 				$box = EasyTemplate::html('createpage_step1box.tmpl.php',$vars);
+
 				$wgOut->addHTML($box);
 			}
 			return;

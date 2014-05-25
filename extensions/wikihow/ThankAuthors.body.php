@@ -148,12 +148,28 @@ EOHTML
 			wfDebug("STA: going through contributors\n");
 
 			$article = new Article($title);
-			$contributors = $article->getContributors(0, 0, true);
-			foreach ($contributors as $c) {
-				$id = $c->getID();
-				$u = $c;
+			//$contributors = $article->getContributors(0, 0, true);
+			$contributors = ArticleAuthors::getAuthors($article->getID());
+			foreach ($contributors as $k => $v) {
+				$u = User::newFromName($k);
+				$id = $u->getID();
+				//$id = $c->getID();
+				//$u = $c;
 				wfDebug("STA: going through contributors $u $id\n");
 				if ($id == "0") continue; // forget the anon users.
+				
+				//notify via the echo notification system
+				if (class_exists('EchoEvent')) {
+					EchoEvent::create( array(
+						'type' => 'kudos',
+						'title' => $title,
+						'extra' => array(
+							'kudoed-user-id' => $id,
+						),
+						'agent' => $wgUser,
+					) );
+				}
+				
 				$t = Title::newFromText("User_kudos:" . $u);
 				$a = new Article($t);
 				$update = $t->getArticleID() > 0;

@@ -6,9 +6,11 @@ WH.mobile = jQuery.extend(WH.mobile,
 (function () {
 
 	var contentTabs = ['ingredients', 'steps', 'thingsyoullneed', 'tips', 'warnings', 'video'];
-	var contentDropdowns = ['ingredients', 'steps', 'thingsyoullneed', 'tips', 'warnings', 'video', 'relatedwikihows', 'sources', 'article_info'];
+	var contentDropdowns = ['ingredients', 'steps', 'thingsyoullneed', 'tips', 'warnings', 'video', 'relatedwikihows', 'sources', 'article_info', 'user_completed_images'];
 
 	function initHillaryCTA() {
+		// Paused for now, per Elizabeth/Krystle - April 14, 2014
+		return;
 		if (document.location.href.indexOf('#review') != -1) return; // No CTA if already in tool
 		if (document.location.href.indexOf('//m.wiki') == -1) return; // No CTA on non-english
 		if (Math.random() > 0.1) return; // only 10 percent chance of getting this CTA

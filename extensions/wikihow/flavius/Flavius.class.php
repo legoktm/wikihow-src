@@ -63,6 +63,7 @@ class FlaviusConfig {
 								 'FTalkPagesReceived' => 1,
 								 'FThumbsReceived' => 1,
 								 'FContributionEditCount' => 1,
+								 'FContributionEditCount2' => 1,
 								 'FRequestsAnswered' => 1,
 								 'FRequestsMade' => 1,
 								 'FRevertedStats' => 1));
@@ -513,10 +514,12 @@ class Flavius {
 		$sql = "select fi_user, fi_value, fi_day from flavius_interval where fi_field=" . $this->db->addQuotes($field) . " AND fi_day=" . $this->db->addQuotes($date) ." group by fi_user";
 		$ids = array();
 		$td = array();
+		$totals = array();
 		$res = $this->db->query($sql, __METHOD__);
 		foreach($res as $row) {
 			$ids[] = $row->fi_user;
 			$td[$row->fi_user] = $row->fi_value;
+			$totals[$row->fi_user] = 0;
 		}
 		if($ids) {
 			$sql = "select fi_user, sum(fi_value) as tot from flavius_interval where fi_day <" . $this->db->addQuotes($date) . " AND fi_field=" . $this->db->addQuotes($field) . " AND fi_day>" . $this->db->addQuotes($lastTotalDate) . " AND fi_user in (" . implode(',', $ids) . ") GROUP BY fi_user";
@@ -540,14 +543,9 @@ class Flavius {
 					$td[$row->ft_user] = $row->tot;
 				}
 
-				if(isset($totals[$row->ft_user])) {
-					$totals[$row->ft_user] += $row->tot;	
-				}
-				else {
-					$totals[$row->ft_user] = $row->tot;
-				}
+				$totals[$row->ft_user] += $row->tot;	
 			}
-			$sql = "insert into flavius_milestone(fm_day, fm_field, fm_value, fm_user) values ";
+			$sql = "insert ignore into flavius_milestone(fm_day, fm_field, fm_value, fm_user) values ";
 			$first = false;
 			foreach($values as $value) {
 				foreach($ids as $id) {
@@ -1069,11 +1067,15 @@ class FContributionEditCount extends FSInterval {
 			$user->load();
 			if($user->getEditCount() != NULL) {
 				if(isset($userTotal[$user->getId()]) && $userTotal[$user->getId()] != NULL) {
-					$ret[$endDate][$user->getId()]['contribution_edit_count'] = $user->getEditCount() - $userTotal[$user->getId()];
+					$yesterdaysEditCount = $user->getEditCount() - $userTotal[$user->getId()];
 				}
 				else {
-					$ret[$endDate][$user->getId()]['contribution_edit_count'] = $user->getEditCount();
+					$yesterdaysEditCount = $user->getEditCount();
 				}
+				if($yesterdaysEditCount) {
+					$ret[$endDate][$user->getId()]['contribution_edit_count'] = $yesterdaysEditCount;
+				}
+
 			}
 		}
 		$this->profileOut(__METHOD__ . "-contribution_edit_count");
@@ -1091,6 +1093,39 @@ class FContributionEditCount extends FSInterval {
 		return($ret);
 	}
 
+}
+/**
+ * Get contribution edit count
+ */
+class FContributionEditCount2 extends FSInterval {
+    public function batchCalcInterval(&$dbr, &$users, $startDate, $endDate) {
+        $this->profileIn(__METHOD__);
+        $ids = $this->getIds($users);
+		$sql = "select ucs.ucs_user, ucs.ucs_day, (ucs.ucs_count - ifnull((select ucs2.ucs_count from flavius.user_contribution_snapshot ucs2 where ucs2.ucs_day < ucs.ucs_day and ucs.ucs_user=ucs2.ucs_user order by ucs2.ucs_day desc limit 1),0)) as day_change from flavius.user_contribution_snapshot ucs where ucs.ucs_day > " . $dbr->addQuotes($startDate) . " AND ucs.ucs_day <= " . $dbr->addQuotes($endDate) . " and ucs.ucs_user in (" . implode(',',$ids) . ") group by ucs_user, ucs_day" ;
+        $res = $dbr->query($sql, __METHOD__);
+        $ret = array();
+        foreach($res as $row) {
+			if($row->day_change) {
+				$ret[$row->ucs_day][$row->ucs_user]['contribution_edit_count2'] = $row->day_change;
+			}
+        }                                                                                                  
+        $this->profileOut(__METHOD__);
+        return($ret);
+    }
+    public function batchCalcTotals(&$dbr, &$users, $endDate) {
+        $this->profileIn(__METHOD__);
+        $ids = $this->getIds($users);
+		$sql = "select ucs_user, ucs_count from flavius.user_contribution_snapshot where ucs_day=" . $dbr->addQuotes($endDate) . "and ucs_user in (" . implode(',',$ids) . ") group by ucs_user";
+        $res = $dbr->query($sql, __METHOD__);
+        $ret = array();
+        foreach($res as $row) {
+			if($row->ucs_count) {
+            	$ret[$endDate][$row->ucs_user]['contribution_edit_count2'] = $row->ucs_count;
+			}
+        }
+        $this->profileOut(__METHOD__);
+        return($ret);
+    }
 }
 
 /**
@@ -1556,7 +1591,8 @@ class FRequestsAnswered extends FSInterval {
 }
 class FRevertedStats extends FSInterval {
 	function batchCalcInterval(&$dbr, &$users, $startDate, $endDate) {
-		$sql = 'select r2.rev_user as s_user,' . $this->getDayQuery('r.rev_timestamp') . ", count(*) as ct from revision r  join revision r2 on r.rev_page=r2.rev_page and r2.rev_parent_id=r.rev_id where r.rev_comment like '%Reverted%' and r.rev_timestamp >" . $dbr->addQuotes($startDate) . ' AND r.rev_timestamp <=' . $dbr->addQuotes($endDate)  . ' GROUP BY r2.rev_user, day'; 
+		$ids = $this->getIds($users);
+		$sql = 'select r2.rev_user as s_user,' . $this->getDayQuery('r.rev_timestamp') . ", count(*) as ct from revision r  join revision r2 on r.rev_page=r2.rev_page and r2.rev_id=r.rev_parent_id where r.rev_comment like '%Reverted%' and r.rev_timestamp >" . $dbr->addQuotes($startDate) . ' AND r.rev_timestamp <=' . $dbr->addQuotes($endDate)  . ' AND r2.rev_user in (' . implode(',',$ids) . ') GROUP BY r2.rev_user, day'; 
 		$res = $dbr->query($sql, __METHOD__);
 		$ret = array();
 		foreach($res as $row) {
@@ -1565,11 +1601,12 @@ class FRevertedStats extends FSInterval {
 		return($ret);
 	}
 	function batchCalcTotals(&$dbr, &$users, $endDate) {
-		$sql = 'select r2.rev_user as s_user,' . $this->getDayQuery('r.rev_timestamp') . ", count(*) as ct from revision r  join revision r2 on r.rev_page=r2.rev_page and r2.rev_parent_id=r.rev_id where r.rev_comment like '%Reverted%' AND r.rev_timestamp <=" . $dbr->addQuotes($endDate)  . ' GROUP BY r2.rev_user, day'; 
+		$ids = $this->getIds($users);
+		$sql = 'select r2.rev_user as s_user,' . $this->getDayQuery('r.rev_timestamp') . ", count(*) as ct from revision r  join revision r2 on r.rev_page=r2.rev_page and r2.rev_id=r.rev_parent_id where r.rev_comment like '%Reverted%' AND r.rev_timestamp <=" . $dbr->addQuotes($endDate)  . ' AND r2.rev_user in (' . implode(',',$ids) . ')  GROUP BY r2.rev_user, day'; 
 		$res = $dbr->query($sql, __METHOD__);
 		$ret = array();
 		foreach($res as $row) {
-			$ret[$endDate][$row->s_user] = array('edit_reverted' => $row->ct);
+			$ret[$endDate][$row->s_user] = array('edits_reverted' => $row->ct);
 		}
 		return($ret);
 	}

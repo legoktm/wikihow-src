@@ -42,6 +42,7 @@ $(document).ready(function() {
 	Mousetrap.bind(mod + 'b', function() {$('#gb_button').click();});
 	Mousetrap.bind(mod + 't', function() {$('.thumbbutton').click();});
 	Mousetrap.bind(mod + 'q', function() {$('#qn_button').click();});
+
 });
 })(jQuery);
 
@@ -60,7 +61,7 @@ function setRCLinks() {
 			} else if (links[i].getAttribute('accesskey') == 's'
 				&& links[i].id != 'skippatrolurl') {
 				links[i].setAttribute('accesskey',null);
-			}
+		}
 		}
 		*/
 	}
@@ -135,6 +136,7 @@ function setContentInner(html, fade) {
 	if (rev || ns >= 0) openSubMenu('ordering');
 	// Fire even to initialize wikivideo
 	$(document).trigger('rcdataloaded');
+	
 }
 
 function setContent(html) {
@@ -186,6 +188,18 @@ function setupTabs() {
 		openSubMenu('help');
 		return false;
 	});
+	
+	   $("#rcpatrol_keys").on("click", function(e){
+        e.preventDefault();
+        $("#rcpatrol_info").dialog({
+            width: 500,         
+            minHeight: 300,                 
+            modal: true,
+            title: 'RCPatrol Keys',
+            closeText: 'Close',
+            position: 'center',
+        });                                                                                         
+    });
 }
 
 function skip() {
@@ -295,7 +309,7 @@ function markPatrolled() {
 		setTimeout(markPatrolled, 500);
 		return;
 	}
-
+	
 	var numedits = parseIntWH($('#numedits').html());
 	$("#iia_stats_today_rc_edits, #iia_stats_week_rc_edits, #iia_stats_all_rc_edits").each(function(index, elem) {
 		$(this).fadeOut();
@@ -303,10 +317,13 @@ function markPatrolled() {
 		$(this).html(addCommas(cur + numedits));
 		$(this).fadeIn();
 	});
+
 	sendMarkPatrolled(marklink);
 
 	//change quick note links
 	resetQuickNoteLinks();
+	window.oTrackUserAction();
+
 	return false;
 }
 
@@ -394,10 +411,11 @@ $(document).ready(function() {
 	}
 	gPostRollbackCallback = function () {
 		span = $('#rollback-status');
-		if (span.length && span.html().indexOf('Reverted edits by') >= 0) {
+		if (span.length && span.html().toLowerCase().indexOf('reverted edits by') >= 0) {
 			// Special hack for BR because he didn't like not being able
 			// to quick edit after a rollback
-			var exceptionsList = ['BR', 'JuneDays', 'Zack', 'KommaH'];
+			//var exceptionsList = ['BR', 'JuneDays', 'Zack', 'KommaH'];
+			var exceptionsList = ['JuneDays', 'Zack', 'KommaH'];
 			if ($.inArray(wgUserName, exceptionsList) == -1) {
 				setTimeout( markPatrolled, 250 );
 			}

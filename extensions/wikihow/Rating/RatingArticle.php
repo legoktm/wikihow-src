@@ -26,7 +26,7 @@ class RatingArticle extends RatingsTool {
 	function logClear($itemId, $max, $min, $count, $reason){
 		$title = Title::newFromID($itemId);
 
-		if($title) {
+		if ($title) {
 			$params = array($itemId, $min, $max);
 			$log = new LogPage( $this->logType, true );
 			$logMsg = wfMessage('clearratings_logsummary', $reason, $title->getFullText(), $count)->text();
@@ -39,15 +39,14 @@ class RatingArticle extends RatingsTool {
 
 		$dbr = wfGetDB( DB_SLAVE );
 
-		//  get log
+		// get log
 		$res = $dbr->select ('logging',
 			array('log_timestamp', 'log_user', 'log_comment', 'log_params'),
 			array ('log_type' => $this->logType, "log_title"=>$title->getDBKey() ),
-			__METHOD__
-		);
+			__METHOD__);
 
 		$results = array();
-		foreach($res as $row) {
+		foreach ($res as $row) {
 			$item = array();
 			$item['date'] = $wgLang->date($row->log_timestamp);
 			$u = User::newFromId($row->log_user);
@@ -88,13 +87,13 @@ class RatingArticle extends RatingsTool {
 	}
 
 	function getRatingResponse($itemId, $rating) {
-		if($rating > 0) {
+		if ($rating > 0) {
 			return wfMessage('ratearticle_rated')->text();
-		}
-		else {
+		} else {
 			$title = Title::newFromID($itemId);
-			if($title)
+			if ($title) {
 				return wfMessage('ratearticle_notrated', $title->getText(), wfMessage('ratearticle_talkpage')->text())->text();
+			}
 		}
 	}
 
@@ -103,7 +102,7 @@ class RatingArticle extends RatingsTool {
 		wfLoadExtensionMessages('RateItem');
 		if ($this->mContext->canUseWikiPage() == false ) return;
 		$page_id = $this->mContext->getWikiPage()->getId();
-		if ($page_id <= 0 ) return;
+		if ($page_id <= 0) return;
 		$action = $wgRequest->getVal('action');
 		if ($action != null &&  $action != 'view') return;
 		if ($wgRequest->getVal('diff', null) != null) return;
@@ -117,7 +116,7 @@ class RatingArticle extends RatingsTool {
 		}
 
 		$msg = self::getMWMessage($wgTitle->getLocalUrl());
-		$s .="<p>" . wfMessage($msg)->text() . "</p><span><a href='javascript:rateItem(1, {$page_id}, \"article\");' id='gatAccuracyYes' class='button secondary'>" . wfMessage('rateitem_yes_button')->text() . "</a><a href='javascript:rateItem(0, {$page_id}, \"article\");' id='gatAccuracyNo' class='button secondary'>" . wfMessage('rateitem_no_button')->text() . "</a></span>";
+		$s = "<p>" . wfMessage($msg)->text() . "</p><span><a href='javascript:rateItem(1, {$page_id}, \"article\");' id='gatAccuracyYes' class='button secondary'>" . wfMessage('rateitem_yes_button')->text() . "</a><a href='javascript:rateItem(0, {$page_id}, \"article\");' id='gatAccuracyNo' class='button secondary'>" . wfMessage('rateitem_no_button')->text() . "</a></span>";
 		return $s;
 	}
 
@@ -127,7 +126,7 @@ class RatingArticle extends RatingsTool {
 
 		if ($wgArticle == null) return;
 		$page_id = $wgArticle->getID();
-		if ($page_id <= 0 ) return;
+		if ($page_id <= 0) return;
 		$action = $wgRequest->getVal('action');
 		if ($action != null &&  $action != 'view') return;
 		if ($wgRequest->getVal('diff', null) != null) return;
@@ -141,7 +140,7 @@ class RatingArticle extends RatingsTool {
 
 		// change this if you don't want people seeing the ratings
 		$msg = self::getMWMessage($wgTitle->getLocalUrl());
-		$s .="<p id='article_rating'>" . wfMessage($msg)->text().
+		$s = "<p id='article_rating'>" . wfMessage($msg)->text().
 			"<a href='javascript:rateItem(1, {$page_id}, \"article\");' id='gatAccuracyYes' class='button secondary'>" . strtoupper(wfMessage('rateitem_yes_button')->text()) . "</a>
 			<a href='javascript:rateItem(0, {$page_id}, \"article\");' id='gatAccuracyNo' class='button secondary'>" . strtoupper(wfMessage('rateitem_no_button')->text()) . "</a></p>";
 		return $s;
@@ -2204,49 +2203,3 @@ class RatingArticle extends RatingsTool {
  *
  ***/
  
-/*
- * moved directly to the AccuracyPatrol class
- *
-class ListArticleAccuracyPatrol extends PageQueryPage {
-
-	var $targets = array();
-	var $sqlQuery;
-
-	function setSql($sql) {
-		$this->sqlQuery = $sql;
-	}
-
-	function getName() {
-		return 'AccuracyPatrol';
-	}
-
-	function isExpensive( ) { return false; }
-
-	function isSyndicated() { return false; }
-
-	function getPageHeader( ) {
-		global $wgOut;
-		return $wgOut->parse( wfMessage( 'listlowratingstext' )->text() );
-	}
-
-	function getOrder() {
-		return '';
-	}
-
-	function getSQL() {
-		return "SELECT page_namespace, page_title, rl_avg, rl_count FROM rating_low, page WHERE rl_page=page_id ORDER BY rl_avg";
-	}
-
-	function formatResult($skin, $result) {
-		$t = Title::makeTitle($result->page_namespace, $result->page_title);
-		if ($t == null)
-			return "";
-		$avg = number_format($result->rl_avg * 100, 0);
-		$cl = SpecialPage::getTitleFor( 'Clearratings', $t->getText() );
-
-		return "{$skin->makeLinkObj($t, $t->getFullText() )} - ({$result->rl_count} votes, average: {$avg}% - {$skin->makeLinkObj($cl, 'clear',  'type=article')})";
-	}
-
-
-}
-*/

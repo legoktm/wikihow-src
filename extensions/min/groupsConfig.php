@@ -19,7 +19,7 @@ return array(
 		#'//skins/common/highlighter-0.6.js',
 		'//skins/common/wikihowbits.js',
 		'//skins/common/swfobject.js',
-		'//extensions/wikihow/common/jquery.scrollTo/jquery.scrollTo.js',
+		'//extensions/wikihow/common/jquery.scrollTo.1.4.12/jquery.scrollTo.min.js',
 		'//skins/common/fb.js',
 		'//extensions/wikihow/GPlusLogin/gplus.js',
 		'//skins/WikiHow/google_cse_search_box.js',
@@ -32,6 +32,9 @@ return array(
 
 	// AG - updated the version of jquery-ui-custom
 	'jqui' => array('//extensions/wikihow/common/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js'),
+	'jqs' => array('//extensions/wikihow/common/jquery-ui-slider-dialog-custom/jquery.ui-1.8.13.sortable.min.js'),
+	'tmc' => array('//extensions/wikihow/common/tinymce_4.0.20_jquery/js/tinymce/tinymce.min.js',
+		'//extensions/wikihow/common/tinymce_4.0.20_jquery/js/tinymce/jquery.tinymce.min.js'),
 	'wkt' => array('//extensions/wikihow/common/download.jQuery.js'),
 	'rcw' => array('//extensions/wikihow/rcwidget/rcwidget.js'),
 	'sp' => array('//skins/WikiHow/spotlightrotate.js'),
@@ -42,12 +45,20 @@ return array(
 	'thm' => array('//extensions/wikihow/thumbsup/thumbsnotifications.js'),
 	'stu' => array('//skins/common/stu.js'),
 	'altj' => array('//extensions/wikihow/altmethodadder/altmethodadder.js'),
-	'methj' => array('//extensions/wikihow/altmethodadder/methodeditor.js'),
-	'meguj' => array('//extensions/wikihow/altmethodadder/methodguardian.js'),
+	'methj' => array(
+		'//extensions/wikihow/common/mousetrap.min.js',
+		'//extensions/wikihow/altmethodadder/methodeditor.js'
+	),
+	'meguj' => array(
+		'//extensions/wikihow/common/mousetrap.min.js',
+		'//extensions/wikihow/altmethodadder/methodguardian.js'
+	),
 	'tpt' => array('//extensions/wikihow/tipsandwarnings/toptentips.js'),
 	'hp' => array('//extensions/wikihow/homepage/wikihowhomepage.js'),
 	'ts' => array('//extensions/wikihow/textscroller/textscroller.js'),
 	'ii' => array('//extensions/wikihow/imagefeedback/imagefeedback.js'),
+	'ac' => array('//extensions/wikihow/articlecreator/articlecreator.js'),
+	'uci' => array('//extensions/wikihow/mobile/ucipatrol/ucifeedback.js'),
 	'ctt' => array('//extensions/wikihow/cattool/categorizer.js'),
 	'whv' => array(
 		'//extensions/wikihow/whvid/whvid.js',
@@ -107,7 +118,9 @@ return array(
 	'tsc' => array('//extensions/wikihow/textscroller/textscroller.css'),
 	'tptc' => array('//extensions/wikihow/tipsandwarnings/topten.css'),
 	'iic' => array('//extensions/wikihow/imagefeedback/imagefeedback.css'),
+	'ucic' => array('//extensions/wikihow/mobile/ucipatrol/ucifeedback.css'),
 	'tpc' => array('//extensions/wikihow/tipsandwarnings/tipspatrol.css'),
+	'ucipc' => array('//extensions/wikihow/mobile/ucipatrol/ucipatrol.css'),
 	'dvc' => array('//extensions/wikihow/docviewer/docviewer.css'),
 	'spc' => array('//skins/owl/special.css'),
 	'whvc' => array(
@@ -117,6 +130,7 @@ return array(
 	'catc' => array('//extensions/wikihow/categories-owl.css'),
 	'qcc' => array('//extensions/wikihow/qc/qc.css'),
 	'rcpc' => array('//extensions/wikihow/rcpatrol/rcpatrol.css'),
+	'acc' => array('//extensions/wikihow/articlecreator/articlecreator.css'),
 	'diffc' => array('//skins/common/diff.css'),
 	'vaddc' => array('//extensions/wikihow/video/videoadder.css'),
 	'suggc' => array('//extensions/wikihow/suggestedtopics.css'),
@@ -151,6 +165,7 @@ return array(
 	'mtpt' => array('//extensions/wikihow/tipsandwarnings/toptentips.js'),
 	'maim' => array('//extensions/wikihow/mobile/webtoolkit.aim.min.js'),
 	'muci' => array('//extensions/wikihow/mobile/usercompletedimages.js'),
+	'tpj' => array('//extensions/wikihow/tipsandwarnings/tipspatrol.js'),
 
 	// mobile CSS
 	'mwhc' => array(
@@ -166,6 +181,7 @@ return array(
 	'mthr' => array('//extensions/wikihow/thumbratings/thumbratings.css'),
 	'msd' => array('//extensions/wikihow/docviewer/docviewer_m.css'),
 	'mtptc' => array('//extensions/wikihow/tipsandwarnings/topten_m.css'),
+	'mucic' => array('//extensions/wikihow/mobile/usercompletedimages.css'),
 
     // 'js' => array('//js/file1.js', '//js/file2.js'),
     // 'css' => array('//css/file1.css', '//css/file2.css'),

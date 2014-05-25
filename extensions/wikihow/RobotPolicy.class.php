@@ -86,6 +86,9 @@ class RobotPolicy {
 		} elseif ($this->isInaccurate()) {
 			$policy = self::POLICY_NOINDEX_FOLLOW;
 			$policyText = 'isInaccurate';
+		} elseif ($this->isVideoThumbnailDeindexTest()) {
+			$policy = self::POLICY_NOINDEX_FOLLOW;
+			$policyText = 'isVideoThumbnailDeindexTest';
 		} elseif ($this->isProdButNotWWWHost()) {
 			$policy = self::POLICY_NOINDEX_NOFOLLOW;
 			$policyText = 'isProdButNotWWWHost';
@@ -196,7 +199,7 @@ class RobotPolicy {
 		if ($this->title->getNamespace() != NS_USER) {
 			return 0;
 		}
-		$u = split("/", $this->title->getText());
+		$u = explode("/", $this->title->getText());
 		return WikihowUser::getAuthorStats($u[0]);
 	}
 	
@@ -207,7 +210,7 @@ class RobotPolicy {
 		if ($this->title->getNamespace() != NS_USER) {
 			return 0;
 		}
-		$u = split("/", $this->title->getText());
+		$u = explode("/", $this->title->getText());
 		return WikihowUser::isGPlusAuthor($u[0]);
 	}
 	 
@@ -360,7 +363,7 @@ class RobotPolicy {
 	private function inWhitelist() {
 		static $whitelist = null;
 		if (!$whitelist) $whitelist = wfMessage('index-whitelist')->text();
-		$urls = split("\n", $whitelist);
+		$urls = explode("\n", $whitelist);
 		foreach ($urls as $url) {
 			$url = trim($url);
 			if ($url) {
@@ -369,6 +372,19 @@ class RobotPolicy {
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	// Reuben added short deindex test to try and get video thumbnails out of 
+	// google index
+	private function isVideoThumbnailDeindexTest() {
+		global $wgTitle;
+		if ($wgTitle 
+			&& in_array($wgTitle->getPartialURL(), 
+				array('Make-Santa-Cookies', 'Delete-Apps')))
+		{
+			return true;
 		}
 		return false;
 	}

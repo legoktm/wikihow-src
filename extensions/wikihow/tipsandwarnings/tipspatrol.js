@@ -17,8 +17,10 @@ WH.tipsPatrol = (function() {
 
 	$('#tip_header').on( "click", "#tip_delete", function(e) {
 		e.preventDefault();
+
 		if (!jQuery(this).hasClass('clickfail')) {
 			clearTool(coachTip);
+			window.oTrackUserAction();
 			$.post(toolURL, {
 				deleteTip: true,
 				tipId: tipId,
@@ -47,6 +49,7 @@ WH.tipsPatrol = (function() {
 		if (validate()) {
 			if (!jQuery(this).hasClass('clickfail')) {
 				clearTool(coachTip);
+				window.oTrackUserAction();
 				$.post(toolURL, {
 					keepTip: true,
 					articleId: articleId,
@@ -243,6 +246,18 @@ WH.tipsPatrol = (function() {
 			Mousetrap.bind(mod + 's', function() {$('#tip_skip').click();});
 			Mousetrap.bind(mod + 'p', function() {$('#tip_keep').click();});
 			Mousetrap.bind(mod + 'd', function() {$('#tip_delete').click();});
+
+			$("#tips_keys").click(function(e){
+				e.preventDefault();
+        		$("#tips_info").dialog({
+					width: 500,
+					minHeight: 300,
+					modal: true,
+					title: 'Tips Patrol Keys',
+					closeText: 'Close',
+					position: 'center',
+        		});
+    		});	
 
 			$("#article").prepend("<div id='tip_count' class='tool_count'><h3></h3><span>tips remaining</span></div>");
 			skipTip();

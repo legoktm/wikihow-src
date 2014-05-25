@@ -123,7 +123,7 @@ class MethodGuardian extends SpecialPage {
 						
 						$newMethod = $wgParser->parse("=== " . $row->ama_method . " ===\n" . $row->ama_steps, $title, new ParserOptions())->getText();
 						$newMethod = preg_replace('@<span class="editsection">.*?<\/span>@','',$newMethod); //remove that edit link
-						$content['steps'] = WikihowArticleHTML::processArticleHTML($newMethod, array('no-ads' => true, 'ns' => NS_MAIN));
+						$content['steps'] = WikihowArticleHTML::processArticleHTML("<div class='steps'><div class='section_text'>" . $newMethod . "</div></div>", array('no-ads' => true, 'ns' => NS_MAIN));
 						
 						$content['articleTitle'] = "<a href='{$title->getLocalURL()}'>{$title->getText()}</a>";
 						$content['error'] = false;
@@ -202,5 +202,92 @@ class MethodGuardian extends SpecialPage {
 		$stats->addStatsWidget();
 		$standings = new MethodGuardianStandingsGroup();
 		$standings->addStandingsWidget();
+	}
+
+	public static function checkContent(&$title, &$methodName, &$methodSteps, $debug = false) {
+		global $IP;
+
+		$stepsArray = explode("#", $methodSteps);
+		$wordsArray = array();
+		foreach ($stepsArray as $step) {
+			preg_match_all('/\b(\w|\')+\b/u', $step, $matches); //u modified allows for international characters
+			foreach ($matches[0] as $match) {
+				$wordsArray[] = $matches[0];
+			}
+		}
+
+		//check length of each step
+		$hasLongEnough = false;
+		$minLength = 8;
+		foreach($wordsArray as $stepsArray) {
+			if(count($stepsArray) >= $minLength) {
+				$hasLongEnough = true;
+			}
+		}
+
+		if( !$hasLongEnough ) {
+			if($debug)
+				echo "****** Steps are not long enough\n";
+			return false;
+		}
+
+		//contains no letters
+		if(preg_match('@[a-z]@i', $methodSteps) == 0) {
+			if($debug)
+				echo "****** Doesn't have any letters in the steps\n";
+			return false;
+		}
+
+		//check and see if everything is uppercase
+		if(strtoupper($methodSteps) == $methodSteps) {
+			if($debug)
+				echo "****** Steps are all uppercase\n";
+			return false;
+		}
+
+		//check for gibberish and bad words
+		$filename = $IP . "/maintenance/bad_words.txt";
+		$fi = fopen($filename, "r");
+		$badWordsArray = array();
+		while ( !feof( $fi ) ) {
+			$fcontent = fgets($fi);
+			$fcontent = strtolower(trim($fcontent));
+			if($fcontent != "")
+				$badWordsArray[] = $fcontent;
+		}
+
+		$totalWords = 0;
+		$gibberishWords = 0;
+		//can't use pspell on www, so not doing this test for now
+		//$pspell = wikiHowDictionary::getLibrary();
+
+		foreach($wordsArray as $stepArray) {
+			foreach($stepArray as $word) {
+				if (in_array(strtolower($word), $badWordsArray)) {
+					if($debug)
+						echo "****** Contains the bad word: $word\n";
+					return false;
+				}
+				/*if (!pspell_check($pspell,$word)) {
+					$gibberishWords++;
+				}
+				$totalWords++;*/
+			}
+		}
+		/*if($totalWords == 0 || $gibberishWords/$totalWords > .5) {
+			if($debug)
+				echo "****** Too many gibberish words\n";
+			return false;
+		}*/
+
+		//check for default values
+		if(str_replace(array("\r"), "", $methodSteps) == trim(AltMethodAdder::DEFAULT_STEPS)) {
+			if($debug)
+				echo "****** Same as default\n";
+			return false;
+		}
+
+
+		return true;
 	}
 }

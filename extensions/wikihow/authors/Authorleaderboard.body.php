@@ -8,6 +8,13 @@ class Authorleaderboard extends SpecialPage {
     function execute ($par) {
 		global $wgRequest, $wgOut, $wgUser, $wgLang, $wgLanguageCode;
 
+		//this tool is deprecated
+		//go here instead
+		global $wgServer;
+		header('HTTP/1.1 301 Moved Permanently');
+		header('Location: ' . $wgServer . '/Special:Leaderboard');
+		exit;
+		
 		if ($wgLanguageCode != 'en') {
 			$wgOut->showErrorPage( 'nosuchspecialpage', 'nospecialpagetext' );
 			return;

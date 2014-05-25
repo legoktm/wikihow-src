@@ -23,6 +23,31 @@ class ArticleMetaInfo {
 		$isMaintenance = false,
 		$row = null;
 
+	// Reuben added an exclusion list from Chris because we found that
+	// wikiVideo wasn't doing well in terms of CTR from Google Index, and
+	// video thumbnails seemed to be the common factor. We're excluding
+	// OpenGraph image data and pinterest data from certain pages as a
+	// test to see if (1) we can remove the video thumbnails from the
+	// Google Index for these articles, and (2) if this helps CTR / page
+	// views for these articles.
+	//
+	// Articles with an even article ID had this og:image:
+	//    <meta property="og:image" content=""/>
+	// Articles with an odd article ID had no og:image meta tag.
+	static $opengraphArticleExclusions = array(
+		1068179, // Bake-Chicken-Breast -- added new Done image and renamed old Done image from html
+		65596, 18474, 14904, 109431, 23439,
+		31411,
+		22782, // Remove-Gum-from-Clothes -- added new Done image at end
+		24394, 237241, 14791,
+		2365, 22205, 5014, 118572, 2538648,
+		13331, 5358, 22960, 527276, 64180,
+		279762, 3467, 235416, 27799, 26355,
+		344563, 143190, 150727, 3232181, 66040,
+		494467, // Make-Santa-Cookies -- deindexed, added new Done image
+		2896745, // Delete-Apps -- deindexed, added new Done image
+	);
+
 	const MAX_DESC_LENGTH = 240;
 
 	const DESC_STYLE_NOT_SPECIFIED = -1;
@@ -377,7 +402,7 @@ class ArticleMetaInfo {
 
 		if (!is_array($res)) {
 			$articleID = $this->articleID;
-			$namespace = MW_MAIN;
+			$namespace = NS_MAIN;
 			$dbr = $this->getDB();
 			$sql = 'SELECT * FROM article_meta_info WHERE ami_id=' . $dbr->addQuotes($articleID) . ' AND ami_namespace=' . intval($namespace);
 			$res = $dbr->query($sql, __METHOD__);
@@ -486,7 +511,7 @@ class ArticleMetaInfo {
 		// url will look like this, for example:
 		// http://www.wikihow.com/Kiss?fb=t
 		if ($wgRequest->getVal('fb', '') == 't') {
-			$fbDesc = wfMessage('article_meta_description_facebook', $wgTitle->getText())->getText();
+			$fbDesc = wfMessage('article_meta_description_facebook', $wgTitle->getText())->text();
 			$url .= "?fb=t";
 		}
 
@@ -515,11 +540,30 @@ class ArticleMetaInfo {
 			} else {
 				$img = wfGetPad( 'http://www.wikihow.com' . $img );
 			}
-			$props[] = array( 'property' => 'og:image', 'content' => $img );
+			if (!self::isImageExclusionArticle()) {
+				$props[] = array( 'property' => 'og:image', 'content' => $img );
+			} else {
+				global $wgTitle;
+				$articleID = $wgTitle ? $wgTitle->getArticleID() : 0;
+				if ($articleID % 2 == 0) {
+					$props[] = array( 'property' => 'og:image', 'content' => '' );
+				}
+			}
 		}
 
 		foreach ($props as $prop) {
-			$wgOut->addHeadItem($prop['property'], '<meta property="' . $prop['property'] . '" content="' . htmlspecialchars($prop['content'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . '"/>' . "\n");
+			//ENT_HTML5 was added in php 5.4.0 (we aren't there yet)
+			//$wgOut->addHeadItem($prop['property'], '<meta property="' . $prop['property'] . '" content="' . htmlspecialchars($prop['content'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . '"/>' . "\n");
+			$wgOut->addHeadItem($prop['property'], '<meta property="' . $prop['property'] . '" content="' . htmlspecialchars($prop['content'], ENT_QUOTES, 'UTF-8') . '"/>' . "\n");
+		}
+	}
+
+	static function isImageExclusionArticle() {
+		global $wgTitle, $wgLanguageCode;
+		if (!$wgTitle || ($wgLanguageCode == "en" && in_array($wgTitle->getArticleID(), self::$opengraphArticleExclusions))) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -601,6 +645,56 @@ class ArticleMetaInfo {
 		}
 
 		return $return;
+	}
+
+	static function addTwitterMetaProperties() {
+		global $wgTitle, $wgRequest, $wgOut, $wgLanguageCode, $wgServer;
+
+		$action = $wgRequest->getVal('action', 'view');
+
+		if($wgTitle->getNamespace() != NS_MAIN || $action != "view")
+			return;
+
+		$isMainPage = $wgTitle
+			&& $wgTitle->getNamespace() == NS_MAIN
+			&& $wgTitle->getText() == wfMessage('mainpage')->inContentLanguage()->text()
+			&& $action == 'view';
+
+		if (!self::$wgTitleAMIcache) {
+			self::$wgTitleAMIcache = new ArticleMetaInfo($wgTitle);
+		}
+		$ami = self::$wgTitleAMIcache;
+
+		if($isMainPage)
+			$twitterTitle = "wikiHow";
+		else
+			$twitterTitle = wfMessage('howto', $ami->titleText)->text();
+
+		if($isMainPage)
+			$twitterDesc = "wikiHow - How to do anything";
+		else
+			$twitterDesc = $ami->getFacebookDescription();
+
+		if($isMainPage)
+			$twitterImg = "/images/7/71/Wh-logo.jpg";
+		else
+			$twitterImg = $ami->getImage();
+		if ($wgLanguageCode == 'en') {
+			$twitterImg = $wgServer . $twitterImg;
+		} else {
+			$twitterImg = wfGetPad( 'http://www.wikihow.com' . $twitterImg );
+		}
+
+		$wgOut->addHeadItem('tcard', '<meta name="twitter:card" content="summary_large_image"/>' . "\n");
+		if (!self::isImageExclusionArticle()) {
+			$wgOut->addHeadItem('timage', '<meta name="twitter:image:src" content="' . $twitterImg . '"/>' . "\n");
+		}
+		$wgOut->addHeadItem('tsite', '<meta name="twitter:site" content="@wikihow"/>' . "\n");
+		$wgOut->addHeadItem('tdesc', '<meta name="twitter:description" content="' . htmlentities($twitterDesc) . '"/>' . "\n");
+
+
+		$wgOut->addHeadItem('ttitle', '<meta name="twitter:title" content="' . htmlentities($twitterTitle) . '"/>' . "\n");
+		$wgOut->addHeadItem('turl', '<meta name="twitter:url" content="' . $wgTitle->getFullURL() . '"/>' . "\n");
 	}
 
 }

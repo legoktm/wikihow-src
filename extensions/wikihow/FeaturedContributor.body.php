@@ -43,7 +43,7 @@ class FeaturedContributor extends UnlistedSpecialPage {
 		$fc_blurb = preg_replace("/\n/","",strip_tags($output->getText() , '<p><b><a><br>'));
 
 		$fc_blurb = str_replace("$1", $u->getName(), $fc_blurb);
-		$regYear .= gmdate('Y',wfTimestamp(TS_UNIX,$u->getRegistration()));
+		$regYear = gmdate('Y', wfTimestamp(TS_UNIX, $u->getRegistration()));
 		$fc_blurb = str_replace("$2", $regYear, $fc_blurb);
 
 ?>

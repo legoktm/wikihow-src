@@ -24,6 +24,7 @@ switch($action) {
 		$res = $dbw->delete(MethodEditor::LOGGING_TABLE_NAME, array("mel_timestamp <= {$expired}"), __FILE__);
 		break;
 	case "init":
+		$dbw->delete(MethodEditor::LOGGING_TABLE_NAME, '*', __FILE__);
 		$edits = DatabaseHelper::batchSelect('logging', array('log_timestamp', 'log_user'), array('log_type' => 'methedit'), __FILE__);
 		foreach($edits as $edit) {
 			$dbw->insert(MethodEditor::LOGGING_TABLE_NAME, array('mel_timestamp' => $edit->log_timestamp, 'mel_user' => $edit->log_user));

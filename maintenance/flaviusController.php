@@ -91,6 +91,8 @@ class FlaviusController {
 				$this->flavius->clearIntervalStats($this->clearDay);
 				$this->flavius->clearTotalStats($this->clearDay);
 				$this->calculateMilestones("contribution_edit_count", array(10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000));
+				$this->calculateMilestones("contribution_edit_count2", array(10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000));
+
 			}
 
 		}
@@ -201,6 +203,19 @@ class FlaviusController {
 	}
 
 	/**
+	 * Recalculate a days interval stats
+	 */
+	 public function recalcInterval($startDay, $endDay) {
+		$ids = $this->falvius->getAllIdsToCalc();
+		$t = $this;
+		$intervalStats = FlaviusConfig::getIntervalStats();
+		$this->doBatch($ids,self::BATCH_SIZE,function($idSlice) use($t,$intervalStats) {
+			$t->flavius->calcIntervalStats($idSlice, $intervalStats, $startDay, $endDay, $dryRun);
+		});
+
+	 }
+
+	/**
 	 * Calculate interval stats form last touch date
 	 */
 	public function calcIntervalStat($statName, $lastTouchDate=false, $partial=false, $dryRun = false) {
@@ -216,17 +231,13 @@ class FlaviusController {
 		}
 
 		$t = $this;
-		if($dryRun) {
-			$t->flavius->startProfile();	
-		}
+		$t->flavius->startProfile();	
 		$this->doBatch($ids,self::BATCH_SIZE,function($idSlice) use($stats,$t) {
 			$t->flavius->calcIntervalStats($idSlice, $stats, $t->oldDay, $t->yesterdaysDate, $dryRun);
 			$t->flavius->calcTotalStats($idSlice, $stats, $t->oldDay);
 		});
-		if($dryRun) {
-			print("Profile times");
-			$t->flavius->printProfileTimes();	
-		}
+		print("=====Profile times====");
+		$t->flavius->printProfileTimes();	
 
 	}
 
@@ -270,8 +281,8 @@ if($argv[0] == '-yesterday') {
 else {
 	$fc = new FlaviusController();
 }
-// Note: this should probably be changed to alerts@wikihow.com for production
-$fc->addErrorEmail("alerts@wikihow.com");
+$fc->addErrorEmail("gershon@wikihow.com");
+$fc->addErrorEmail("reuben@wikihow.com");
 
 if($argv[0] == '--fullrun') {
 	$fc->run(true);
@@ -296,6 +307,9 @@ elseif($argv[0] == "--fullgroup") {
 elseif($argv[0] == "--fullinterval") {
 	$fc->calcIntervalStats();
 }
+elseif($argv[0] == "--recalcinterval") {
+	$fc->recalcInterval($argv[1], $argv[2]);
+}
 elseif($argv[0] == "--partialintervalstat") {
 	$fc->calcIntervalStat($argv[1], "20010101", true);
 }
@@ -312,7 +326,12 @@ elseif($argv[0] == "--summary") {
 	$fc->makeSummary();
 }
 elseif($argv[0] == "--milestones") {
-	$fc->calculateMilestones($argv[1],array(10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000));
+	if(isset($argv[2])) {
+		$fc->calculateMilestones($argv[1],array(10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000), $argv[2]);
+	}
+	else {
+		$fc->calculateMilestones($argv[1],array(10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000));
+	}
 }
 elseif($argv[0] == "--anonstats") {
 	$fc->calculateAnons();	

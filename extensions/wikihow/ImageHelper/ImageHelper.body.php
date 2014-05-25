@@ -14,10 +14,10 @@ class ImageHelper extends UnlistedSpecialPage {
 
 	public static function heightPreference($desiredWidth, $desiredHeight, &$file) {
 		$heightPreference = false;
-		if($file) {
+		if ($file) {
 			$sourceWidth = $file->getWidth();
 			$sourceHeight = $file->getHeight();
-			if($desiredWidth/$desiredHeight < $sourceWidth/$sourceHeight) {
+			if ($desiredWidth/$desiredHeight < $sourceWidth/$sourceHeight) {
 				//desired image is portrait
 				$heightPreference = true;
 			}
@@ -31,9 +31,9 @@ class ImageHelper extends UnlistedSpecialPage {
 		
 		$articles = ImageHelper::getLinkedArticles($title);
 		$relatedArticles = array();
-		foreach($articles as $t){
+		foreach ($articles as $t) {
 			$related = ImageHelper::setRelatedWikiHows($t);
-			foreach($related as $titleString){
+			foreach ($related as $titleString) {
 				$relatedArticles[$titleString] = $titleString;
 			}
 		}
@@ -42,9 +42,9 @@ class ImageHelper extends UnlistedSpecialPage {
 
 		$count = 0;
 		$images = '';
-		foreach($relatedArticles as $titleString){
+		foreach ($relatedArticles as $titleString) {
 			$t = Title::newFromText($titleString);
-			if($t && $t->exists()) {
+			if ($t && $t->exists()) {
 				$result = SkinWikihowskin::getArticleThumb($t, 127, 140);
 				$images .= $result;
 				
@@ -52,7 +52,7 @@ class ImageHelper extends UnlistedSpecialPage {
 			}
 		}
 
-		if($count > 0){
+		if ($count > 0) {
 			$section .= "<div class='other_articles minor_section'>
 						<h2>" . wfMsg('ih_relatedArticles') . "</h2>
 						$images
@@ -63,17 +63,17 @@ class ImageHelper extends UnlistedSpecialPage {
 		$wgOut->addHTML($section);
 	}
 
-	function setRelatedWikiHows($title){
+	function setRelatedWikiHows($title) {
 		global $wgTitle, $wgParser, $wgMemc;
 
-		$key = wfMemcKey("ImageHelper_related" . $title->getArticleID());
+		$key = wfMemcKey("ImageHelper_related", $title->getArticleID());
 		$result = $wgMemc->get($key);
 		if ($result) {
 			return $result;
 		}
 
 		$templates = wfMsgForContent('ih_categories_ignore');
-		$templates = split("\n", $templates);
+		$templates = explode("\n", $templates);
 		$templates = str_replace("http://www.wikihow.com/Category:", "", $templates);
 		$templates = array_flip($templates); // make the array associative.
 
@@ -84,16 +84,16 @@ class ImageHelper extends UnlistedSpecialPage {
 			$whow = WikihowArticleEditor::newFromText($text);
 			$related = preg_replace("@^==.*@m", "", $whow->getSection('related wikihows'));
 
-			if($related != ""){
+			if ($related != "") {
 				$preg = "/\\|[^\\]]*/";
 				$related = preg_replace($preg, "", $related);
-				$rarray = split("\n", $related);
-				foreach($rarray as $related) {
+				$rarray = explode("\n", $related);
+				foreach ($rarray as $related) {
 					preg_match("/\[\[(.*)\]\]/", $related, $rmatch);
 
 					//check to make sure this article isn't in a category
 					//that we don't want to show
-					$title = Title::MakeTitle( $s->page_namespace, $rmatch[1] );
+					$title = Title::MakeTitle( NS_MAIN, $rmatch[1] );
 					$cats = ($title->getParentCategories());
 					if (is_array($cats) && sizeof($cats) > 0) {
 						$keys = array_keys($cats);
@@ -106,23 +106,21 @@ class ImageHelper extends UnlistedSpecialPage {
 								break;
 							}
 						}
-						if($found)
-							continue;
+						if ($found) continue;
 					}
 
 					$relatedTitles[] = $rmatch[1];
 				}
 				
-			}
-			else{
-				$cats = ($title->getParentCategories());
+			} else {
+				$cats = $title->getParentCategories();
 				$cat1 = '';
 				if (is_array($cats) && sizeof($cats) > 0) {
 					$keys = array_keys($cats);
 					$cat1 = '';
 					$found = false;
 					$templates = wfMsgForContent('ih_categories_ignore');
-					$templates = split("\n", $templates);
+					$templates = explode("\n", $templates);
 					$templates = str_replace("http://www.wikihow.com/Category:", "", $templates);
 					$templates = array_flip($templates); // make the array associative.
 					for ($i = 0; $i < sizeof($keys) && !$found; $i++) {
@@ -162,7 +160,7 @@ class ImageHelper extends UnlistedSpecialPage {
 			}
 		}
 
-		$wgMemc->set(wfMemcKey("ImageHelper_related" . $title->getArticleID()), $relatedTitles);
+		$wgMemc->set($key, $relatedTitles);
 		
 		return $relatedTitles;
 		
@@ -175,7 +173,7 @@ class ImageHelper extends UnlistedSpecialPage {
 	 * NS_MAIN namespace and will also not be in a excluded category.
 	 * 
 	 */
-	function getLinkedArticles($title){
+	function getLinkedArticles($title) {
 		global $wgMemc;
 		$cachekey = wfMemcKey("ImageHelper_linked", $title->getArticleID());
 
@@ -197,14 +195,15 @@ class ImageHelper extends UnlistedSpecialPage {
 		$articles = array();
 
 		$templates = wfMsgForContent('ih_categories_ignore');
-		$templates = split("\n", $templates);
+		$templates = explode("\n", $templates);
 		$templates = str_replace("http://www.wikihow.com/Category:", "", $templates);
 		$templates = array_flip($templates); // make the array associative.
 
-		while ( $s = $dbr->fetchObject( $res ) ) {
+		foreach ($res as $s) {
 			//check if in main namespace
-			if($s->page_namespace != NS_MAIN)
-					continue;
+			if ($s->page_namespace != NS_MAIN) {
+				continue;
+			}
 
 			//check if in category exclusion list
 			$title = Title::MakeTitle( $s->page_namespace, $s->page_title );
@@ -220,10 +219,10 @@ class ImageHelper extends UnlistedSpecialPage {
 						break;
 					}
 				}
-				if($found)
+				if ($found)
 					continue;
 			}
-			if($s->page_title != $imageTitle){
+			if ($s->page_title != $imageTitle) {
 				$articles[] = $title;
 			}
 
@@ -233,7 +232,7 @@ class ImageHelper extends UnlistedSpecialPage {
 		return $articles;
 	}
 
-	function getSummaryInfo($image){
+	function getSummaryInfo($image) {
 		global $wgOut, $wgTitle;
 
 		$sk = $this->getSkin();
@@ -243,7 +242,7 @@ class ImageHelper extends UnlistedSpecialPage {
 		$tmpl = new EasyTemplate( dirname(__FILE__) );
 		$tmpl->set_vars(array(
 			'preview' => $sizes['width'] . "x" . $sizes['height'] . "px",
-			'full' => $sizes['full'] == 0?"<a href='" . $image->getFullUrl() . "'>" . $image->getWidth() . "x" . $image->getHeight() . " px </a>":wfMsg( 'file-nohires'),
+			'full' => ($sizes['full'] == 0 ? "<a href='" . $image->getFullUrl() . "'>" . $image->getWidth() . "x" . $image->getHeight() . " px </a>" : wfMsg( 'file-nohires')),
 			'file' => $sk->formatSize($image->getSize()),
 			'mime' => $image->getMimeType(),
 			'imageCode' => "[[" . $wgTitle->getFullText() . "|thumb|description]]"
@@ -253,10 +252,11 @@ class ImageHelper extends UnlistedSpecialPage {
 
 	}
 
-	function getImages($articleId){
+	function getImages($articleId) {
 		global $wgMemc;
 
-		$result = $wgMemc->get(wfMemcKey("ImageHelper_getImages" . $articleId));
+		$key = wfMemcKey("ImageHelper_getImages", $articleId);
+		$result = $wgMemc->get($key);
 		if ($result) {
 			return $result;
 		}
@@ -264,11 +264,11 @@ class ImageHelper extends UnlistedSpecialPage {
 		$dbr = wfGetDB( DB_SLAVE );
 		$results = array();
 		$res = $dbr->select(array('imagelinks'), '*', array('il_from' => $articleId));
-		while($row = $dbr->fetchRow($res)){
-			$results[] = $row;
+		foreach ($res as $row) {
+			$results[] = (array)$row;
 		}
 
-		$wgMemc->set(wfMemcKey("ImageHelper_getImages" . $articleId), $results);
+		$wgMemc->set($key, $results);
 
 		return $results;
 	}
@@ -282,15 +282,15 @@ class ImageHelper extends UnlistedSpecialPage {
 
 		$count = 0;
 		$images = '';
-		foreach($articles as $t){
-			if($t && $t->exists()) {
+		foreach ($articles as $t) {
+			if ($t && $t->exists()) {
 				$images .= SkinWikihowskin::getArticleThumb($t, 150, 120);
 				
 				if (++$count == 5) break;
 			}
 		}
 
-		if($count > 0){
+		if ($count > 0) {
 			$section .= "<h4>" . wfMsg('Linkstoimage') . "</h4>";
 			$section .= "<table class='featuredArticle_Table'>";
 			$section .= $images;
@@ -306,32 +306,33 @@ class ImageHelper extends UnlistedSpecialPage {
 	 * This function takes an array of titles and finds other images
 	 * that are in those articles.
 	 */
-	function getConnectedImages($articles, $title){
+	function getConnectedImages($articles, $title) {
 		global $wgOut, $wgMemc;
 
 		wfLoadExtensionMessages('ImageHelper');
 
 		$exceptions = wfMsg('ih_exceptions');
-		$imageExceptions = split("\n", $exceptions);
+		$imageExceptions = explode("\n", $exceptions);
 
 		$sk = $this->getSkin();
 
-		$result = $wgMemc->get(wfMemcKey("ImageHelper_getConnectedImages" . $imageName));
+		$key = wfMemcKey("ImageHelper_getConnectedImages", $title->getText());
+		$result = $wgMemc->get($key);
 		if ($result) {
 			$wgOut->addHTML($result);
 			return;
 		}
 
 		$imageName = $title->getDBkey();
-		if(in_array($imageName, $imageExceptions)){
-			$wgMemc->set(wfMemcKey("ImageHelper_getConnectedImages" . $imageName), "");
+		if (in_array($imageName, $imageExceptions)) {
+			$wgMemc->set($key, "");
 			return;
 		}
 		
 		$html = '';
 
 		$noImageArray = array();
-		foreach($articles as $title){
+		foreach ($articles as $title) {
 			$imageUrl = array();
 			$thumbUrl = array();
 			$imageTitle = array();
@@ -341,17 +342,17 @@ class ImageHelper extends UnlistedSpecialPage {
 			$results = ImageHelper::getImages($title->getArticleID());
 
 			$count = 0;
-			if(count($results) <= 1){
+			if (count($results) <= 1) {
 				$noImageArray[] = $title;
 				continue;
 			}
 			
 			$titleLink = $sk->makeKnownLinkObj( $title, "" );
 			$found = false;
-			foreach($results as $row){
-				if($count >= 4)
-					break;
-				if($row['il_to'] != $imageName && !in_array($row['il_to'], $imageExceptions)){
+			foreach ($results as $row) {
+				if ($count >= 4) break;
+
+				if ($row['il_to'] != $imageName && !in_array($row['il_to'], $imageExceptions)) {
 					$image = Title::newFromText("Image:" . $row['il_to']);
 					if ($image && $image->getArticleID() > 0) {
 
@@ -370,7 +371,7 @@ class ImageHelper extends UnlistedSpecialPage {
 					}
 				}
 			}
-			if($count > 0){
+			if ($count > 0) {
 				$tmpl = new EasyTemplate( dirname(__FILE__) );
 				$tmpl->set_vars(array(
 					'imageUrl' => $imageUrl,
@@ -384,30 +385,30 @@ class ImageHelper extends UnlistedSpecialPage {
 				));
 
 				$html .= $tmpl->execute('connectedImages.tmpl.php');
-			}
-			else
+			} else {
 				$noImageArray[] = $title;
+			}
 		}
 
-		if(sizeof($noImageArray) > 0){
+		if (sizeof($noImageArray) > 0) {
 			$html .= "<div class='minor_section'>
 						<h2>" . wfMsg('ih_otherlinks') . "</h2><ul class='im-images'>";
-			foreach($noImageArray as $title){
+			foreach ($noImageArray as $title) {
 				$link = $sk->makeKnownLinkObj( $title, "" );
 				$html .= "<li>{$link}</li>\n";
 			}
 			$html .= "</ul></div>";
 		}
 		
-		$wgMemc->set(wfMemcKey("ImageHelper_getConnectedImages" . $imageName), $html);
+		$wgMemc->set($key, $html);
 
 		$wgOut->addHTML($html);
 	}
 
-	function displayBottomAds(){
+	function displayBottomAds() {
 		global $wgOut, $wgUser;
 		
-		if($wgUser->getID() == 0){
+		if ($wgUser->getID() == 0) {
 			$channels = wikihowAds::getCustomGoogleChannels('imagead2', false);
 			$embed_ads = wfMsg('imagead2', $channels[0], $channels[1] );
 			$embed_ads = preg_replace('/\<[\/]?pre\>/', '', $embed_ads);
@@ -422,12 +423,12 @@ class ImageHelper extends UnlistedSpecialPage {
 		global $wgOut, $wgUser, $wgImageLimits, $wgRequest, $wgLang, $wgContLang;
 
 		$sizeSel = intval( $wgUser->getOption( 'imagesize') );
-		if( !isset( $wgImageLimits[$sizeSel] ) ) {
+		if ( !isset( $wgImageLimits[$sizeSel] ) ) {
 			$sizeSel = User::getDefaultOption( 'imagesize' );
 
 			// The user offset might still be incorrect, specially if
 			// $wgImageLimits got changed (see bug #8858).
-			if( !isset( $wgImageLimits[$sizeSel] ) ) {
+			if ( !isset( $wgImageLimits[$sizeSel] ) ) {
 				// Default to the first offset in $wgImageLimits
 				$sizeSel = 0;
 			}
@@ -501,7 +502,7 @@ class ImageHelper extends UnlistedSpecialPage {
 
 			
 
-			if(!$this->img->isLocal()) {
+			if (!$this->img->isLocal()) {
 				$this->printSharedImageText();
 			}
 		} else {
@@ -512,7 +513,7 @@ class ImageHelper extends UnlistedSpecialPage {
 		}
 	}
 
-	function showDescription($imageTitle){
+	function showDescription($imageTitle) {
 		global $wgOut;
 		
 		$description = "";
@@ -529,38 +530,38 @@ class ImageHelper extends UnlistedSpecialPage {
 		
 	}
 
-	function addSideWidgets($imagePage, $title, $image){
+	function addSideWidgets($imagePage, $title, $image) {
 		global $wgLanguageCode;
 		$skin = $this->getSkin();
 		
 		if (ImageHelper::IMAGES_ON) {
 			//first add related images
 			$html = ImageHelper::getRelatedImagesWidget($title);
-			if($html != "")
+			if ($html != "")
 				$skin->addWidget($html);
 
 		}
 		//first add image info
 		$html = ImageHelper::getImageInfoWidget($imagePage, $title, $image);
-		if($html != "")
+		if ($html != "")
 			$skin->addWidget($html);
 		if (ImageHelper::IMAGES_ON) {
 			$html = ImageHelper::getRelatedWikiHowsWidget($title);
-			if($html != "")
+			if ($html != "")
 				$skin->addWidget($html);
 		}
 	}
 
-	function getRelatedWikiHowsWidget($title){
+	function getRelatedWikiHowsWidget($title) {
 		global $wgOut;
 
 		wfLoadExtensionMessages('ImageHelper');
 
 		$articles = ImageHelper::getLinkedArticles($title);
 		$relatedArticles = array();
-		foreach($articles as $t){
+		foreach ($articles as $t) {
 			$related = ImageHelper::setRelatedWikiHows($t);
-			foreach($related as $titleString){
+			foreach ($related as $titleString) {
 				$relatedArticles[$titleString] = $titleString;
 			}
 		}
@@ -568,15 +569,15 @@ class ImageHelper extends UnlistedSpecialPage {
 		$section = '';
 		$count = 0;
 		$images = '';
-		foreach($relatedArticles as $titleString){
+		foreach ($relatedArticles as $titleString) {
 			$t = Title::newFromText($titleString);
-			if($t && $t->exists()) {
+			if ($t && $t->exists()) {
 				$images .= SkinWikihowskin::getArticleThumb($t, 127, 140);
 
 				if (++$count == 6) break;
 			}
 		}
-		if($count > 0){
+		if ($count > 0) {
 			$section .= "<h3>" . wfMsg('ih_relatedArticles') . "</h3>
 						<div class='other_articles_side'>
 						$images
@@ -594,17 +595,17 @@ class ImageHelper extends UnlistedSpecialPage {
 		$sk = $this->getSkin();
 
 		$t = Title::newFromText('Image-Templates', NS_CATEGORY);
-		if($t){
+		if ($t) {
 			$cv = new WikihowCategoryViewer($t, $this->getContext());
 			$cv->clearCategoryState();
 			$cv->doQuery();
 
 			$templates = array();
-			foreach($cv->articles as $article){
+			foreach ($cv->articles as $article) {
 				$start = strrpos($article, 'title="Template:');
-				if($start > 0){
+				if ($start > 0) {
 					$end = strrpos($article, '"', $start + 16 + 1);
-					if($end > 0){
+					if ($end > 0) {
 						$templates[] = strtolower(str_replace(' ', '-', substr($article, $start + 16, $end - $start - 16)));
 					}
 				}
@@ -641,7 +642,7 @@ class ImageHelper extends UnlistedSpecialPage {
 		$content = str_replace("== Summary ==", "=== Summary ===", $content);
 		$content = trim($content);
 
-		if(strlen($content) > 0 && substr($content, 0, 1) != "=")
+		if (strlen($content) > 0 && substr($content, 0, 1) != "=")
 			$content = "=== Summary === \n" . $content;
 		else{
 
@@ -654,21 +655,21 @@ class ImageHelper extends UnlistedSpecialPage {
 		return $html;
 	}
 
-	function getRelatedImagesWidget($title){
+	function getRelatedImagesWidget($title) {
 		$exceptions = wfMsg('ih_exceptions');
-		$imageExceptions = split("\n", $exceptions);
+		$imageExceptions = explode("\n", $exceptions);
 		
 		$articles = ImageHelper::getLinkedArticles($title);
 		$images = array();
-		foreach($articles as $t){
+		foreach ($articles as $t) {
 			$results = ImageHelper::getImages($t->getArticleID());
-			if(count($results) <= 1){
+			if (count($results) <= 1) {
 				continue;
 			}
 
 			$titleDb = $title->getDBkey();
-			foreach($results as $row){
-				if($row['il_to'] != $titleDb && !in_array($row['il_to'], $imageExceptions)){
+			foreach ($results as $row) {
+				if ($row['il_to'] != $titleDb && !in_array($row['il_to'], $imageExceptions)) {
 					$images[] = $row['il_to'];
 				}
 			}
@@ -678,54 +679,53 @@ class ImageHelper extends UnlistedSpecialPage {
 		$maxLoc = count($images);
 		$maxImages = $maxLoc;
 		$finalImages = array();
-		while($count < 6 && $count < $maxImages){
+		while ($count < 6 && $count < $maxImages) {
 			$loc = rand(0, $maxLoc);
-			if($images[$loc] != null){
+			if (isset($images[$loc]) && $images[$loc]) {
 				$image = Title::newFromText("Image:" . $images[$loc]);
 				if ($image && $image->getArticleID() > 0) {
 					$file = wfFindFile($image);
-					if ($file && isset($file)) {
-						$finalImages[] = array('title'=>$image, 'file'=>$file);
+					if ($file) {
+						$finalImages[] = array('title' => $image, 'file' => $file);
 						$images[$loc] = null;
 						$count++;
-					}
-					else
+					} else {
 						$maxImages--;
-				}
-				else
+					}
+				} else {
 					$maxImages--;
+				}
 				$images[$loc] = null;
 			}
 		}
 
-		if(count($finalImages) > 0){
+		if (count($finalImages) > 0) {
 			$html = '<div><h3>' . wfMsg('ih_relatedimages_widget') . '</h3><table style="margin-top:10px" class="image_siderelated">';
 			$count = 0;
-			foreach($finalImages as $imageObject){
+			foreach ($finalImages as $imageObject) {
 				$image = $imageObject['title'];
 				$file = $imageObject['file'];
-				if($count % 2 == 0)
+				if ($count % 2 == 0)
 					$html .= "<tr>";
 				
 				$heightPreference = ImageHelper::heightPreference(127, 140, $file);
-
 				$thumb = $file->getThumbnail(127, 140, true, true, $heightPreference);
 				$imageUrl = $image->getFullURL();
 				$thumbUrl = $thumb->getUrl();
-				$imageTitle = $imageName;
+				$imageTitle = $image->getText();
 
 				$html .= "<td valign='top'>
-							<a href='" . $imageUrl . "' title='" . $imageTitle . "' class='image'>
+							<a href='" . $imageUrl . "' title='" . htmlspecialchars($imageTitle) . "' class='image'>
 							<img border='0' class='mwimage101' src='" . wfGetPad($thumbUrl) ."' alt='" . $imageTitle . "'>
 							</a>
 						</td>";
 
-				if($count % 2 == 2)
+				if ($count % 2 == 2)
 					$html .= "</tr>";
 
 				$count++;
 			}
-			if($count % 3 != 2)
+			if ($count % 3 != 2)
 				$html .= "</tr>";
 			$html .= "</table></div>";
 			
@@ -750,8 +750,10 @@ class ImageHelper extends UnlistedSpecialPage {
 	 *
 	 * @deprecated use transform()
 	 */
-
-	//XXCHANGED FOR GALLERY IMAGES
+	// NOTE: Reuben changed this function to ignore the $render flag; we should
+	// refactor the calls to this function to remove that param. Chatted with
+	// Aaron and Bebeth about this $render change on May 9, 2014.
+	// NOTE: Reuben deprecated the $heightPreference param -- it does nothing now
 	public function getThumbnail( $width, $height=-1, $render = true, $crop = false, $heightPreference = false ) {
 		$params = array( 'width' => $width );
 		if ( $height != -1 ) {
@@ -762,7 +764,10 @@ class ImageHelper extends UnlistedSpecialPage {
 			$params['crop'] = 1;
 		}
 		$params['heightPreference'] = $heightPreference;
-		$flags = $render ? File::RENDER_NOW : 0;
+		// Reuben: No longer use RENDER_NOW flag because it's unnecessary and 
+		// messes up the transformVia404 stuff
+		//$flags = $render ? File::RENDER_NOW : 0;
+		$flags = 0;
 		return $this->transform( $params, $flags );
 	}
 

@@ -2495,7 +2495,13 @@ class Parser {
 					}
 					$inBlockElem = !$closematch;
 				} elseif ( !$inBlockElem && !$this->mInPre ) {
-					if ( ' ' == substr( $t, 0, 1 ) and ( $this->mLastSection === 'pre' || trim( $t ) != '' ) and !$inBlockquote ) {
+					// Reuben, wikiHow change on 4/22/2014: We don't have any use for the
+					// feature of Mediawiki where if the first character in the paragraph
+					// (after parsing templates) is a space, Mediawiki would wrap that
+					// paragraph in a <pre> tag. Our users find it annoying and don't use
+					// it, so we are disabling this first block of the "if" statement below
+					// by adding "false" as the first clause.
+					if ( false and ' ' == substr( $t, 0, 1 ) and ( $this->mLastSection === 'pre' || trim( $t ) != '' ) and !$inBlockquote ) {
 						# pre
 						if ( $this->mLastSection !== 'pre' ) {
 							$paragraphStack = false;

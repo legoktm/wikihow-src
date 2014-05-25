@@ -270,6 +270,12 @@ abstract class MobileHtmlBuilder {
 		return $box;
 	}
 	
+	protected function getUserCompletedImages($title) {
+		$html = UCIPatrol::getImagesHTML($title);
+		$html = '<div id="user_completed_images">'.$html.'</div>';
+		return $html;
+	}
+
 	protected function getArticleInfo($title) {
 		global $wgUser;
 		$skin = $wgUser->getSkin();
@@ -346,24 +352,48 @@ class MobileArticleBuilder extends MobileBasicArticleBuilder {
 				$needle = '</div></li>';
 				$needleLen = strlen($needle);
 
-				//not using this code right now, but leaving it in for a bit
-				/*if($stepsCount > 1) {
+				//put ad after first step
+				if($stepsCount > 1 && $wgLanguageCode == "en") {
 					//there's more than one step, so put an ad
 					//at the end of the the first step
-					$replacement = '<div class="clearall"></div>' . wfMsg('adunitmobile4') . '</div></li>';
+					$adLabel = wfMessage('ad_label')->text();
+					$replacement = wfMsg('adunitmobile4', $adLabel) . '</div></li>';
 					$pos = strpos($vars['sections']['steps']['html'], $needle);
 					$vars['sections']['steps']['html'] = substr_replace($vars['sections']['steps']['html'], $replacement, $pos, $needleLen);
-				}*/
+				}
+
+				//now try and put one at the end of the last step
+				//in the first method
+				$pos = strpos($vars['sections']['steps']['html'], "<h3>");
+				$pos2 = strpos($vars['sections']['steps']['html'], "<h3>", $pos+1);
+				$putAd2 = false;
+				if($wgLangaugeCode == "en" && $pos2 !== false) {
+					$totalLen = strlen($vars['sections']['steps']['html']);
+					$finalPos = strrpos($vars['sections']['steps']['html'], $needle, -1*($totalLen - $pos2));
+					$adLabel = wfMessage('ad_label')->text();
+					$replacement = wfMsg('adunitmobile2', $adLabel) . '</div></li>';
+					$vars['sections']['steps']['html'] = substr_replace($vars['sections']['steps']['html'], $replacement, $finalPos, $needleLen);
+					$putAd2 = true;
+				}
 
 				//now put an ad after the last step
+				//if we couldn't do the above ad unit
+				//then put it in too
 				$pos = strrpos($vars['sections']['steps']['html'], $needle);
 				if ($pos !== false) {
 					$adLabel = wfMessage('ad_label')->text();
 					$replacement = wfMsg('adunitmobile3', $adLabel) . '</div></li>';
+					if($wgLanguageCode == "en" && !$putAd2) {
+						$replacement = wfMsg('adunitmobile2', $adLabel) . $replacement;
+					}
 					$vars['sections']['steps']['html'] = substr_replace($vars['sections']['steps']['html'], $replacement, $pos, $needleLen);
 				} else {
 					$adLabel = wfMessage('ad_label')->text();
-					$vars['sections']['steps']['html'] .= wfMsg('adunitmobile3', $adLabel);
+					$replacement = "";
+					if($wgLanguageCode == "en" && !$putAd2) {
+						$replacement = wfMsg('adunitmobile2', $adLabel);
+					}
+					$vars['sections']['steps']['html'] .= $replacement . wfMsg('adunitmobile3', $adLabel);
 				}
 			}
 		}
@@ -451,6 +481,10 @@ class MobileArticleBuilder extends MobileBasicArticleBuilder {
 
 		if (class_exists('TextScroller') && strpos($this->nonMobileHtml, 'textscroller_outer') !== false) {
 			self::addCSS('tsc', true); // TextScroller
+		}
+
+		if (class_exists('UCIPatrol') && UCIPatrol::showUCI($this->t)) {
+			$this->addCSS('mucic');
 		}
 	}
 
@@ -668,6 +702,7 @@ class MobileBasicArticleBuilder extends MobileHtmlBuilder {
 			wfMsg('sourcescitations') => 'sources',
 			wfMsg('thingsyoullneed') => 'thingsyoullneed',
 			wfMsg('article_info') => 'article_info',
+			wfMsg('user_completed_images') => 'user_completed_images'
 		);
 
 		$lang = MobileWikihow::getSiteLanguage();
@@ -1018,6 +1053,12 @@ DONE;
 		foreach ($nodes as $node) {
 			$node->parentNode->removeChild($node);
 		}
+		
+		//remove edit link in h4 headers
+		$nodes = $xpath->query('//h4/a[@class="editsection"]');
+		foreach ($nodes as $node) {
+			$node->parentNode->removeChild($node);
+		}
 
 		//pull out the first 6 related wikihows and format them
 		$nodes = $xpath->query('//div[@id="relatedwikihows"]/ul/li');
@@ -1093,8 +1134,14 @@ DONE;
 		
 		// Add article info
 		$sections['article_info']['name'] = wfMsg('article_info');
-		$sections['article_info']['html'] = $this->getArticleInfo($title);
+		$sections['article_info']['html'] = $this->getArticleInfo($this->t);
 		
+		// add user created images
+		if (class_exists('UCIPatrol') && UCIPatrol::showUCI($this->t)) {
+			$sections['user_completed_images']['name'] = wfMsg('user_completed_images');
+			$sections['user_completed_images']['html'] = $this->getUserCompletedImages($this->t);
+		}
+
 		// Remove </body></html> from html
 		if (count($sections) > 0) {
 			$keys = array_keys($sections);

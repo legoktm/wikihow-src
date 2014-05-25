@@ -13,7 +13,7 @@ class WikihowCategoryPage extends CategoryPage {
 	var $catStream;
 
 	function view() {
-		global $wgOut, $wgRequest, $wgUser, $wgTitle, $wgHooks;
+		global $wgOut, $wgRequest, $wgUser, $wgTitle, $wgHooks, $wgSquidMaxage;
 		 
 		if (!$wgTitle->exists()) {
 			parent::view();
@@ -26,7 +26,8 @@ class WikihowCategoryPage extends CategoryPage {
 		
 		$restAction = $wgRequest->getVal('restaction');
 		if ($restAction == 'pull-chunk') {
-			$wgOut->setArticleBodyOnly(true);
+ 			$wgOut->setArticleBodyOnly(true);
+			$wgOut->setSquidMaxage($wgSquidMaxage);
 			$start = $wgRequest->getInt('start');
 			if (!$start) return;
 			$categoryViewer = new WikihowCategoryViewer($wgTitle, $this->getContext());

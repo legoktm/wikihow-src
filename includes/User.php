@@ -4937,11 +4937,12 @@ class User {
                 $key = "$wgDBname:newkudos:ip:$val";
                 $wgMemc->set( $key, $val ? 1 : 0 );
             } else {
-                if( $val ) {
-                    // Make sure the user page is watched, so a notification
-                    // will be sent out if enabled.
-                    $this->addWatch( $this->getTalkPage() );
-                }
+				//We notify users other ways now [sc]
+                // if( $val ) {
+                    // // Make sure the user page is watched, so a notification
+                    // // will be sent out if enabled.
+                    // $this->addWatch( $this->getTalkPage() );
+                // }
             }
             $this->invalidateCache();
             $this->saveSettings();

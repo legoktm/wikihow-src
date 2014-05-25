@@ -229,7 +229,10 @@ class DocViewer extends UnlistedSpecialPage {
 	}
 
 	private static function getFallbackImg($doc_name) {
-		$file = wfFindFile($doc_name.'.png');
+		$file = wfFindFile($doc_name.'_sample.png');
+		
+		//backwards compatibility
+		if (!$file || !isset($file)) $file = wfFindFile($doc_name.'.png');
 		
 		if ($file && isset($file)) {
 			$img_url = wfGetPad($file->geturl());
@@ -491,7 +494,10 @@ class DocViewer extends UnlistedSpecialPage {
 		//spaces to hyphens
 		$doc_name_hyphenized = preg_replace('@ @','-',$doc_name);
 		
-		$file = wfFindFile($doc_name.'.png');
+		$file = wfFindFile($doc_name.'_sample.png');
+		
+		//backwards compatibility
+		if (!$file || !isset($file)) $file = wfFindFile($doc_name.'.png');
 		
 		if ($file && isset($file)) {
 			$thumb = $file->getThumbnail(170);

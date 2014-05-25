@@ -222,10 +222,10 @@ class SampleDocProcess {
 		global $wgImageMagickConvertCommand, $wgUseOptiPng, $wgOptiPngCommand;
 		
 		$comment = 'Auto-uploaded for the Samples page.';
-		$license = 'cc-by-sa-nc-2.5-self';
+		$license = 'cc-by-sa-nc-3.0-self';
 		
 		//PNG the file name
-		$img_file = preg_replace('@.pdf@','.png',$local_file);
+		$img_file = preg_replace('@.pdf@','_sample.png',$local_file);
 		
 		//make an image out of a pdf (add an [0] so we only get the first page)
 		$cmd = $wgImageMagickConvertCommand . ' ' . escapeshellarg($local_file) . '[0] ' . escapeshellarg($img_file);

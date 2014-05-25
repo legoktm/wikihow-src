@@ -19,6 +19,7 @@ $( document ).on( "click", "#method_delete", function(e) {
 			},
 			'json'
 		);
+		window.oTrackUserAction();
 	}
 });
 
@@ -39,6 +40,7 @@ $( document ).on( "click", "#method_keep", function(e) {
 			},
 			'json'
 		);
+		window.oTrackUserAction();
 	}
 });
 
@@ -65,6 +67,23 @@ $(document).ready(function(){
 	$("#article").prepend("<div id='method_count' class='tool_count'><h3></h3><span>methods remaining</span></div>");
 	getNextMethod();
 	window.setTimeout(updateStandingsTable, 100);
+
+	var mod = Mousetrap.defaultModifierKeys;
+	Mousetrap.bind(mod + 'd', function() {$('#method_delete').click();});
+	Mousetrap.bind(mod + 's', function() {$('#method_skip').click();});
+	Mousetrap.bind(mod + 'e', function() {$('#method_keep').click();});
+
+	$("#method_keys").click(function(e){
+		e.preventDefault();
+		$("#method_info").dialog({
+			width: 500,
+			minHeight: 300,
+			modal: true,
+			title: 'Method Guardian Keys',
+			closeText: 'Close',
+			position: 'center',
+		});
+	});
 });
 	
 // asks the backend for a new article

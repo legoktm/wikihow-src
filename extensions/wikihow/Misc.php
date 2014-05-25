@@ -77,14 +77,15 @@ function wfGetPad($relurl = '') {
 		//  (3) the site is being served via SSL/https (to get around
 		//      mixed content issues with chrome)
 		//  (4) if the image being requested is from an international server
-		if (preg_match('@^https?://@i', $relurl) ||
-			$isCachedCopy ||
-			(!$isCanonicalServer &&
-			 (!preg_match('@\.wikihow\.com$@', @$_ENV['HOSTNAME']) ||
-			  $wgSSLsite ||
-			  $wgIsStageHost ||
-			  !IS_PROD_EN_SITE)))
-		{
+		if (preg_match('@^https?://@i', $relurl)
+			|| $isCachedCopy
+			|| IS_IMAGE_SCALER
+			|| (!$isCanonicalServer
+				&& (!preg_match('@\.wikihow\.com$@', @$_ENV['HOSTNAME'])
+					|| $wgSSLsite
+					|| $wgIsStageHost
+					|| !IS_PROD_EN_SITE))
+		) {
 			return $relurl;
 		}
 	}

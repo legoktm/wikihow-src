@@ -39,11 +39,11 @@ function MagicArticlesStartedMagicWords(&$magicWords) {
 }
 
 function MagicArticlesStartedwgVariableIDs(&$wgVariableIDs) {
-	$wgVariableIDs[] = ARTICLESSTARTED;
-	$wgVariableIDs[] = PATROLCOUNT;
-	$wgVariableIDs[] = NABCOUNT;
-	$wgVariableIDs[] = VIEWERSHIP;
-	$wgVariableIDs[] = NUMBEROFARTICLESSTARTED;
+	$wgVariableIDs[] = 'ARTICLESSTARTED';
+	$wgVariableIDs[] = 'PATROLCOUNT';
+	$wgVariableIDs[] = 'NABCOUNT';
+	$wgVariableIDs[] = 'VIEWERSHIP';
+	$wgVariableIDs[] = 'NUMBEROFARTICLESSTARTED';
 	return true;
 }
 
@@ -176,7 +176,7 @@ function nabcount($parser, $date1 = '', $date2  = '') {
 }
 
 function wfWikiHowMagicAssignAValue(&$parser, &$cache, &$magicWordId, &$ret) {
-	if (VIEWERSHIP == $magicWordId) {
+	if ('VIEWERSHIP' == $magicWordId) {
 		global $wgTitle;
 		if (!$wgTitle) return true;
 		$dbr = wfGetDB(DB_SLAVE);
@@ -189,7 +189,7 @@ function wfWikiHowMagicAssignAValue(&$parser, &$cache, &$magicWordId, &$ret) {
 		$count = $dbr->selectField(array('page', 'firstedit'), 'sum(page_counter)', $options, "viewership");
 		$ret = number_format($count, 0, "", ",");
 		return true;
-	} else  if (NUMBEROFARTICLESSTARTED == $magicWordId) {
+	} else  if ('NUMBEROFARTICLESSTARTED' == $magicWordId) {
 		global $wgTitle;
 		if (!$wgTitle) return true;
 		$dbr = wfGetDB(DB_SLAVE);

@@ -4,11 +4,11 @@ global $IP;
 require_once("$IP/extensions/wikihow/RisingStar.php");
 
 abstract class ArticleViewer extends ContextSource {
-
 	var $articles, $articles_start_char;
 
 	function __construct(IContextSource $context) {
 		$this->setContext($context);
+		$this->clearState();
 	}
 
 	function clearState() {
@@ -20,12 +20,9 @@ abstract class ArticleViewer extends ContextSource {
 }
 
 class FaViewer extends ArticleViewer {
-
-	function doQuery()
-	{
-
-		$Fas = FeaturedArticles::getTitles(45);
-		foreach($Fas as $fa) {
+	function doQuery() {
+		$fas = FeaturedArticles::getTitles(45);
+		foreach ($fas as $fa) {
 			$this->articles[] = Linker::link($fa['title']);
 		}
 	}
@@ -42,9 +39,9 @@ class RsViewer extends ArticleViewer {
 	function doQuery() {
 		$rs = RisingStar::getRS();
 
-		if($rs) {
+		if ($rs) {
 			$i = 0;
-			foreach($rs as $titleString => $star) {
+			foreach ($rs as $titleString => $star) {
 				$title = Title::newFromText($titleString);
 				if($title) {
 					$this->articles[] = Linker::link($title);
@@ -54,7 +51,6 @@ class RsViewer extends ArticleViewer {
 				}
 			}
 		}
-
 	}
 }
 
@@ -62,17 +58,14 @@ class WikihowCategoryViewer extends ArticleViewer {
 	var $title, $limit, $from, $until,
 		$children, $children_start_char,
 		$showGallery, $gallery,
-		$articlecount;
+		$articles_fa, $article_info,
+		$article_info_fa, $articles_start_char_fa;
 
-
-	//XXADDED
-	var $articles_fa, $article_info, $article_info_fa, $articles_start_char_fa;
-
-	function __construct($title, IContextSource $context, $from = '', $until = '')
-	{
-		parent::__construct($context);
-		
+	function __construct($title, IContextSource $context, $from = '', $until = '') {
 		global $wgCategoryPagingLimit;
+
+		parent::__construct($context);
+
 		$this->title = $title;
 		$this->from = $from;
 		$this->until = $until;
@@ -87,9 +80,9 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string HTML output
 	 * @private
 	 */
-	function getHTML()
-	{
+	function getHTML() {
 		global $wgOut, $wgCategoryMagicGallery;
+
 		wfProfileIn(__METHOD__);
 
 		$skin = $this->getSkin();
@@ -103,7 +96,6 @@ class WikihowCategoryViewer extends ArticleViewer {
 		if (count($this->articles) > 0) {
 			$sections = $this->columnListRD($this->articles, $this->articles_start_char, $this->article_info);
 		}
-
 
 		$r = $this->getCategoryTop() .
 		$r = "<br style='clear:both;'/>" .
@@ -122,8 +114,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		return $r;
 	}
 
-	function finaliseCategoryState()
-	{
+	function finaliseCategoryState() {
 		if ($this->flip) {
 			$this->children = array_reverse($this->children);
 			$this->children_start_char = array_reverse($this->children_start_char);
@@ -141,8 +132,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string
 	 * @private
 	 */
-	function columnListRD($articles, $articles_start_char, $article_info)
-	{
+	function columnListRD($articles, $articles_start_char, $article_info) {
 		// divide list into three equal chunks
 		$chunk = (int)(count($articles) / 2);
 
@@ -165,7 +155,6 @@ class WikihowCategoryViewer extends ArticleViewer {
 
 		if (count($articles) > 0) {
 			$r .= '<ul class="category_column column_first">' . "\n";
-			//foreach ($articles as $article) {
 			for ($index = 0; $index < count($articles); $index++) {
 
 				$rtmp = '';
@@ -220,7 +209,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 				$r = '';
 			}
 
-			//Add more FAs from subcategories
+			// Add more FAs from subcategories
 			if ($rf_count < 10) {
 				$randomFAs = array();
 				$randomFAs = $this->getSubCatFAs();
@@ -272,8 +261,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		return $ret;
 	}
 
-	function getSubCatFAs()
-	{
+	function getSubCatFAs() {
 		global $wgOut, $wgCategoryMagicGallery, $wgCategoryPagingLimit, $wgTitle;
 
 		$children = $this->children;
@@ -318,27 +306,20 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string
 	 * @private
 	 */
-	function shortListRD($articles, $articles_start_char, $flatten = false)
-	{
-		//XXCHANGED -- the whole function pretty much
-		//$r = '<h3>' . htmlspecialchars( $articles_start_char[0] ) . "</h3>\n";
-		if (count($articles) == 0)
+	function shortListRD($articles, $articles_start_char, $flatten = false) {
+		if (count($articles) == 0) {
 			return "";
+		}
 		$chunk = (int)((count($articles) / 2) + 2);
 
 		$sk = $this->getSkin();
-		$r .= '<ul class="category_column column_first">' . "\n";
+		$r = '<ul class="category_column column_first">' . "\n";
 		$allSubCats = array();
 		for ($index = 0; $index < count($articles); $index++) {
 
 			if ($index == $chunk) {
 				$r .= "\n" . '</ul> <ul class="category_column">' . "\n";
 			}
-			if ($articles_start_char[$index] != $articles_start_char[$index - 1]) {
-				//XXCHANGED
-				//$r .= "</ul><h3>" . htmlspecialchars( $articles_start_char[$index] ) . "</h3>\n<ul>";
-			}
-			//XXCHANGED
 			if (is_array($articles[$index])) {
 				$query= self::getViewModeArray($this->getContext());
 				$r .= "<li>{$articles[$index][0]}</li>";
@@ -347,9 +328,8 @@ class WikihowCategoryViewer extends ArticleViewer {
 					$allSubCats[] = $t->getText();
 					$links[] = Linker::link($t, $t->getText(), array(), $query);
 				}
-				//$r .= $this->shortList($articles[$index][1], array());
 				$r .= "\n<ul><li>" . implode(" <strong>&bull;</strong> ", $links) . "</li></ul>\n";
-			} else if ($articles[$index] instanceof Title) {
+			} elseif ($articles[$index] instanceof Title) {
 				$t = $articles[$index];
 				$allSubCats[] = $t->getText();
 				$link = Linker::link($t, $t->getText());
@@ -374,16 +354,15 @@ class WikihowCategoryViewer extends ArticleViewer {
 		return $r;
 	}
 
-	function getFAs()
-	{
+	function getFAs() {
 		global $wgOut, $wgCategoryMagicGallery, $wgCategoryPagingLimit, $wgTitle;
+
 		$this->clearCategoryState();
 		$this->doQuery();
 		return $this->articles_fa;
 	}
 
-	function clearCategoryState()
-	{
+	function clearCategoryState() {
 		$this->articles = array();
 		$this->articles_start_char = array();
 		$this->children = array();
@@ -392,16 +371,13 @@ class WikihowCategoryViewer extends ArticleViewer {
 			$this->gallery = new ImageGallery();
 			$this->gallery->setHideBadImages();
 		}
-
-		//XXADDED
 		$this->articles_fa = array();
 		$this->article_info = array();
 		$this->article_info_fa = array();
 		$this->articles_start_char_fa = array();
 	}
 
-	function doQuery()
-	{
+	function doQuery() {
 		$dbr = wfGetDB(DB_SLAVE);
 		if ($this->from != '') {
 			$pageCondition = 'cl1.cl_sortkey >= ' . $dbr->addQuotes($this->from);
@@ -413,54 +389,44 @@ class WikihowCategoryViewer extends ArticleViewer {
 			$pageCondition = '1 = 1';
 			$this->flip = false;
 		}
-		//XXCHANGED
 
-		$sql = "SELECT page_title, page_namespace, page_len, page_further_editing, cl1.cl_sortkey, page_counter, page_is_featured
-	FROM (page, categorylinks cl1)
-	WHERE
-	$pageCondition
-	AND cl1.cl_from = page_id
-	AND cl1.cl_to = " . $dbr->addQuotes($this->title->getDBKey())
-			. " AND page_namespace != 14 "
-			. " GROUP BY page_id "
-			. " ORDER BY " . ($this->flip ? 'cl1.cl_sortkey DESC' : 'cl1.cl_sortkey')
-			. " LIMIT " . ($this->limit + 1);
-		$res = $dbr->query($sql);
-
-		//XX ADDING A TOTAL COUNT
-		//$sql2 = "SELECT count(*) as C FROM (page, categorylinks cl1) WHERE cl1.cl_from = page_id
-		//	AND cl1.cl_to = " . $dbr->addQuotes($this->title->getDBKey()) ;
-		//$res2 = $dbr->query($sql2);
-		//$rowx = $dbr->fetchObject($res2);
-		//$this->articlecount = $rowx->C;
+		$sql = "SELECT page_title, page_namespace, page_len, page_further_editing,
+				cl1.cl_sortkey, page_counter, page_is_featured
+			FROM (page, categorylinks cl1)
+			WHERE $pageCondition
+				AND cl1.cl_from = page_id
+				AND cl1.cl_to = " . $dbr->addQuotes($this->title->getDBKey()) . "
+				AND page_namespace != 14
+			GROUP BY page_id
+			ORDER BY " . ($this->flip ? 'cl1.cl_sortkey DESC' : 'cl1.cl_sortkey') . "
+			LIMIT " . ($this->limit + 1);
+		$res = $dbr->query($sql, __METHOD__);
 
 		$count = 0;
 		$this->nextPage = null;
-		while ($x = $dbr->fetchObject($res)) {
-			if (!$this->processRow($x, &$count)) {
+		foreach ($res as $x) {
+			if (!$this->processRow($x, $count)) {
 				break;
 			}
 		}
-		$dbr->freeResult($res);
 
 		// get all of the subcategories this time
-		$sql = "SELECT page_title, page_namespace, page_len, page_further_editing, cl1.cl_sortkey, page_counter, page_is_featured
-	FROM (page, categorylinks cl1)
-	WHERE cl1.cl_from = page_id
-	AND cl1.cl_to = " . $dbr->addQuotes($this->title->getDBKey())
-			. " AND page_namespace = " . NS_CATEGORY
-			. " GROUP BY page_id "
-			. " ORDER BY " . ($this->flip ? 'cl1.cl_sortkey DESC' : 'cl1.cl_sortkey');
-		$res = $dbr->query($sql);
+		$sql = "SELECT page_title, page_namespace, page_len, page_further_editing,
+				cl1.cl_sortkey, page_counter, page_is_featured
+			FROM (page, categorylinks cl1)
+			WHERE cl1.cl_from = page_id
+				AND cl1.cl_to = " . $dbr->addQuotes($this->title->getDBKey()) . "
+				AND page_namespace = " . NS_CATEGORY . "
+			GROUP BY page_id
+			ORDER BY " . ($this->flip ? 'cl1.cl_sortkey DESC' : 'cl1.cl_sortkey');
+		$res = $dbr->query($sql, __METHOD__);
 		$count = 0;
-		while ($x = $dbr->fetchObject($res)) {
-			$this->processRow($x, &$count);
+		foreach ($res as $x) {
+			$this->processRow($x, $count);
 		}
-		$dbr->freeResult($res);
 	}
 
-	function processRow($x, &$count)
-	{
+	function processRow($x, &$count) {
 		if (++$count > $this->limit) {
 			// We've reached the one extra which shows that there are
 			// additional pages to be had. Stop here...
@@ -471,8 +437,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		$title = Title::makeTitle($x->page_namespace, $x->page_title);
 
 		if ($title->getNamespace() == NS_CATEGORY) {
-			//XXADDED
-			// checkfor subcategries
+			// check for subcategories
 			$subcats = $this->getSubcategories($title);
 			if (sizeof($subcats) == 0) {
 				$this->addSubcategory($title, $x->cl_sortkey, $x->page_len);
@@ -482,17 +447,18 @@ class WikihowCategoryViewer extends ArticleViewer {
 		} elseif ($this->showGallery && $title->getNamespace() == NS_IMAGE) {
 			$this->addImage($title, $x->cl_sortkey, $x->page_len, $x->page_is_redirect);
 		} else {
-			// Page in this category
+			// page in this category
 			$info_entry = array();
 			$info_entry['page_counter'] = $x->page_counter;
 			$info_entry['page_len'] = $x->page_len;
 			$info_entry['page_further_editing'] = $x->page_further_editing;
 			$isFeatured = !empty($x->page_is_featured);
 			$info_entry['page_is_featured'] = intval($isFeatured);
-			$info_entry['number_of_edits'] = $x->edits;
-			$info_entry['template'] = $x->tl_title;
+			$info_entry['number_of_edits'] = isset($x->edits) ? $x->edits : 0;
+			$info_entry['template'] = isset($x->tl_title) ? $x->tl_title : '';
 			if (!$info_entry['page_is_featured']) {
-				$this->addPage($title, $x->cl_sortkey, $x->page_len, $x->page_is_redirect, $info_entry);
+				$pageIsRedirect = isset($x->page_is_redirect) ? $x->page_is_redirect : false;
+				$this->addPage($title, $x->cl_sortkey, $x->page_len, $pageIsRedirect, $info_entry);
 			} else {
 				$this->addFA($title, $x->cl_sortkey, $x->page_len, $info_entry);
 			}
@@ -500,8 +466,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		return true;
 	}
 
-	function getSubcategories($title)
-	{
+	function getSubcategories($title) {
 		$dbr = wfGetDB(DB_SLAVE);
 		$res = $dbr->select(
 			array('categorylinks', 'page'),
@@ -509,39 +474,38 @@ class WikihowCategoryViewer extends ArticleViewer {
 			array('page_id=cl_from',
 				'cl_to' => $title->getDBKey(),
 				'page_namespace=' . NS_CATEGORY
-			)
+			),
+			__METHOD__
 		);
 		$results = array();
-		while ($row = $dbr->fetchObject($res)) {
+		foreach ($res as $row) {
 			$results[] = Title::makeTitle($row->page_namespace, $row->page_title);
 		}
-		$dbr->freeResult($res);
 		return $results;
 	}
 
 	/*
 	*  Returns a query associative array if the viewMode is text, blank otheriwise (for image mode)
 	*/
-	public static function getViewModeArray($context) {
+	static function getViewModeArray($context) {
 		return $context->getRequest()->getVal('viewMode', 0) ? array('viewMode'=>'text'): array();
 	}
 
 	/*
 	*  Returns a query string parameter if the viewMode is text, blank otheriwise (for image mode)
 	*/
-	public static function getViewModeParam() {
+	static function getViewModeParam() {
 		global $wgRequest;
 		return $wgRequest->getVal('viewMode', 0) ? "viewMode=text" : '';
 	}
 	/**
 	 * Add a subcategory to the internal lists
 	 */
-	function addSubcategory($title, $sortkey, $pageLength, $subcats = null)
-	{
+	function addSubcategory($title, $sortkey, $pageLength, $subcats = null) {
 		global $wgContLang;
+
 		// Subcategory; strip the 'Category' namespace from the link text.
-		//XXCHANGED
-		$query = self::getViewModeArray($this->getContext()); 
+		$query = self::getViewModeArray($this->getContext());
 		$link = Linker::linkKnown($title, $wgContLang->convertHtml($title->getText()), array(), $query);
 		if ($subcats == null) {
 			$this->children[] = $link;
@@ -562,8 +526,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * Workaround: If sortkey == "Category:".$title, than use $title for sorting,
 	 * else use sortkey...
 	 */
-	function getSubcategorySortChar($title, $sortkey)
-	{
+	function getSubcategorySortChar($title, $sortkey) {
 		global $wgContLang;
 
 		if ($title->getPrefixedText() == $sortkey) {
@@ -578,8 +541,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 	/**
 	 * Add a page in the image namespace
 	 */
-	function addImage(Title $title, $sortkey, $pageLength, $isRedirect = false)
-	{
+	function addImage(Title $title, $sortkey, $pageLength, $isRedirect = false) {
 		if ($this->showGallery) {
 			$image = new Image($title);
 			if ($this->flip) {
@@ -595,9 +557,9 @@ class WikihowCategoryViewer extends ArticleViewer {
 	/**
 	 * Add a miscellaneous page
 	 */
-	function addPage($title, $sortkey, $pageLength, $isRedirect = false, $info_entry = null)
-	{
+	function addPage($title, $sortkey, $pageLength, $isRedirect = false, $info_entry = null) {
 		global $wgContLang;
+
 		// AG - the makeSizeLinkObj is deprecated and Linker::link takes care of size/color of the link now
 		$this->articles[] = $isRedirect
 			? '<span class="redirect-in-category">' . Linker::linkKnown($title) . '</span>'
@@ -607,9 +569,9 @@ class WikihowCategoryViewer extends ArticleViewer {
 		$this->articles_start_char[] = $wgContLang->convert($wgContLang->firstChar($sortkey));
 	}
 
-	function addFA($title, $sortkey, $pageLength, $info_entry = null)
-	{
+	function addFA($title, $sortkey, $pageLength, $info_entry = null) {
 		global $wgContLang;
+
 		// Removed because it's adding duplicate content in some cat pages (sc 1/2/2014)
 		// $this->articles_fa[] = Linker::link(
 			// $pageLength, $title, $wgContLang->convert($title->getPrefixedText())
@@ -617,13 +579,14 @@ class WikihowCategoryViewer extends ArticleViewer {
 		// AG - the makeSizeLinkObj is deprecated and Linker::link takes care of size/color of the link now
 		$this->articles_fa[] = Linker::link( $title, $wgContLang->convert($title->getPrefixedText()) );
 		$this->articles_start_char_fa[] = $wgContLang->convert($wgContLang->firstChar($sortkey));
-		if (is_array($info_entry))
+		if (is_array($info_entry)) {
 			$this->article_info_fa[] = $info_entry;
+		}
 	}
 
-	function getSubcategorySection()
-	{
+	function getSubcategorySection() {
 		global $wgTitle;
+
 		# Don't show subcategories section if there are none.
 		$r = '';
 		$c = count($this->children);
@@ -637,8 +600,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		return $r;
 	}
 
-	function getImageSection()
-	{
+	function getImageSection() {
 		if ($this->showGallery && !$this->gallery->isEmpty()) {
 			$this->gallery->setPerRow(3);
 			return "<div id=\"mw-category-media\">\n" .
@@ -650,8 +612,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		}
 	}
 
-	function getCategoryBottom()
-	{
+	function getCategoryBottom() {
 		if ($this->until != '') {
 			return $this->pagingLinks($this->title, $this->nextPage, $this->until, $this->limit);
 		} elseif ($this->nextPage != '' || $this->from != '') {
@@ -670,9 +631,9 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string
 	 * @private
 	 */
-	function pagingLinks($title, $first, $last, $limit, $query = array())
-	{
+	function pagingLinks($title, $first, $last, $limit, $query = array()) {
 		global $wgLang;
+
 		$sk = $this->getSkin();
 		$limitText = $wgLang->formatNum($limit);
 
@@ -688,8 +649,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 		return "($prevLink) ($nextLink)";
 	}
 
-	function getCategoryTop()
-	{
+	function getCategoryTop() {
 		$r = '';
 		if ($this->until != '') {
 			$r .= $this->pagingLinks($this->title, $this->nextPage, $this->until, $this->limit);
@@ -701,19 +661,13 @@ class WikihowCategoryViewer extends ArticleViewer {
 			: "<br style=\"clear:both;\"/>\n" . $r;
 	}
 
-	function getPagesSection()
-	{
+	function getPagesSection() {
 		$ti = htmlspecialchars($this->title->getText());
-		# Don't show articles section if there are none.
+		// Don't show articles section if there are none.
 		$r = array();
 		$c = count($this->articles);
 		if ($c > 0) {
-			//VUDEL $r = "<div id=\"mw-pages\">\n";
-			//$r = "<div id=\"mw-help\">\n";
-			//$r .= '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
-			//$r .= wfMsgExt( 'categoryarticlecount', array( 'parse' ), $c );
 			$r = $this->columnListRD($this->articles, $this->articles_start_char, $this->article_info);
-			//$r .= "\n</div>";
 		}
 		return $r;
 	}
@@ -728,8 +682,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string
 	 * @private
 	 */
-	function formatList($articles, $articles_start_char, $cutoff = 6, $article_info = null)
-	{
+	function formatList($articles, $articles_start_char, $cutoff = 6, $article_info = null) {
 		if (count($articles) > $cutoff) {
 			return $this->columnList($articles, $articles_start_char, article_info);
 		} elseif (count($articles) > 0) {
@@ -748,8 +701,7 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string
 	 * @private
 	 */
-	function columnList($articles, $articles_start_char, $article_info)
-	{
+	function columnList($articles, $articles_start_char, $article_info) {
 		// divide list into three equal chunks
 		$chunk = (int)(count($articles) / 3);
 
@@ -759,7 +711,6 @@ class WikihowCategoryViewer extends ArticleViewer {
 		$prev_start_char = 'none';
 
 		// loop through the chunks
-		//XXADDED
 		$featured = 0;
 		$articles_with_templates = array();
 		$articles_with_templates_info = array();
@@ -768,7 +719,6 @@ class WikihowCategoryViewer extends ArticleViewer {
 		for ($startChunk = 0, $endChunk = $chunk, $chunkIndex = 0;
 			 $chunkIndex < 3;
 			 $chunkIndex++, $startChunk = $endChunk, $endChunk += $chunk + 1) {
-			//			$r .= "<td>\n";
 			$atColumnTop = true;
 
 			// output all articles in category
@@ -787,14 +737,12 @@ class WikihowCategoryViewer extends ArticleViewer {
 					$cont_msg = "";
 					if ($articles_start_char[$index] == $prev_start_char)
 						$cont_msg = ' ' . wfMessage('listingcontinuesabbrev')->escaped();
-					// $r .= "<h3>" . htmlspecialchars( $articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
 					$prev_start_char = $articles_start_char[$index];
 				}
-				///XXXXXXX
 				if (is_array($article_info) && $article_info[$index]['page_is_featured'] && $featured == 0) {
 					$r .= "<div id='category_featured_entries'><img src='/skins/common/images/star.png' style='margin-right:5px;'><b>" . wfMessage('featured_articles_category')->text() . "</b>";
 					$featured = 1;
-				} else if (is_array($article_info) && !$article_info[$index]['page_is_featured'] && $featured == 1) {
+				} elseif (is_array($article_info) && !$article_info[$index]['page_is_featured'] && $featured == 1) {
 					$r .= "</div>";
 				}
 				if (is_array($article_info) && isset($article_info[$index])) {
@@ -808,17 +756,10 @@ class WikihowCategoryViewer extends ArticleViewer {
 					}
 				}
 
-				///XXXXXXX
-				//      $r .= "<li>{$articles[$index]}</li>";
 				$r .= "<div id='category_entry'>{$articles[$index]}</div>";
 			}
-			if (!$atColumnTop) {
-				#$r .= "</ul>\n";
-			}
-
-
 		}
-		//XXADDED
+
 		if (sizeof($articles_with_templates) > 0) {
 			$r .= "<div style='margin-top: 10px;'><b>" . wfMessage('articles_that_require_attention')->text() . "</b>";
 			$index = 0;
@@ -838,48 +779,35 @@ class WikihowCategoryViewer extends ArticleViewer {
 	 * @return string
 	 * @private
 	 */
-	function shortList($articles, $articles_start_char)
-	{
-		//XXCHANGED -- the whole function pretty much
-		//$r = '<h3>' . htmlspecialchars( $articles_start_char[0] ) . "</h3>\n";
-		$r .= "<div id=subcategories_list>";
+	function shortList($articles, $articles_start_char) {
+		$r = "<div id=subcategories_list>";
 		$r .= '<ul>';
 		$sk = $this->getSkin();
 		for ($index = 0; $index < count($articles); $index++) {
-			if ($articles_start_char[$index] != $articles_start_char[$index - 1]) {
-				//XXCHANGED
-				//$r .= "</ul><h3>" . htmlspecialchars( $articles_start_char[$index] ) . "</h3>\n<ul>";
-			}
-			//XXCHANGED
 			if (is_array($articles[$index])) {
 				$r .= "<li>{$articles[$index][0]}</li>";
 				$links = array();
 				foreach ($articles[$index][1] as $t) {
 					$links[] = Linker::link($t, $t->getText());
 				}
-				//$r .= $this->shortList($articles[$index][1], array());
 				$r .= "<div id=subcategories_list2><ul><li>" . implode(" <b>&bull;</b> ", $links) . "</li></ul></div>";
-			} else if ($articles[$index] instanceof Title) {
+			} elseif ($articles[$index] instanceof Title) {
 				$t = $articles[$index];
 				$link = Linker::link($t, $t->getText());
 				$r .= "<li>{$link}</li>";
 			} else {
-				if (is_string($articles[$index]))
+				if (is_string($articles[$index])) {
 					$r .= "<li>{$articles[$index]}</li>";
-				else {
+				} else {
 					print_r($articles[$index]);
 				}
 			}
 		}
-		#$r .= '</ul>';
 		$r .= '</div>';
 		return $r;
 	}
 
-	//XXADDED
-
-	function getArticlesFurtherEditing($articles, $article_info)
-	{
+	function getArticlesFurtherEditing($articles, $article_info) {
 		$articles_with_templates = array();
 		$articles_with_templates_info = array();
 

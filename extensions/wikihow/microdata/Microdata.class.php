@@ -78,6 +78,9 @@ class Microdata {
 		{
 			$schema_hdr = ' itemscope itemtype="http://schema.org/CreativeWork"';
 		}
+		else {
+			$schema_hdr = '';
+		}
 		return $schema_hdr;
 	}
 

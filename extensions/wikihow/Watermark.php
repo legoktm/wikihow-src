@@ -5,10 +5,14 @@ if ( !defined('MEDIAWIKI') ) die();
 class WatermarkSupport {
 	const NO_WATERMARK = "noWatermark";
 	const ADD_WATERMARK = "addWatermark";
-	const WIKIPHOTO_CREATOR = "Wikiphoto";
 	const FORCE_TRANSFORM = "forcetransform";
-	const MAINTENANCE_CREATOR = "Maintenance script";
 
+	static function isWikihowCreator($userName) {
+		global $wgWatermarkUsers;
+		return (is_array($wgWatermarkUsers) && in_array($userName, $wgWatermarkUsers));
+	}
+
+	// NOTE: Reuben deprecated the $heightPreference param -- it no longer does anything
 	function getUnwatermarkedThumbnail( $image, $width, $height=-1, $render = true, $crop = false, $heightPreference = false ) {
 		$params = array( 'width' => $width );
 		if ( $height != -1 ) {
@@ -19,7 +23,10 @@ class WatermarkSupport {
 		}
 		$params[WatermarkSupport::NO_WATERMARK] = true;
 		$params['heightPreference'] = $heightPreference;
-		$flags = $render ? File::RENDER_NOW : 0;
+		// NOTE: Reuben removed use of the RENDER_NOW param because it makes no
+		// effect if not using the transformVia404 Mediawiki functionality
+		//$flags = $render ? File::RENDER_NOW : 0;
+		$flags = 0;
 		return $image->transform( $params, $flags );
 	}
 

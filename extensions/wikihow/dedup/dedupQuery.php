@@ -6,6 +6,9 @@ class DedupQuery {
 	const SEARCH_REFRESH_INTERVAL = 7776000; // 60*60*24*90 i.e. 90 days
 
 	public static function fetchQuery($query, $ts) {
+		if(!$query) {
+			return;	
+		}
 		$dbr = wfGetDB(DB_SLAVE);
 		$sql = "select min(ql_time_fetched) as ts from dedup.query_lookup where ql_query=" . $dbr->addQuotes($query);
 		$res = $dbr->query($sql, __METHOD__);
@@ -49,7 +52,9 @@ class DedupQuery {
 				$dbw->query($sql, __METHOD__);
 			}
 			else {
-				$sql ="insert into dedup.query_lookup_log(qll_query, qll_result, qll_timestamp, qll_timestamp, qll_comment) values(" . $dbw->addQuotes($query) . "," . $dbw->addQuotes('badresponse') . "," . $dbw->addQuotes(wfTimestampNow()) . "," . $dbw->addQuotes("Response code: " . $results->bossresponse->responsecode);	
+				$dbw = wfGetDB(DB_MASTER);
+				$sql ="insert into dedup.query_lookup_log(qll_query, qll_result, qll_timestamp, qll_timestamp, qll_comment) values(" . $dbw->addQuotes($query) . "," . $dbw->addQuotes('badresponse') . "," . $dbw->addQuotes(wfTimestampNow()) . "," . $dbw->addQuotes("Response : " . ($results ? print_r($results,true) : ''));
+				$dbw->query($sql, __METHOD__);	
 			}
 		}
 		catch(Exception $ex) {
@@ -65,9 +70,18 @@ class DedupQuery {
 		return($query);
 	}
 	public static function addTitle($title, $lang) {
+		if(!$title) {
+			return("");
+		}
 		$titleText = $title->getText();
+		if(!$titleText) {
+			return("");
+		}
 		$pageId = $title->getArticleID();
 		$query = self::getQueryFromTitleText($titleText);
+		if(!$query) {
+			return("");
+		}
 		self::fetchQuery($query, wfTimestamp(TS_MW, time() - self::SEARCH_REFRESH_INTERVAL));
 		$dbr = wfGetDB(DB_SLAVE);
 		$sql = "select count(*) as ct from dedup.title_query where tq_title=" . $dbr->addQuotes($titleText);	
@@ -113,4 +127,57 @@ class DedupQuery {
 		$sql = "insert ignore into dedup.special_query(sq_query,sq_import_date) values(" . $dbw->addQuotes($query) . ",now())";
 		$dbw->query($sql, __METHOD__);
 	}
+
+	/**
+	 * Find matches for the designated queries
+	 */
+	public static function matchQueries($queries) {
+		$dbr = wfGetDB(DB_SLAVE);
+		$queriesN = array();
+		foreach($queries as $query) {
+			$queriesN[] = $dbr->addQuotes($query);	
+		}
+		$dbw = wfGetDB(DB_MASTER);
+		$sql = "insert ignore into dedup.query_match select ql.ql_query as query1, ql2.ql_query as query2, count(*) as ct from dedup.query_lookup ql join dedup.query_lookup ql2 on ql2.ql_url=ql.ql_url where ql.ql_query in (" . implode(',',$queriesN) . ") group by ql.ql_query, ql2.ql_query"; 
+		$dbw->query($sql, __METHOD__);
+
+	}
+
+	/**
+	 * Find categories
+	 */
+	 public static function getCategories($query) {
+			$dbr = wfGetDB(DB_SLAVE);
+			$sql = "select cl_to, sum(ct) as score from categorylinks join dedup.title_query on tq_page_id=cl_from and tq_lang='en' join dedup.query_match on tq_query=query2 and tq_query<>query1 where query1=" . $dbr->addQuotes($query) . " group by cl_to order by score desc"; 
+			$res = $dbr->query($sql, __METHOD__);
+			$cats = array();
+			foreach($res as $row) {
+				$cats[] = array('cat' => $row->cl_to, 'score' => $row->score);
+			}
+			return($cats);
+	 }
+	 /*
+	  * Find articles related to the following
+	  */
+	  public static function getRelated($title, $minScore = 1) {
+	  	global $wgLanguageCode;
+
+	  	$dbr = wfGetDB(DB_SLAVE);
+		$query = DedupQuery::addTitle($title, $wgLanguageCode);
+		if(!$query) {
+			return(array());
+		}
+		$sql = "select query1, query2, ct, tq_page_id from dedup.query_match join dedup.title_query on tq_query=query2 where query1 =" . $dbr->addQuotes($query) . " and query1<> query2 order by query1, ct desc";
+		$res = $dbr->query($sql, __METHOD__);
+		$titles = array();
+		foreach($res as $row) {
+			if($row->ct >= $minScore) {
+				$t = Title::newFromId($row->tq_page_id);
+				if($t) {
+					$titles[] = array('title' => $t, 'ct' =>$row->ct);
+				}
+			}
+		}
+		return($titles);
+	  }
 }

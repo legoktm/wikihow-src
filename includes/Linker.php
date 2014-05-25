@@ -580,15 +580,15 @@ class Linker {
 		$sourceWidth = $file->getWidth();
 		$sourceHeight = $file->getHeight();
 
-		if($sourceHeight > $sourceWidth) {
-			if($sourceWidth > 200) {
+		if ($sourceHeight > $sourceWidth) {
+			if ($sourceWidth > 200) {
 				$isPortrait = true;
 				$isLarge = true;
 			}
 		}
 		else {
-			//landscape
-			if($sourceWidth > 400) {
+			// landscape
+			if ($sourceWidth > 400) {
 				$isLarge = true;
 			}
 		}
@@ -597,9 +597,10 @@ class Linker {
 			$isLarge = false;
 		}
 
-		if($section == "summary") {
-			//for intro they must specify 625 and center to have it shown
-			if($hp['width'] >= 625) {
+		if ($section == "summary") {
+			// for intro image, writer must specify at least 625 and centered for
+			// the image to show
+			if (isset($hp['width']) && $hp['width'] >= 625) {
 				$imageClass .= " introimage ";
 			}
 		}

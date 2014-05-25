@@ -45,5 +45,6 @@ body {
 .edit,
 .editsection,
 .mwimg,
-.whvid_cont
+.whvid_cont,
+.altadder_section
 { display: none !important; }

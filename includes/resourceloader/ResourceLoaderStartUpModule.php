@@ -218,6 +218,10 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				'version' => wfTimestamp( TS_ISO_8601_BASIC, $version ),
 				'siterev' => WH_SITEREV
 			);
+
+			// WIKIHOW - arg added this hook so we can remove the version from the query
+			wfRunHooks( 'ResourceLoaderStartupModuleQuery', array( &$query ) );
+
 			// Ensure uniform query order
 			ksort( $query );
 

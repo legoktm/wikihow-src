@@ -21,4 +21,18 @@ class WAPUIBabelfishAdmin extends WAPUIAdminController {
 		$this->outputSuccessHtml($message);
 	}
 
+	function outputCompletedReportHtml() {
+		global $wgOut;
+		$wgOut->setPageTitle('Completed Report Generator');
+		global $wgOut;
+		$vars = $this->getDefaultVars($this->dbType);
+		if ($this->cu->isAdmin()) {
+			$vars['langs'][] = 'all';
+		}
+		$vars['buttonId'] = 'rpt_completed_articles_admin';
+		$tmpl = new WAPTemplate($this->dbType);
+		$wgOut->addHtml($tmpl->getHtml('completed_report.tmpl.php', $vars));
+	}
+
+
 }

@@ -24,7 +24,7 @@ abstract class WAPUIController {
 		$vars = array();
 		$vars['js'] = HtmlSnips::makeUrlTags('js', array('chosen.jquery.min.js'), '/extensions/wikihow/common/chosen', false);
 		$vars['js'] .= HtmlSnips::makeUrlTags('js', array('wap.js'), '/extensions/wikihow/wap', false);
-		$vars['js'] .= HtmlSnips::makeUrlTags('js', array('jquery.tablesorter.min.js', 'download.jQuery.js'), '/extensions/wikihow/common', false);
+		$vars['js'] .= HtmlSnips::makeUrlTags('js', array('jquery-ui-1.9.2.core_datepicker.custom.min.js','jquery.tablesorter.min.js', 'download.jQuery.js'), '/extensions/wikihow/common', false);
 		$vars['css'] = HtmlSnips::makeUrlTags('css', array('chosen.css'), '/extensions/wikihow/common/chosen', false);
 		$vars['css'] .= HtmlSnips::makeUrlTags('css', array('wap.css'), '/extensions/wikihow/wap', false);
 		$vars['userPage'] = $this->config->getUserPageName();

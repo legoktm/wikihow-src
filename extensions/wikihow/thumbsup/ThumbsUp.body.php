@@ -67,7 +67,7 @@ class ThumbsUp extends UnlistedSpecialPage {
 		while ($row = $dbr->fetchObject($res)) {
 			// Only give one thumb up in the case of multiple intermediary revisions for RC Patrol
 			if (!in_array($recipient, $recipients)) {
-				self::thumb($row->rev_id, $row->rev_user, $row->rev_user_text, $pageId);
+				self::thumb($row->rev_id, $row->rev_user, $row->rev_user_text, $pageId, true);
 			}
 			$recipients[] = $recipient;
 		}
@@ -137,7 +137,7 @@ class ThumbsUp extends UnlistedSpecialPage {
 				$sql .= "ON DUPLICATE KEY UPDATE pb_thumbs_received=pb_thumbs_received + 1";
 				$res = $dbw->query($sql);
 			}
-			
+
 			$t = Title::newFromID($pageId);
 			if (is_object($t)) {
 				// Add a log entry
@@ -239,20 +239,25 @@ class ThumbsUp extends UnlistedSpecialPage {
 			$user_talk = Title::makeTitle( NS_USER_TALK, $recipientText );
 		}
 
-		$comment = wfMsg('thumbs_talk_msg', $diffUrl, $t->getText());
-		$formattedComment = wfMsg('postcomment_formatted_comment', $dateStr, $user, $real_name, $comment);
+		//Don't leave a talk page comment for thumbs up
+		//Echo notifications should be enough
+		//-------------------------------------------------
+		// $comment = wfMsg('thumbs_talk_msg', $diffUrl, $t->getText());
+		// //add a hidden variable to id thumbs up notifications for echo
+		// $comment .= '<!--thumbsup-->';
+		// $formattedComment = wfMsg('postcomment_formatted_comment', $dateStr, $user, $real_name, $comment);
 
-		if ($user_talk->getArticleId() > 0) {
-			$r = Revision::newFromTitle($user_talk);
-			$text = $r->getText();
-		}
+		// if ($user_talk->getArticleId() > 0) {
+			// $r = Revision::newFromTitle($user_talk);
+			// $text = $r->getText();
+		// }
 
-		$article = new Article($user_talk);
-		$text .= "\n\n$formattedComment\n\n";
-		$article->doEdit($text, wfMsg('thumbs-up-usertalk-editsummary'));
+		// $article = new Article($user_talk);
+		// $text .= "\n\n$formattedComment\n\n";
+		// $article->doEdit($text, wfMsg('thumbs-up-usertalk-editsummary'));
 
-		// Auto patrol talk page messages to not anger the rc patrollers with thumbs up chatter
-		self::autoPatrolTalkMessage($user_talk->getArticleId());
+		// // Auto patrol talk page messages to not anger the rc patrollers with thumbs up chatter
+		// self::autoPatrolTalkMessage($user_talk->getArticleId());
 
 
 		if ($recipientId > 0) {
@@ -269,12 +274,42 @@ class ThumbsUp extends UnlistedSpecialPage {
 				$thumbsEmailOption = 0;
 			}
 			if ($thumbsEmailOption === 0) {
-				$track_title = '?utm_source=thumbsup_message&utm_medium=email&utm_term=title_page&utm_campaign=talk_page_message';
-				$track_diff = '&utm_source=thumbsup_message&utm_medium=email&utm_term=diff_page&utm_campaign=talk_page_message';
-				$diffHref = "<a href='$diffUrl$track_diff'>edit</a>";
-				$titleHref = "<a href='" . $t->getFullURL() . "$track_title'>" . $t->getText() . "</a>";
-				$emailComment = wfMsg('thumbs_talk_email_msg', $diffHref, $titleHref);
-				AuthorEmailNotification::notifyUserTalk($user_talk->getArticleId(), $wgUser->getID() ,$emailComment, 'thumbsup');
+				//SWITCHED TO ECHO NOTIFICATIONS
+				// $track_title = '?utm_source=thumbsup_message&utm_medium=email&utm_term=title_page&utm_campaign=talk_page_message';
+				// $track_diff = '&utm_source=thumbsup_message&utm_medium=email&utm_term=diff_page&utm_campaign=talk_page_message';
+				// $diffHref = "<a href='$diffUrl$track_diff'>edit</a>";
+				// $titleHref = "<a href='" . $t->getFullURL() . "$track_title'>" . $t->getText() . "</a>";
+				// $emailComment = wfMsg('thumbs_talk_email_msg', $diffHref, $titleHref);
+				//AuthorEmailNotification::notifyUserTalk($user_talk->getArticleId(), $wgUser->getID() ,$emailComment, 'thumbsup');
+
+				//notify via the echo notification system
+				if (class_exists('EchoEvent')) {
+					EchoEvent::create( array(
+						'type' => 'thumbs-up',
+						'title' => $t,
+						'extra' => array(
+							'revid' => $revisionId,
+							'thumbed-user-id' => $recipientId,
+						),
+						'agent' => $wgUser,
+					) );
+				}
+			}
+		}
+		else {
+			//anon
+			//notify via the echo notification system
+			if (class_exists('EchoEvent')) {
+				EchoEvent::create( array(
+					'type' => 'thumbs-up',
+					'title' => $t,
+					'extra' => array(
+						'revid' => $revisionId,
+						'thumbed-user-id' => $recipientId,
+						'thumbed-user-text' => $recipientText,
+					),
+					'agent' => $wgUser,
+				) );
 			}
 		}
 

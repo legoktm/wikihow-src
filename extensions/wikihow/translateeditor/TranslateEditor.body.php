@@ -60,7 +60,7 @@ class TranslateEditor extends UnlistedSpecialPage {
 		
 				EasyTemplate::set_path(dirname(__FILE__).'/');
 				// Templates to remove from tranlsation
-				$remove_templates = array("{{FA}}");
+				$remove_templates = array("{{FA}}", "\\[\\[Category:[^\\]]+\\]\\]");
 				// Words or things to automatically translate 
 				$translations = array(array('from'=>self::getSectionRegex('Steps'), 'to' =>self::getSectionWikitext(wfMsg('Steps'))),
 															array('from'=>self::getSectionRegex('Tips'),'to'=>self::getSectionWikitext(wfMsg('Tips'))),
@@ -68,7 +68,7 @@ class TranslateEditor extends UnlistedSpecialPage {
 															array('from'=>self::getSectionRegex('Ingredients'),'to'=>self::getSectionWikitext(wfMsg('Ingredients'))),
 															array('from'=>self::getSectionRegex("Things You'll need"),'to'=>self::getSectionWikitext(wfMsg('Thingsyoullneed'))),
 															array('from'=>self::getSectionRegex("Related wikiHows"),'to'=>self::getSectionWikitext(wfMsg('Related'))),
-															array('from'=>self::getSectionRegex("Sources and Citations"),'to'=>self::getSectionWikitext(wfMsg('Sources')))
+															array('from'=>self::getSectionRegex("Sources and Citations"),'to'=>self::getSectionWikitext(wfMsg('Sources'))),
 															);
 				$vars = array('title' => $target, 'checkForLL' => true, 'translateURL'=>true, 'translations' => json_encode($translations), 'remove_templates'=> array_map(preg_quote,$remove_templates));
 				$html = EasyTemplate::html('TranslateEditor.tmpl.php', $vars);

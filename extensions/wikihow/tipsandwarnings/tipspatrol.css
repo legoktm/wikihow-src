@@ -149,3 +149,9 @@ h1.firstHeading a:hover {
 	height: 14px;
 	background: url(/skins/owl/images/article_sprite.png) no-repeat -114px 0;
 }
+
+#tips_keys {
+    float: right;
+    font-size: 10px;
+    margin-top: -45px;
+}

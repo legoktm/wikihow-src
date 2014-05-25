@@ -174,6 +174,11 @@ class ArticleHTMLParser {
 	// used for processing the intro
 	// if $processImage is true it will also create thumbnails of the intro image if applicable
 	public function processIntro($imageNsText, $processImage = true) {
+		//remove any TOC that will mess up our h2 logic
+		if (pq('div#toc')->length) {
+			pq('div#toc')->remove();
+		}
+	
 		// the intro is before the first h2
 		$before = "h2";
 

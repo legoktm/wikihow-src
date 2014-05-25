@@ -32,6 +32,31 @@ class AdminBounceTests extends UnlistedSpecialPage {
 	}
 
 	/**
+	 * Reset everything for URLs on Petametrics
+	 */
+	private static function resetPM(&$urls, $resetDesktop = true, $resetMobile = true, $resetTablet = true) {
+		$ids = array();
+		foreach($urls as $url) {
+			$ids[] = "" . $url['title']->getArticleId();	
+		}
+		$url = 'https://api.petametrics.com/v1/metrics/bydevice/reset';
+
+		$data = array('$apiKey' => WH_PETAMETRICS_API_KEY,
+					  '$resetDesktop' => $resetDesktop,
+					  '$resetMobile' => $resetMobile,
+					  '$resetTablet' => $resetTablet,
+					  '$ids' => $ids);
+		$json = json_encode($data);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		$str = curl_exec($ch);
+		curl_close($ch);
+	}
+	/**
 	 * Reset the bounce stats for a bunch of articles
 	 */
 	private static function resetStats(&$urls,$domain='bt') {
@@ -486,11 +511,12 @@ EOHTML;
 				if ('reset' == $action) { // both www and mobile
 					foreach (self::$domains as $domain=>$foo) {
 						$html .= self::resetStats($urls, $domain);
-					}
+											}
 				} else { // just one domain
 					$domain = substr($action, -2);
 					$html = self::resetStats($urls, $domain);
 				}
+				self::resetPM($urls);
 				self::resetVarnishes($urls);
 
 				self::mailUserResetDone($wgUser, $urls);
@@ -549,8 +575,6 @@ $tmpl = <<<EOHTML
 </div>
 <textarea id="pages-list" name="pages-list" type="text" rows="10" cols="70"></textarea><br/>
 <button id="pages-fetch" disabled="disabled" style="padding: 5px;">fetch stats</button>
-<button id="pages-resetbt" disabled="disabled" style="padding: 5px;">reset www</button>
-<button id="pages-resetmb" disabled="disabled" style="padding: 5px;">reset mobile</button>
 <button id="pages-reset" disabled="disabled" style="padding: 5px;">reset all</button>
 <br/>
 <br/>

@@ -887,6 +887,52 @@ class Leaderboard extends SpecialPage {
 	}
 
 	/**
+	 * Query for UCIPatrol
+	 **/
+	function getUCIAdded($starttimestamp, $lb_user = '', $getArticles = false) {
+		global $wgMemc;
+
+		if ($getArticles) {
+			$key = "leaderboard:uci_tool2:$starttimestamp:$lb_user";
+		} else {
+			$key = "leaderboard:uci_tool2:$starttimestamp";
+		}
+
+		$cachekey = wfMemcKey($key);
+		$val = $wgMemc->get($cachekey);
+		if (is_array($val)) {
+			return $val;
+		}
+
+		$dbr = wfGetDB(DB_SLAVE);
+		$data = array();
+
+		$bots = WikihowUser::getBotIDs();
+
+		$bot = "";
+
+		if(sizeof($bots) > 0) {
+			$bot = " AND log_user NOT IN (" . $dbr->makeList($bots) . ") ";
+		}
+
+		$sql = "SELECT log_user, count(*) as C ".
+			"FROM logging ".
+			"WHERE log_type='ucipatrol' and log_timestamp >= '$starttimestamp' ". $bot.
+			"GROUP BY log_user ORDER BY C DESC LIMIT 30";
+		$res = $dbr->query($sql, __METHOD__);
+
+		foreach ($res as $row) {
+			$u = User::newFromId($row->log_user);
+			if ($u) {
+				$data[$u->getName()] = number_format($row->C, 0, "", ',');
+			}
+		}
+
+		$wgMemc->set($cachekey, $data, 3600);
+		return $data;
+	}
+
+	/**
 	 * Query for TipsPatrol
 	 **/
 	function getTipsAdded($starttimestamp, $lb_user = '', $getArticles = false) {

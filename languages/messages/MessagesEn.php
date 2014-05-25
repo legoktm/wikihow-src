@@ -1627,7 +1627,7 @@ The reason given by $3 is ''$2''",
 'cantcreateaccount-text' => "Account creation from this IP address (<strong>$1</strong>) has been blocked by [[User:$3|$3]].
 
 The reason given by $3 is <em>$2</em>",
-'createaccount-hook-aborted' => '$1', # do not translate or duplicate this message to other languages
+'createaccount-hook-aborted' => '<h4>Error</h4>The name is too similar to an existing account.',
 
 # History pages
 'viewpagelogs'           => 'View logs for this page',
@@ -8187,6 +8187,11 @@ To include your video in an article on the wiki, insert the following code into 
 'youtubeauthsub_uploading' => 'Your video is being uploaded. Please be patient.',
 'youtubeauthsub_username' => 'YouTube Username',
 'youtubeauthsub_viewpage' => 'Alternatively, you can view your video [[$1|here]].',
+# RCP rollback
+'rcp-alreadyrolled'              => 'Cannot rollback this edit of [[:$1]];  Someone else has edited the page already or the rollback would make no actual change.  The last edit to the page was by [[User:$3|$3]] ([[User_talk:$3|talk]]{{int:pipe-separator}}[[Special:Contributions/$3|{{int:contribslink}}]]).',
+'rcp-rollback-success' => 'RCP reverted edits by $1 to $3 by $2',
+'rcp-revertpage' => 'RCP reverted edits by [[Special:Contributions/$2|$2]] ([[User_talk:$2|talk]]) to  revision #$3 by [[User:$1|$1]]',
+'rcp-revertpage-nouser' => 'RCP reverted edits by a hidden user to last revision by {{GENDER:$1|[[User:$1|$1]]}}',
 # From wikiHow.i18n
 
 'PatrolRC' => 'Patrol Recent Changes',
@@ -8249,8 +8254,10 @@ To include your video in an article on the wiki, insert the following code into 
 <fb:like href="http://www.facebook.com/wikiHow" send="false" layout="button_count" width="150" show_faces="false"></fb:like>
 </div>
 </div>',
+'part_3' => 'Parts',
 'part_2' => 'Part $1 of $2: $3',
 'part_1' => 'Part $1 of $2',
+'method_3' => 'Methods',
 'method_2' => 'Method $1 of $2: $3',
 'method_1' => 'Method $1 of $2',
 'recentchanges-legend'  => '',

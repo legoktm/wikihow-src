@@ -3,6 +3,9 @@
 * 
 */
 class AltMethodAdder extends UnlistedSpecialPage {
+
+	const DEFAULT_METHOD = "Name your method";
+	const DEFAULT_STEPS = "Add your steps using an ordered list. For example:\n# Step one\n# Step two\n# Step three";
 	
 	function __construct() {
 		parent::__construct('AltMethodAdder');
@@ -40,9 +43,13 @@ class AltMethodAdder extends UnlistedSpecialPage {
 		$title = Title::newFromID($articleId);
 		$result = array();
 		if($title) {
-			$dbw = wfGetDB(DB_MASTER);
-			$dbw->insert('altmethodadder', array('ama_page' => $articleId, 'ama_method' => $altMethod, 'ama_steps' => $altSteps, 'ama_user' => $wgUser->getID(), 'ama_timestamp' => wfTimestampNow()));
-			
+			$isValid = MethodGuardian::checkContent($title, $altMethod, $altSteps, false);
+			//only add it to the db if it's actually a valid method as defined
+			//by the MethodGuardian::checkContent
+			if($isValid) {
+				$dbw = wfGetDB(DB_MASTER);
+				$dbw->insert('altmethodadder', array('ama_page' => $articleId, 'ama_method' => $altMethod, 'ama_steps' => $altSteps, 'ama_user' => $wgUser->getID(), 'ama_timestamp' => wfTimestampNow()));
+			}
 			$result['success'] = true;
 			
 			//Parse the wikiText that they gave us.
@@ -61,7 +68,9 @@ class AltMethodAdder extends UnlistedSpecialPage {
 	 * This will get display on article pages
 	 */
 	public static function getCTA(&$t) {
-		if (self::isActivePage() && self::isValidTitle($t)) {
+		if (self::isActivePage() 
+			&& !self::isReferredFromArticleCreator()
+			&& self::isValidTitle($t)) {
 			
 			$tmpl = new EasyTemplate( dirname(__FILE__) );
 			$tmpl->set_vars(array('title' => $t->getText()));
@@ -77,6 +86,10 @@ class AltMethodAdder extends UnlistedSpecialPage {
 	public static function isActivePage() {
 		//now showing on ALL pages
 		return true;
+	}
+
+	public static function isReferredFromArticleCreator() {
+		return strpos($_SERVER['HTTP_REFERER'], '/Special:ArticleCreator') !== false;
 	}
 	
 	function getSQL() {

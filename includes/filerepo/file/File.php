@@ -962,6 +962,7 @@ abstract class File {
 	 * @deprecated use transform()
 	 */
 	// JRS added adapter to support existing getthumnail calls throughout our mw codebase
+	// RDS deprecated the heightPreference param and made it no longer function
 	public function getThumbnail( $width, $height=-1, $render = true, $crop = false, $heightPreference = false ) {
 		return ImageHelper::getThumbnail( $width, $height, $render, $crop, $heightPreference );
 	}

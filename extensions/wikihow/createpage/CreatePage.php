@@ -303,8 +303,11 @@ function wfRemoveFromFirstEdit($wikiPage, $user, $reason, $id) {
 }
 
 function wfShowFollowUpOnCreation() {
-	global $wgTitle, $wgRequest, $wgOut, $wgUser, $wgCookiePrefix, $wgCookiePath, $wgCookieDomain, $wgCookieSecure;
-
+	global $wgTitle, $wgRequest, $wgOut, $wgUser, $wgCookiePrefix, $wgCookiePath, $wgCookieDomain, $wgCookieSecure, $wgLanguageCode;
+	// Don't show extra sharing dialog after creating an article on international
+	if($wgLanguageCode != "en") {
+		return true;	
+	}
 	try {
 		$t = $wgTitle;
 		if (!$t || $t->getNamespace() != NS_MAIN) {
@@ -325,14 +328,19 @@ function wfShowFollowUpOnCreation() {
 			return true;
 		}
 
-		// all of this logic could be cleaned up and HTML moved to a template
 		$dbr = wfGetDB(DB_SLAVE);
 		$num_revisions = $dbr->selectField('revision', 'count(*)', array('rev_page=' . $article->getId()));
 		if ($num_revisions > 1) return true;
+
 		$user_name  = $dbr->selectField('revision', 'rev_user_text', array('rev_page=' . $article->getId()));
+		if($wgUser->getName() != $user_name) {
+			return true;
+		}
+
+		// all of this logic could be cleaned up and HTML moved to a template
 		if ((strpos($_SERVER['HTTP_REFERER'], 'action=edit') !== false
+			 || strpos($_SERVER['HTTP_REFERER'], '/Special:ArticleCreator') !== false
 			 || strpos($_SERVER['HTTP_REFERER'], 'action=submit2') !== false)
-			&& $wgUser->getName() == $user_name
 			&& (!isset($_SESSION["aen_dialog"][$article->getId()]))
 			)
 		{
@@ -356,7 +364,6 @@ function wfShowFollowUpOnCreation() {
 									$("#dialog-box").load("/Special:CreatepageFinished");
 									$("#dialog-box").dialog({
 										width: 600,
-										height: 600,
 										modal: true,
 										closeText: "Close",
 										title: "' . wfMsg('createpage_congratulations') . '"
@@ -373,9 +380,12 @@ function wfShowFollowUpOnCreation() {
 						}
 					</script>
 				');
+			} elseif ($wgUser->GetId() != 0 && strpos($_SERVER['HTTP_REFERER'], '/Special:ArticleCreator') !== false) {
+				// If article was created by the article creator and user logged in then get a different dialog script
+				ArticleCreator::printArticleCreatedScript($t);
 			} else {
-
-				if ($wgUser->getOption( 'enableauthoremail' )) {
+				//BEBETH: putting this back as it was before. This is one of the backwards preferences
+				if ($wgUser->getOption( 'enableauthoremail' ) != '1') {
 					setcookie('aen_dialog_check',$article->getId(),time()+3600);
 
 					print('
@@ -405,7 +415,7 @@ function wfShowFollowUpOnCreation() {
 						</script>
 					');
 				}
-			}
+		}
 			$_SESSION["aen_dialog"][$article->getId()] = 1;
 		}
 	} catch (Exception $e) {

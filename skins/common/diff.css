@@ -1,5 +1,6 @@
 /*
 ** Diff rendering
+** (integrated with wikipedia's new style on 4/2014 [sc])
 */
 table.diff {
 	border: none;
@@ -11,7 +12,7 @@ table.diff {
 	table-layout: fixed;
 }
 table.diff td {
-	padding: 5px;
+	padding:0.33em 0.5em;
 	text-align: left;
 }
 table.diff, table.diff td.diff-otitle, table.diff td.diff-ntitle {
@@ -23,6 +24,8 @@ table.diff, table.diff td.diff-otitle, table.diff td.diff-ntitle {
 }
 td.diff-marker {
 	text-align: right;
+	padding: 0.25em;
+	font-weight: bold;
 }
 .rtl td.diff-marker {
 	text-align: left;
@@ -30,20 +33,27 @@ td.diff-marker {
 td.diff-lineno {
 	font-weight: bold;
 }
-td.diff-addedline {
-	background: #cfc;
-	font-size: smaller;
+td.diff-addedline,td.diff-deletedline,td.diff-context{
+	font-size:88%;
+	vertical-align:top;
+	white-space:-moz-pre-wrap;
+	white-space:pre-wrap;
+	border-style:solid;
+	border-width:1px 1px 1px 4px;
+	border-radius:0.33em
 }
-td.diff-deletedline {
-	background: #f4dcdc;
-	font-size: smaller;
+td.diff-addedline{ border-color:#a3d3ff }
+td.diff-deletedline{ border-color:#ffe49c }
+td.diff-context{
+	background:#f9f9f9;
+	border-color:#e6e6e6;
+	color:#333333
 }
-td.diff-context {
-	background: #eee;
-	font-size: smaller;
-}
+td.diff-addedline .diffchange,td.diff-deletedline .diffchange{ border-radius:0.33em; }
+td.diff-addedline .diffchange{ background:#d8ecff; }
+td.diff-deletedline .diffchange{ background:#feeec8; }
+
 .diffchange {
-	color: red;
 	font-weight: bold;
 	text-decoration: none;
 }

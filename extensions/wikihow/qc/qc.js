@@ -85,6 +85,7 @@ function loadResult(result) {
 	$('#qc_yes').click( function() {
 		if (!$(this).hasClass('clickfail')) {
 			qcVote(true);
+			window.oTrackUserAction();
 		}
 		return false;
 	});
@@ -93,6 +94,7 @@ function loadResult(result) {
 	$('#qc_no').click( function() {
 		if (!$(this).hasClass('clickfail_2')) {
 			qcVote(false);
+			window.oTrackUserAction();
 		}
 		return false;
 	});	

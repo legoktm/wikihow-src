@@ -71,6 +71,9 @@
 	 * @return {void}
 	 */
 	function pingServer( action, guiderId ) {
+		// JRS 04/23/14 Turn off the ping server functionality
+		return false;
+
 		var tourInfo, tourName, tourSpec, tourStep;
 
 		tourInfo = gt.parseTourId( guiderId );

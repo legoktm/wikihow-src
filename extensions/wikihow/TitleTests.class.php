@@ -71,7 +71,10 @@ class TitleTests {
 	}
 
 	public function getTitle() {
-		return self::genTitle($this->title, $this->row['tt_test'], $this->row['tt_custom']);
+		$tt_test = isset($this->row['tt_test']) ? $this->row['tt_test'] : '';
+		$tt_custom = isset($this->row['tt_custom']) ? $this->row['tt_custom'] : '';
+	
+		return self::genTitle($this->title, $tt_test, $tt_custom);
 	}
 
 	public function getDefaultTitle() {
@@ -224,7 +227,8 @@ class TitleTests {
 	}
 
 	public function getMetaDescription() {
-		return self::genMetaDescription($this->title, $this->row['tt_test']);
+		$tt_test = isset($this->row['tt_test']) ? $this->row['tt_test'] : '';
+		return self::genMetaDescription($this->title, $tt_test);
 	}
 
 	private static function genMetaDescription($title, $test) {

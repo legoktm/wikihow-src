@@ -86,9 +86,9 @@ class TipsPatrol extends SpecialPage {
 		$wgOut->setHTMLTitle(wfMessage('tipspatrol')->text());
 		$wgOut->setPageTitle(wfMessage('tipspatrol')->text());
 
-		$wgOut->addJSCode('mt');  // Moustrap library
+		$wgOut->addJSCode('mt');  // Mousetrap library
 		$wgOut->addCSSCode('tpc'); // Tips Patrol CSS
-		$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('tipspatrol.js'), 'extensions/wikihow/tipsandwarnings', true));
+		$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('tipspatrol.js'), 'extensions/wikihow/tipsandwarnings'));
 
 		if ($wgDebugToolbar) {
 			$wgOut->addScript(HtmlSnips::makeUrlTags('js', array('consoledebug.js'), 'extensions/wikihow/debug', false));

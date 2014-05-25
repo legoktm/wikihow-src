@@ -3,7 +3,7 @@ $messages = array();
 $messages['en'] =
 	array(
 		'prefs-wikihow' => "wikiHow",
-		'prefs-marketing' => "Email me occasionally with interesting updates about the results of my wikiHow contributions",
+		'prefs-marketing' => "Email me occasional updates about my wikiHow contributions",
 		'prefs-talk' => "Email me when a user sends me a talk page message",
 		'prefs-thumbsnot' =>  "Enable thumbs up notifications on the wikiHow site",
 		'prefs-thumbsemail' => "Enable thumbs up email notifications",
@@ -17,4 +17,6 @@ $messages['en'] =
 		'prefs-rcwidget' => "Show Recent Changes Widget",
 		'prefs-welcomer' => "Don't allow my account to welcome new users",
 		'prefs-autopatrol' => "Mark my edits patrolled by default",
+		'prefs-articlecreator' => "Use the Article Creation Tool for writing new articles",
+		'prefs-emailsettingsind' => "Individual Email Settings",
 	);

@@ -70,6 +70,8 @@ class HillaryRest extends UnlistedSpecialPage {
 
 		$action = $wgRequest->getVal('action');
 		if ($action) {
+print json_encode(array('error' => 'This tool is not available'));
+exit;
 			$pageid = $wgRequest->getInt('pageid');
 			if (!$pageid) exit;
 			$hillary = new Hillary($userid, $pageid);
@@ -120,6 +122,7 @@ class HillaryRest extends UnlistedSpecialPage {
 			if (!$votes) {
 				$wgOut->setArticleBodyOnly(true);
 				$html = $hillary->getSplashPage($toolURL);
+$html = 'This tool is currently unavailable';
 				$wgOut->addHTML($html);
 			} else {
 				$wgOut->redirect($toolURL);
@@ -274,11 +277,14 @@ class Hillary {
 				array("hp_action = ''"),
 				__METHOD__,
 				array('LIMIT' => self::PAGE_SIZE,
-					'ORDER BY' => 'hp_neg_votes, hp_pos_votes, hp_last_voted, hp_pageid DESC'));
+					'ORDER BY' => 'hp_last_voted, hp_pageid DESC'));
 			$bundle = array();
 			foreach ($res as $row) {
 				$bundle[] = intval($row->hp_pageid);
 			}
+			// randomize this array so that not everyone proceeds with the same
+			// articles in the same order
+			shuffle($bundle);
 			$wgMemc->set($cacheKey, $bundle, self::PAGE_CACHE_EXPIRY);
 		}
 		return $bundle;

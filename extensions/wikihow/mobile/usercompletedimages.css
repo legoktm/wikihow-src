@@ -1,0 +1,17 @@
+#drop-content-user_completed_images {
+	margin-right: -11px;
+}
+
+.uci_thumbnail {
+	float: left;
+	padding: 2px;
+}
+
+.uci_table {
+	display:inline-block;
+	overflow: auto;
+}
+
+.uci_thumbnail img {
+	display:block;
+}

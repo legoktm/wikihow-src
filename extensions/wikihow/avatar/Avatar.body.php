@@ -6,7 +6,9 @@ use Guzzle\Http\EntityBody;
 
 class Avatar extends UnlistedSpecialPage {
 
-	const DEFAULT_PROFILE = '/skins/WikiHow/images/default_profile.png';
+	const DEFAULT_PROFILE_OLD = '/skins/WikiHow/images/default_profile.png';
+	const DEFAULT_PROFILE = '/skins/WikiHow/images/80x80_user.png';
+	const ANON_AVATAR_DIR = '/skins/WikiHow/anon_avatars';
 	const AWS_BUCKET = 'image_backups';
 	
 	static $aws = null;
@@ -294,7 +296,7 @@ class Avatar extends UnlistedSpecialPage {
 	function getAvatarURL($name) {
 		$raw = self::getAvatarRaw($name);
 		if ($raw['type'] == 'df') {
-			return wfGetPad(self::DEFAULT_PROFILE);
+			return Avatar::getDefaultProfile();
 		} elseif (($raw['type'] == 'fb') || ($raw['type'] == 'gp')) {
 			return $raw['url'];
 		} elseif ($raw['type'] == 'av') {
@@ -358,7 +360,7 @@ class Avatar extends UnlistedSpecialPage {
 		if (($wgUser->getID() == $u->getID()) && ($wgUser->getID() > 0) && ($wgTitle->getNamespace() == NS_USER)) {
 			$ret .= "<div class='avatar' id='avatarID'>";
 			$url = self::getAvatarURL($name);
-			if (stristr($url, basename(self::DEFAULT_PROFILE)) !== false) {
+			if (stristr($url, basename(Avatar::getDefaultProfile())) !== false) {
 				$ret .= "
 				<div id='avatarULaction'><div class='avatarULtextBox'><a class='avatar_upload' onclick='uploadImageLink();return false;' id='gatUploadImageLink' href='#'></a></div></div>";
 			} else {
@@ -388,9 +390,46 @@ class Avatar extends UnlistedSpecialPage {
 		return $ret;
 	}
 
-	function getDefaultPicture() {
-		$ret = "<img src='" . wfGetPad(self::DEFAULT_PROFILE) . "'>";
+	function getAnonName($src) {
+		if (preg_match('/\_(.*?)\./', $src, $matches)) {
+			return "Anonymous " . ucfirst($matches[1]);
+		}
+	}
+
+	// returns an anon avatar picture and its name
+	// hashes on the id if it is non null
+	function getAnonImageFileName($id = null) {
+		global $IP;
+		$images	= glob($IP . Avatar::ANON_AVATAR_DIR . '/80x80*');
+		if ($id === null) {
+			$i = array_rand($images);
+		} else {
+			$i = abs($id) % (count($images) - 1);
+			MWDebug::log("id: $id, i: $i");
+		}
+		return basename($images[$i]);
+	}
+
+	// gets an avatar from the pool of anonymous avatars
+	// uses the id as a hash so you can keep getting the same one if you want
+	// passing in a null just gives a completely random avatar
+	function getAnonAvatar($id = null) {
+		$fileName = Avatar::getAnonImageFileName($id);
+		$img = "<img src='" . wfGetPad(Avatar::ANON_AVATAR_DIR . "/" . $fileName) . "'>";
+		$name = Avatar::getAnonName($fileName);
+		$ret = array("name"=>$name, "image"=>$img);
 		return $ret;
+	}
+
+	function getDefaultPicture() {
+		$ret = "<img src='" . Avatar::getDefaultProfile() . "'>";
+		return $ret;
+	}
+
+	function getDefaultProfile() {
+		global $wgDebugToolbar;
+
+		return wfGetPad(self::DEFAULT_PROFILE);
 	}
 
 	public static function removePicture($uid = '') {
